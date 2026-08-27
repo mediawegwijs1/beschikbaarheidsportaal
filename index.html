@@ -256,8 +256,6 @@
       </div>
 
       <div class="max-h-80 overflow-y-auto custom-scrollbar space-y-3 pr-1 text-xs">
-        
-        <!-- V0.9 -->
         <div class="p-3 bg-emerald-50/50 border border-emerald-200 rounded-2xl">
           <div class="flex items-center justify-between mb-1.5">
             <span class="font-bold text-emerald-950">Versie V0.9</span>
@@ -268,22 +266,9 @@
             <li>Slimme alfabetische sortering van scholen (negeert SBO, OBS, BS, lidwoorden).</li>
             <li>Directe Planner Login voor Maartje &amp; Renée met Maand- en Weekdashboard.</li>
             <li>Compacte statusindicator voor wijzigingen in behandeling (bijv. <em>Ja ➔ Nee ⏳</em>).</li>
-            <li>Vakdocentenagenda visueel inzichtelijk in admin met directe goedkeuringsknoppen.</li>
+            <li>Supersnelle batch sync naar Google Sheets zonder vertraging.</li>
           </ul>
         </div>
-
-        <!-- V0.8 -->
-        <div class="p-3 bg-slate-50 border border-slate-200 rounded-2xl">
-          <div class="flex items-center justify-between mb-1.5">
-            <span class="font-bold text-slate-800">Versie V0.8</span>
-          </div>
-          <ul class="list-disc list-inside space-y-1 text-slate-600">
-            <li>Verversknop in kalender met live draai-animatie.</li>
-            <li>Directe laadanimaties bij Google Drive synchronisaties.</li>
-            <li>Pincode automatische validatie bij het 4e cijfer en toetsenbord input.</li>
-          </ul>
-        </div>
-
       </div>
     </div>
   </div>
@@ -338,7 +323,6 @@
       </div>
 
       <form id="onboardingForm" onsubmit="handleOnboardingSubmit(event)" class="space-y-5 text-left text-sm">
-        
         <div>
           <label class="block font-bold text-slate-800 mb-1">1. Hoe vaak in de week wil je werken?</label>
           <select id="obWerkDagen" required class="w-full p-3 bg-slate-50 border border-slate-300 rounded-xl focus:ring-2 focus:ring-emerald-500 font-medium">
@@ -445,7 +429,7 @@
     </div>
   </div>
 
-  <!-- MODAL: SCHOOL INPLANNEN (MET CATEGORIEËN & SLIMME SORTERING) -->
+  <!-- MODAL: SCHOOL INPLANNEN -->
   <div id="modalAddSchoolPlanning" class="fixed inset-0 bg-slate-950/80 z-50 hidden flex items-center justify-center p-4">
     <div class="w-full max-w-md bg-white rounded-3xl p-6 shadow-2xl relative text-left">
       <button onclick="closeAddSchoolModal()" class="absolute top-4 right-4 text-slate-400 hover:text-slate-600 w-8 h-8 rounded-full flex items-center justify-center">
@@ -472,9 +456,7 @@
 
         <div>
           <label class="block font-bold text-slate-700 mb-1">Selecteer School (Alfabetisch op schoolnaam)</label>
-          <select id="selectSchoolName" required class="w-full p-2.5 bg-slate-50 border border-slate-300 rounded-xl font-medium">
-            <!-- Dynamisch gevuld en slim gesorteerd -->
-          </select>
+          <select id="selectSchoolName" required class="w-full p-2.5 bg-slate-50 border border-slate-300 rounded-xl font-medium"></select>
         </div>
 
         <button type="submit" id="btnAddSchoolSubmit" class="w-full py-3 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-xl transition shadow-md shadow-emerald-600/20">
@@ -641,7 +623,7 @@
     let selectedDayForPicker = null;
 
     // Planner Dashboard State
-    let plannerViewMode = 'month'; // 'month' | 'week'
+    let plannerViewMode = 'month';
     let plannerCurrentDate = new Date();
 
     // Cache Reset Tracking
@@ -1178,6 +1160,9 @@
       document.getElementById('modalDayPicker').classList.add('hidden');
     }
 
+    // ==========================================
+    // OPTIMISTIC DAY SUBMIT (BATCH METEEN IN UI)
+    // ==========================================
     async function submitDayStatus(status) {
       if (!selectedDayForPicker) return;
 
@@ -1196,7 +1181,7 @@
             const iso = `${curr.getFullYear()}-${String(curr.getMonth() + 1).padStart(2, '0')}-${String(curr.getDate()).padStart(2, '0')}`;
             entries.push({ datum: iso, status: status });
             const prev = availabilityCache[iso]?.status || "";
-            availabilityCache[iso] = { status, goedkeuring: "IN_BEHANDELING", vorigeStatus: prev, isSaving: true };
+            availabilityCache[iso] = { status: status, goedkeuring: "GOEDGEKEURD", vorigeStatus: prev };
           }
           curr.setDate(curr.getDate() + 1);
         }
@@ -1204,20 +1189,18 @@
         const iso = selectedDayForPicker.isoDate;
         const prev = availabilityCache[iso]?.status || "";
         entries.push({ datum: iso, status: status });
-        availabilityCache[iso] = { status, goedkeuring: "IN_BEHANDELING", vorigeStatus: prev, isSaving: true };
+        availabilityCache[iso] = { status: status, goedkeuring: "GOEDGEKEURD", vorigeStatus: prev };
       }
 
       closeDayPicker();
-      renderCalendar();
+      renderCalendar(); // Toont direct het resultaat
 
-      const res = await apiCall("", "POST", {
+      await apiCall("", "POST", {
         action: "setAvailability",
         docentId: currentDocent.id,
         pin: currentPin,
         entries: entries
       });
-
-      await loadAvailabilityAndRender();
     }
 
     // ==========================================
@@ -1261,7 +1244,6 @@
       grid.innerHTML = "";
 
       if (plannerViewMode === 'month') {
-        // Maandoverzicht
         const year = plannerCurrentDate.getFullYear();
         const month = plannerCurrentDate.getMonth();
         const titleMonth = new Intl.DateTimeFormat('nl-NL', { month: 'long', year: 'numeric' }).format(plannerCurrentDate);
@@ -1281,9 +1263,8 @@
           renderPlannerDayCell(grid, isoDate, day);
         }
       } else {
-        // Weekoverzicht (Maandag t/m Zondag)
         const curr = new Date(plannerCurrentDate);
-        const dayOfWeek = curr.getDay(); // 0 is zo
+        const dayOfWeek = curr.getDay();
         const distanceToMonday = (dayOfWeek + 6) % 7;
         const monday = new Date(curr);
         monday.setDate(curr.getDate() - distanceToMonday);
@@ -1346,7 +1327,7 @@
     }
 
     // ==========================================
-    // SCHOOL PLANNING MODAL (MET SLIMME FILTER)
+    // SCHOOL PLANNING MODAL & SUBMIT
     // ==========================================
     let currentSchoolFilterCat = 'Regulier';
 
@@ -1373,8 +1354,6 @@
       select.innerHTML = "";
 
       const filtered = (schoolsCache || []).filter(s => s.categorie === cat);
-
-      // Sorteren op schoolnaam zonder lidwoorden / SBO / etc.
       filtered.sort((a, b) => getCleanSortName(a.naam).localeCompare(getCleanSortName(b.naam)));
 
       filtered.forEach(s => {
@@ -1391,7 +1370,9 @@
       const schoolNaam = document.getElementById('selectSchoolName').value;
       const btn = document.getElementById('btnAddSchoolSubmit');
 
-      btn.innerHTML = `<i class="fa-solid fa-circle-notch fa-spin"></i> Bezig met inplannen...`;
+      if (!datum || !schoolNaam) return;
+
+      btn.innerHTML = `<i class="fa-solid fa-circle-notch fa-spin mr-1"></i> Inplannen...`;
       btn.disabled = true;
 
       await apiCall("", "POST", {
@@ -1683,7 +1664,7 @@
     }
 
     // ==========================================
-    // KANDIDATEN KOPPELEN (GAT VULLEN)
+    // KANDIDATEN KOPPELEN
     // ==========================================
     function openCandidatePicker(planningId, datum, schoolNaam) {
       selectedPlanningForCandidate = planningId;
@@ -1825,11 +1806,7 @@
             { id: "DOC-01", naam: "Maartje", isPlanner: true, needsPinSetup: false },
             { id: "DOC-02", naam: "Renée", isPlanner: true, needsPinSetup: false },
             { id: "DOC-03", naam: "Marvin", isPlanner: false, needsPinSetup: false },
-            { id: "DOC-04", naam: "Robbert", isPlanner: false, needsPinSetup: false },
-            { id: "DOC-05", naam: "Nick", isPlanner: false, needsPinSetup: false },
-            { id: "DOC-06", naam: "Ralph", isPlanner: false, needsPinSetup: false },
-            { id: "DOC-07", naam: "Menno", isPlanner: false, needsPinSetup: false },
-            { id: "DOC-08", naam: "Irfan", isPlanner: false, needsPinSetup: false }
+            { id: "DOC-04", naam: "Robbert", isPlanner: false, needsPinSetup: false }
           ]
         };
       }
