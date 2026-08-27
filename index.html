@@ -45,7 +45,7 @@
   <header class="bg-white/90 backdrop-blur border-b border-slate-200 sticky top-0 z-30 shadow-sm">
     <div class="max-w-7xl mx-auto px-4 h-13 py-2.5 flex items-center justify-between">
       
-      <!-- Links: Live tijd & Datum (met 5-klik reset) -->
+      <!-- Links: Live tijd & Datum (5-klik cache reset) -->
       <div 
         onclick="handleClockClick()" 
         title="Klik 5x om cache & data geforceerd te legen" 
@@ -55,7 +55,7 @@
         <span id="liveClock">laden...</span>
       </div>
 
-      <!-- Midden: Docent info & acties (alleen zichtbaar na login) -->
+      <!-- Midden: Docent info & acties -->
       <div id="headerUserSection" class="hidden flex items-center gap-2 md:gap-3">
         <span class="font-bold text-slate-800 text-xs md:text-sm flex items-center gap-1.5">
           <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
@@ -69,7 +69,7 @@
         </button>
       </div>
 
-      <!-- Rechts: Admin knop (zoals in screenshot 3) -->
+      <!-- Rechts: Admin knop -->
       <div class="flex items-center">
         <button onclick="openAdminPinModal()" class="text-xs bg-white hover:bg-slate-50 text-slate-700 font-medium px-2.5 py-1.5 rounded-lg border border-slate-300 shadow-sm transition flex items-center gap-1.5">
           <i class="fa-solid fa-gear text-slate-400 text-xs"></i>
@@ -85,8 +85,8 @@
        ========================================== -->
   <main class="flex-1 max-w-7xl w-full mx-auto p-4 md:p-6 flex flex-col justify-center items-center">
 
-    <!-- SCHERM 1: LANDINGSPAGINA (MET KNOPPEN-GRID & LOADING) -->
-    <section id="viewLanding" class="w-full max-w-md my-auto text-center animate-fade-in">
+    <!-- SCHERM 1: LANDINGSPAGINA -->
+    <section id="viewLanding" class="w-full max-w-md my-auto text-center">
       <div class="bg-white p-6 md:p-8 rounded-3xl shadow-xl border border-slate-200/80">
         
         <!-- Mediawegwijs Logo & Subtitel -->
@@ -96,13 +96,13 @@
               <span class="text-cyan-600">MEDIA</span><span class="text-pink-600">WEGWIJS</span>
             </div>
             <div class="text-[10px] font-bold tracking-widest text-slate-400 uppercase mt-0.5">
-              Beschikbaarheid & Rooster
+              Beschikbaarheid &amp; Rooster
             </div>
           </div>
           <p class="text-slate-500 text-xs mt-3">Typ je naam of klik op je naam hieronder</p>
         </div>
 
-        <!-- Typbox met zoek-icoon rechts -->
+        <!-- Typbox met zoek-icoon -->
         <div class="relative text-left mb-4">
           <input 
             type="text" 
@@ -117,13 +117,13 @@
           </div>
         </div>
 
-        <!-- Verbindingsstatus Melding (tijdens inladen) -->
+        <!-- Status Melding -->
         <div id="loadingStatusBanner" class="p-4 bg-emerald-50 border border-emerald-100 rounded-2xl text-emerald-800 text-xs font-semibold flex items-center justify-center gap-2">
           <i class="fa-solid fa-circle-notch fa-spin text-emerald-600"></i>
           <span>Verbinding maken met de server even geduld...</span>
         </div>
 
-        <!-- Voorgestelde Namen Grid (Knoppen) -->
+        <!-- Namen Grid (Knoppen) -->
         <div id="docentenGridContainer" class="hidden max-h-64 overflow-y-auto custom-scrollbar p-1">
           <div id="docentenButtonsGrid" class="flex flex-wrap gap-2 justify-center">
             <!-- Dynamisch gegenereerd -->
@@ -136,36 +136,45 @@
     <!-- SCHERM 2: MAANDKALENDER DOCENT -->
     <section id="viewCalendar" class="hidden w-full flex-col gap-4">
       
-      <!-- Bovenbalk kalender -->
-      <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm flex flex-col md:flex-row items-center justify-between gap-4">
+      <!-- Bovenbalk kalender met Verversknop (Screenshot 1 stijl) -->
+      <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm flex flex-col xl:flex-row items-center justify-between gap-4">
         
+        <!-- Links: Navigatie & Maand -->
         <div class="flex items-center gap-3">
           <button id="btnPrevMonth" onclick="changeMonth(-1)" class="w-10 h-10 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 flex items-center justify-center transition disabled:opacity-30 disabled:cursor-not-allowed">
-            <i class="fa-solid fa-chevron-left"></i>
+            <i class="fa-solid fa-chevron-left text-xs"></i>
           </button>
-          <h2 id="calendarMonthTitle" class="text-lg md:text-xl font-bold text-slate-800 min-w-[180px] text-center capitalize">
+          <h2 id="calendarMonthTitle" class="text-base md:text-lg font-extrabold text-slate-800 min-w-[170px] text-center capitalize">
             Maand Jaar
           </h2>
           <button id="btnNextMonth" onclick="changeMonth(1)" class="w-10 h-10 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 flex items-center justify-center transition disabled:opacity-30 disabled:cursor-not-allowed">
-            <i class="fa-solid fa-chevron-right"></i>
+            <i class="fa-solid fa-chevron-right text-xs"></i>
           </button>
         </div>
 
-        <!-- Legenda -->
+        <!-- Midden: Verversknop (Punt 1) -->
+        <div class="flex items-center">
+          <button id="btnRefreshCalendar" onclick="manualRefreshCalendar()" class="text-xs bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold px-3.5 py-2 rounded-xl border border-slate-200 shadow-sm transition flex items-center gap-2">
+            <i id="iconRefresh" class="fa-solid fa-arrows-rotate text-slate-500"></i>
+            <span id="textRefresh">Vernieuwen</span>
+          </button>
+        </div>
+
+        <!-- Rechts: Legenda -->
         <div class="flex flex-wrap items-center justify-center gap-2 text-xs font-semibold">
-          <span class="flex items-center gap-1.5 bg-emerald-50 text-emerald-700 border border-emerald-200 px-2.5 py-1 rounded-lg">
+          <span class="flex items-center gap-1.5 bg-emerald-50 text-emerald-700 border border-emerald-200 px-3 py-1 rounded-xl">
             <span class="w-2.5 h-2.5 rounded-full bg-emerald-500"></span> Ja
           </span>
-          <span class="flex items-center gap-1.5 bg-amber-50 text-amber-700 border border-amber-200 px-2.5 py-1 rounded-lg">
+          <span class="flex items-center gap-1.5 bg-amber-50 text-amber-700 border border-amber-200 px-3 py-1 rounded-xl">
             <span class="w-2.5 h-2.5 rounded-full bg-amber-500"></span> Mogelijk
           </span>
-          <span class="flex items-center gap-1.5 bg-rose-50 text-rose-700 border border-rose-200 px-2.5 py-1 rounded-lg">
+          <span class="flex items-center gap-1.5 bg-rose-50 text-rose-700 border border-rose-200 px-3 py-1 rounded-xl">
             <span class="w-2.5 h-2.5 rounded-full bg-rose-500"></span> Nee
           </span>
-          <span class="flex items-center gap-1.5 bg-slate-100 text-slate-600 border border-slate-300 px-2.5 py-1 rounded-lg">
+          <span class="flex items-center gap-1.5 bg-slate-100 text-slate-600 border border-slate-300 px-3 py-1 rounded-xl">
             <span class="w-2.5 h-2.5 rounded-full bg-slate-400"></span> In Behandeling
           </span>
-          <span class="flex items-center gap-1.5 bg-yellow-50 text-yellow-700 border border-yellow-200 px-2.5 py-1 rounded-lg">
+          <span class="flex items-center gap-1.5 bg-yellow-50 text-yellow-700 border border-yellow-200 px-3 py-1 rounded-xl">
             <i class="fa-solid fa-star text-amber-500 text-[10px]"></i> Voorkeur
           </span>
         </div>
@@ -194,7 +203,7 @@
       
       <!-- Links: Versie & Patch notes -->
       <div class="flex items-center gap-2 font-medium">
-        <span>Versie <strong class="text-slate-800">V0.7</strong></span>
+        <span>Versie <strong class="text-slate-800">V0.8</strong></span>
         <span class="text-slate-300">•</span>
         <button onclick="openPatchNotesModal()" class="text-emerald-600 hover:text-emerald-700 font-semibold underline transition">
           Patch notes
@@ -223,20 +232,34 @@
         <h3 class="text-lg font-bold text-slate-900">Patch Notes</h3>
       </div>
 
-      <div class="max-h-72 overflow-y-auto custom-scrollbar space-y-4 pr-1 text-xs">
+      <div class="max-h-80 overflow-y-auto custom-scrollbar space-y-4 pr-1 text-xs">
         
+        <!-- V0.8 -->
+        <div class="p-3 bg-emerald-50/50 border border-emerald-200 rounded-2xl">
+          <div class="flex items-center justify-between mb-1.5">
+            <span class="font-bold text-emerald-950">Versie V0.8</span>
+            <span class="text-[10px] bg-emerald-600 text-white px-2 py-0.5 rounded-full font-bold">Nieuw</span>
+          </div>
+          <ul class="list-disc list-inside space-y-1 text-emerald-900">
+            <li>Verversknop toegevoegd tussen datumnavigatie en opties.</li>
+            <li>Directe laadanimaties op dagen en knoppen bij Google Drive interactie.</li>
+            <li>Admin tab hernoemd naar <strong>Vakdocenten</strong> met interactieve maandagenda per docent.</li>
+            <li>Direct visueel goedkeuren en afwijzen van docentdagen in het adminpaneel.</li>
+            <li>Pincode direct gevalideerd bij 4e cijfer (ook via fysiek toetsenbord).</li>
+            <li>Bug opgelost waarbij na onboarding opnieuw om een pincode werd gevraagd.</li>
+          </ul>
+        </div>
+
+        <!-- V0.7 -->
         <div class="p-3 bg-slate-50 border border-slate-200 rounded-2xl">
           <div class="flex items-center justify-between mb-1.5">
             <span class="font-bold text-slate-800">Versie V0.7</span>
-            <span class="text-[10px] bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded-full font-bold">Huidig</span>
           </div>
           <ul class="list-disc list-inside space-y-1 text-slate-600">
             <li>Namen direct als klikbare knoppen onder typbox weergegeven.</li>
-            <li>Statusmelding tijdens het ophalen van data uit Google Sheets.</li>
-            <li>Tijdnotatie aangepast met groen bolletje + 5-klik harde cache reset.</li>
-            <li>Vaste footerbalk op inlogscherm met versiebeheer en patch notes.</li>
-            <li>Pincodebeveiliging & onboarding met voorkeursdagen (sterretjes).</li>
-            <li>Admin & plannerdashboard (Code 1115) met scholenbeheer & skill levels.</li>
+            <li>Statusmelding tijdens inladen van database.</li>
+            <li>Tijdnotatie aangepast met 5-klik cache reset.</li>
+            <li>Vaste footer op loginscherm en admin/planner dashboard (1115).</li>
           </ul>
         </div>
 
@@ -245,7 +268,7 @@
   </div>
 
   <!-- ==========================================
-       MODAL: PINCODE INVOER
+       MODAL: PINCODE INVOER (AUTO-TRIGGER 4 DIGITS)
        ========================================== -->
   <div id="modalPin" class="fixed inset-0 bg-slate-950/90 z-50 hidden flex items-center justify-center p-4">
     <div class="w-full max-w-sm bg-white rounded-3xl p-6 md:p-8 text-center shadow-2xl relative">
@@ -370,7 +393,9 @@
 
         <div class="pt-2 flex gap-3">
           <button type="button" id="btnCancelProfile" onclick="closeOnboardingModal()" class="hidden flex-1 py-3 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold rounded-xl transition">Annuleren</button>
-          <button type="submit" id="btnSaveOnboarding" class="flex-1 py-3 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-xl shadow-lg shadow-emerald-600/20 transition">Opslaan & Doorgaan</button>
+          <button type="submit" id="btnSaveOnboarding" class="flex-1 py-3 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-xl shadow-lg shadow-emerald-600/20 transition flex items-center justify-center gap-2">
+            <span>Opslaan &amp; Doorgaan</span>
+          </button>
         </div>
 
       </form>
@@ -420,14 +445,14 @@
       <div class="p-4 border-b border-slate-200 flex flex-wrap items-center justify-between gap-3 bg-slate-50">
         <div class="flex items-center gap-2">
           <span class="w-3 h-3 rounded-full bg-amber-500"></span>
-          <h2 class="font-bold text-slate-900 text-base md:text-lg">Admin & Planning Dashboard</h2>
+          <h2 class="font-bold text-slate-900 text-base md:text-lg">Admin &amp; Planning Dashboard</h2>
         </div>
 
         <div class="flex items-center gap-2">
           <div class="bg-slate-200 p-1 rounded-xl flex text-xs font-bold">
-            <button onclick="switchAdminTab('planning')" id="tabBtnPlanning" class="px-3 py-1.5 rounded-lg bg-white text-slate-900 shadow-sm transition">Planning & Gaten</button>
+            <button onclick="switchAdminTab('planning')" id="tabBtnPlanning" class="px-3 py-1.5 rounded-lg bg-white text-slate-900 shadow-sm transition">Planning &amp; Gaten</button>
             <button onclick="switchAdminTab('approvals')" id="tabBtnApprovals" class="px-3 py-1.5 rounded-lg text-slate-600 hover:text-slate-900 transition">Goedkeuringen <span id="badgeOpenApprovals" class="hidden ml-1 px-1.5 py-0.5 bg-rose-500 text-white rounded-full text-[10px]">0</span></button>
-            <button onclick="switchAdminTab('docenten')" id="tabBtnDocenten" class="px-3 py-1.5 rounded-lg text-slate-600 hover:text-slate-900 transition">Skill Levels (N1-N3)</button>
+            <button onclick="switchAdminTab('docenten')" id="tabBtnDocenten" class="px-3 py-1.5 rounded-lg text-slate-600 hover:text-slate-900 transition">Vakdocenten</button>
           </div>
           <button onclick="closeAdminModal()" class="w-8 h-8 rounded-xl bg-slate-200 hover:bg-slate-300 text-slate-700 flex items-center justify-center transition">
             <i class="fa-solid fa-xmark"></i>
@@ -437,10 +462,10 @@
 
       <div class="flex-1 overflow-y-auto p-4 md:p-6 custom-scrollbar bg-slate-100/60">
         
-        <!-- Tab Planning -->
+        <!-- Tab 1: Planning -->
         <div id="adminTabPlanning" class="space-y-4">
           <div class="flex justify-between items-center bg-white p-4 rounded-2xl border border-slate-200">
-            <h3 class="font-bold text-slate-800 text-sm md:text-base">Maandoverzicht Opdrachten & Gaten</h3>
+            <h3 class="font-bold text-slate-800 text-sm md:text-base">Maandoverzicht Opdrachten &amp; Gaten</h3>
             <button onclick="openAddSchoolModal()" class="text-xs bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-3 py-2 rounded-xl transition flex items-center gap-1.5">
               <i class="fa-solid fa-plus"></i> School Toevoegen
             </button>
@@ -448,26 +473,27 @@
           <div id="adminPlanningGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3"></div>
         </div>
 
-        <!-- Tab Goedkeuringen -->
+        <!-- Tab 2: Goedkeuringen (Tekstuele lijst) -->
         <div id="adminTabApprovals" class="hidden space-y-4">
           <div class="bg-white p-4 rounded-2xl border border-slate-200">
-            <h3 class="font-bold text-slate-800 mb-3 text-sm md:text-base">Openstaande Dag- & Profielwijzigingen</h3>
+            <h3 class="font-bold text-slate-800 mb-3 text-sm md:text-base">Openstaande Dag- &amp; Profielwijzigingen</h3>
             <div id="adminApprovalsList" class="space-y-2"></div>
           </div>
         </div>
 
-        <!-- Tab Docenten Skill -->
+        <!-- Tab 3: Vakdocenten (Overzicht + Agenda Inspectie) -->
         <div id="adminTabDocenten" class="hidden space-y-4">
           <div class="bg-white p-4 rounded-2xl border border-slate-200">
-            <h3 class="font-bold text-slate-800 mb-1 text-sm md:text-base">Docentenbeheer (Verborgen voor docenten)</h3>
-            <p class="text-xs text-slate-500 mb-4">Stel hier het skill level in (N1 = hoogst, N3 = laagst) en beheer pincodes.</p>
+            <h3 class="font-bold text-slate-800 mb-1 text-sm md:text-base">Vakdocenten Beheer &amp; Agenda's</h3>
+            <p class="text-xs text-slate-500 mb-4">Bekijk de agenda per docent, keur direct dagen goed of wijs af en beheer skill levels.</p>
             <div class="overflow-x-auto">
               <table class="w-full text-left text-xs">
                 <thead class="bg-slate-50 border-b text-slate-500 uppercase font-bold">
                   <tr>
                     <th class="p-3">Docent</th>
                     <th class="p-3">Skill Level</th>
-                    <th class="p-3">Pincode Status</th>
+                    <th class="p-3">Pincode</th>
+                    <th class="p-3 text-center">Agenda</th>
                     <th class="p-3 text-right">Actie</th>
                   </tr>
                 </thead>
@@ -477,6 +503,50 @@
           </div>
         </div>
 
+      </div>
+
+    </div>
+  </div>
+
+  <!-- MODAL: VISUELE MAANDAGENDA VAKDOCENT (VOOR ADMIN) -->
+  <div id="modalAdminDocentCalendar" class="fixed inset-0 bg-slate-950/90 z-50 hidden flex items-center justify-center p-2 md:p-6">
+    <div class="bg-white rounded-3xl w-full max-w-4xl max-h-[90vh] flex flex-col overflow-hidden shadow-2xl border border-slate-200">
+      
+      <!-- Bovenbalk -->
+      <div class="p-4 border-b border-slate-200 flex items-center justify-between bg-slate-50">
+        <div class="flex items-center gap-2">
+          <span class="w-3 h-3 rounded-full bg-emerald-500"></span>
+          <h3 class="font-bold text-slate-900 text-sm md:text-base" id="adminDocentCalTitle">Agenda van ...</h3>
+        </div>
+        <button onclick="closeAdminDocentCalendar()" class="w-8 h-8 rounded-xl bg-slate-200 hover:bg-slate-300 text-slate-700 flex items-center justify-center transition">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+
+      <!-- Navigatie & Legenda -->
+      <div class="p-3 px-4 border-b border-slate-100 flex flex-wrap items-center justify-between gap-2 bg-white">
+        <div class="flex items-center gap-2">
+          <button onclick="changeAdminDocentMonth(-1)" class="w-8 h-8 rounded-lg bg-slate-100 hover:bg-slate-200 flex items-center justify-center text-xs">
+            <i class="fa-solid fa-chevron-left"></i>
+          </button>
+          <span id="adminDocentCalMonthTitle" class="font-bold text-xs md:text-sm text-slate-800 capitalize min-w-[120px] text-center">Maand Jaar</span>
+          <button onclick="changeAdminDocentMonth(1)" class="w-8 h-8 rounded-lg bg-slate-100 hover:bg-slate-200 flex items-center justify-center text-xs">
+            <i class="fa-solid fa-chevron-right"></i>
+          </button>
+        </div>
+        <p class="text-[11px] text-slate-500 italic">
+          <i class="fa-solid fa-info-circle mr-1 text-emerald-600"></i> Klik op een dag om direct goed te keuren, af te wijzen of de status aan te passen.
+        </p>
+      </div>
+
+      <!-- Grid -->
+      <div class="flex-1 overflow-y-auto p-4 custom-scrollbar">
+        <div class="grid grid-cols-7 gap-2 mb-2 text-center text-[11px] font-bold text-slate-400 uppercase">
+          <div>Ma</div><div>Di</div><div>Wo</div><div>Do</div><div>Vr</div><div>Za</div><div>Zo</div>
+        </div>
+        <div id="adminDocentCalDaysGrid" class="grid grid-cols-7 gap-2">
+          <!-- Dynamisch opgebouwd -->
+        </div>
       </div>
 
     </div>
@@ -520,7 +590,7 @@
      * CONFIGURATIE
      * Plak hieronder jouw Google Apps Script Web App URL tussen de quotes:
      */
-    const API_URL = "https://script.google.com/macros/s/AKfycbxEzGC3ZSIYceQ4E01sBg_YEY14rv13h38DzavDU4NKO7N_l3zM2TpQcCw4nd2S_JQ/exec"; 
+    const API_URL = ""; 
     const ADMIN_SECRET = "1115";
 
     // STATE
@@ -530,7 +600,7 @@
     let enteredPin = "";
     let pinCallback = null;
     let currentCalendarDate = new Date();
-    let availabilityCache = {};
+    let availabilityCache = {}; // { "YYYY-MM-DD": { status, goedkeuring, recordId, isSaving } }
     let selectedDayForPicker = null;
 
     // Cache Reset Click Tracking
@@ -540,6 +610,8 @@
     // Admin State
     let adminData = { docenten: [], availability: [], planning: [], profielAanvragen: [] };
     let selectedPlanningForCandidate = null;
+    let viewingAdminDocent = null;
+    let adminDocentCalDate = new Date();
 
     // ==========================================
     // INITIALISATIE & KLOK
@@ -547,6 +619,7 @@
     window.addEventListener('DOMContentLoaded', () => {
       startClock();
       loadDocentenList();
+      setupGlobalKeydown();
     });
 
     function startClock() {
@@ -567,7 +640,7 @@
       setInterval(update, 1000);
     }
 
-    // 5-Klik Hard Cache & Data Purge
+    // 5-Klik Hard Cache Reset
     function handleClockClick() {
       clockClicks++;
       clearTimeout(clockTimer);
@@ -582,12 +655,11 @@
             names.forEach(name => caches.delete(name));
           });
         }
-        alert("🔄 Cache, sessies en data zijn succesvol geleegd! De pagina wordt nu geforceerd vernieuwd.");
+        alert("🔄 Cache & data geleegd! Pagina wordt vernieuwd.");
         window.location.href = window.location.pathname + '?t=' + Date.now();
       }
     }
 
-    // Patch Notes Modal
     function openPatchNotesModal() {
       document.getElementById('modalPatchNotes').classList.remove('hidden');
     }
@@ -677,11 +749,26 @@
     }
 
     // ==========================================
-    // AUTHENTICATIE & PINCODE
+    // AUTHENTICATIE & PINCODE (AUTO-TRIGGER & TOETSENBORD)
     // ==========================================
+    function setupGlobalKeydown() {
+      document.addEventListener('keydown', (e) => {
+        const modalPin = document.getElementById('modalPin');
+        if (!modalPin.classList.contains('hidden')) {
+          if (e.key >= '0' && e.key <= '9') {
+            pressPinKey(e.key);
+          } else if (e.key === 'Backspace') {
+            deletePinKey();
+          } else if (e.key === 'Escape') {
+            closePinModal();
+          }
+        }
+      });
+    }
+
     function selectDocent(docent) {
       document.getElementById('docentSearchInput').value = docent.naam;
-      currentDocent = docent;
+      currentDocent = { ...docent };
 
       if (docent.needsPinSetup) {
         openPinModal("Kies een 4-cijferige pincode", "Onthoud deze goed voor volgende keer", async (pin) => {
@@ -689,7 +776,12 @@
           if (res.success) {
             currentPin = pin;
             currentDocent.needsPinSetup = false;
-            openProfileModal(false);
+            // Zoek docent in cache en update
+            const cached = docentenCache.find(d => d.id === docent.id);
+            if (cached) cached.needsPinSetup = false;
+            
+            closePinModal();
+            openProfileModal(false); // Direct naar onboarding zonder opnieuw pincode te vragen
           } else {
             showPinError(res.error || "Fout bij instellen.");
           }
@@ -725,6 +817,7 @@
 
     function closePinModal() {
       document.getElementById('modalPin').classList.add('hidden');
+      enteredPin = "";
     }
 
     function pressPinKey(digit) {
@@ -732,7 +825,11 @@
         enteredPin += digit;
         updatePinDots();
         if (enteredPin.length === 4 && pinCallback) {
-          setTimeout(() => pinCallback(enteredPin), 150);
+          // Direct direct uitvoeren zodra 4 cijfers zijn ingevuld
+          setTimeout(() => {
+            const cb = pinCallback;
+            cb(enteredPin);
+          }, 80);
         }
       }
     }
@@ -814,6 +911,11 @@
     async function handleOnboardingSubmit(e) {
       e.preventDefault();
 
+      const btn = document.getElementById('btnSaveOnboarding');
+      const originalText = btn.innerHTML;
+      btn.innerHTML = `<i class="fa-solid fa-circle-notch fa-spin"></i> <span>Gegevens opslaan...</span>`;
+      btn.disabled = true;
+
       const payloadData = {
         werkDagenPwk: document.getElementById('obWerkDagen').value,
         vasteDagen: getCheckboxGroup('vasteDagen'),
@@ -824,27 +926,41 @@
       };
 
       if (!currentDocent.onboardingKlaar) {
+        // Eerste keer opslaan
         const res = await apiCall("", "POST", {
           action: "submitOnboarding",
           docentId: currentDocent.id,
           pin: currentPin,
           formData: payloadData
         });
+
+        btn.innerHTML = originalText;
+        btn.disabled = false;
+
         if (res.success) {
           currentDocent = { ...currentDocent, ...payloadData, onboardingKlaar: true };
           closeOnboardingModal();
-          initCalendarView();
+          initCalendarView(); // Direct door naar de kalender!
+        } else {
+          alert("Fout bij opslaan: " + res.error);
         }
       } else {
+        // Wijzigingsverzoek indienen
         const res = await apiCall("", "POST", {
           action: "requestProfileChange",
           docentId: currentDocent.id,
           pin: currentPin,
           newProfile: payloadData
         });
+
+        btn.innerHTML = originalText;
+        btn.disabled = false;
+
         if (res.success) {
           alert("Je wijzigingsverzoek is ingediend en wordt verwerkt na akkoord van de planning.");
           closeOnboardingModal();
+        } else {
+          alert("Fout: " + res.error);
         }
       }
     }
@@ -865,11 +981,11 @@
     }
 
     // ==========================================
-    // MAANDKALENDER WEERGAVE (DOCENT)
+    // MAANDKALENDER DOCENT & VERNIEUWEN
     // ==========================================
     function initCalendarView() {
       document.getElementById('viewLanding').classList.add('hidden');
-      document.getElementById('landingFooterBar').classList.add('hidden'); // Verberg footer op kalender
+      document.getElementById('landingFooterBar').classList.add('hidden');
       document.getElementById('viewCalendar').classList.remove('hidden');
       document.getElementById('viewCalendar').classList.add('flex');
       
@@ -893,6 +1009,20 @@
         });
       }
       renderCalendar();
+    }
+
+    async function manualRefreshCalendar() {
+      const icon = document.getElementById('iconRefresh');
+      const text = document.getElementById('textRefresh');
+      icon.classList.add('fa-spin');
+      text.innerText = "Synchroniseren...";
+
+      await loadAvailabilityAndRender();
+
+      setTimeout(() => {
+        icon.classList.remove('fa-spin');
+        text.innerText = "Vernieuwen";
+      }, 400);
     }
 
     function renderCalendar() {
@@ -934,7 +1064,10 @@
         let statusBadge = "";
 
         if (avail) {
-          if (avail.goedkeuring === "IN_BEHANDELING") {
+          if (avail.isSaving) {
+            statusBg = "bg-amber-50 border-amber-300 text-amber-900 animate-pulse";
+            statusBadge = `<span class="text-[10px] bg-amber-500 text-white px-1.5 py-0.5 rounded font-bold flex items-center gap-1"><i class="fa-solid fa-circle-notch fa-spin"></i> Opslaan</span>`;
+          } else if (avail.goedkeuring === "IN_BEHANDELING") {
             statusBg = "bg-slate-200 border-slate-400 text-slate-800";
             statusBadge = `<span class="text-[10px] bg-slate-500 text-white px-1.5 py-0.5 rounded font-bold">In Behandeling</span>`;
           } else if (avail.status === "JA") {
@@ -969,7 +1102,7 @@
     }
 
     // ==========================================
-    // DAG PICKER & 3 MAANDEN REEKS
+    // DAG PICKER & LAADANIMATIE (PUNT 2)
     // ==========================================
     function openDayPicker(isoDate, dateObj, dayName) {
       selectedDayForPicker = { isoDate, dateObj, dayName };
@@ -1003,14 +1136,19 @@
           if (curr.getDay() === targetDayOfWeek) {
             const iso = `${curr.getFullYear()}-${String(curr.getMonth() + 1).padStart(2, '0')}-${String(curr.getDate()).padStart(2, '0')}`;
             entries.push({ datum: iso, status: status });
+            // Directe laadstatus tonen in UI
+            availabilityCache[iso] = { status, goedkeuring: "IN_BEHANDELING", isSaving: true };
           }
           curr.setDate(curr.getDate() + 1);
         }
       } else {
-        entries.push({ datum: selectedDayForPicker.isoDate, status: status });
+        const iso = selectedDayForPicker.isoDate;
+        entries.push({ datum: iso, status: status });
+        availabilityCache[iso] = { status, goedkeuring: "IN_BEHANDELING", isSaving: true };
       }
 
       closeDayPicker();
+      renderCalendar(); // Toon direct de spinner op de gekozen dagen
 
       const res = await apiCall("", "POST", {
         action: "setAvailability",
@@ -1020,9 +1158,10 @@
       });
 
       if (res.success) {
-        loadAvailabilityAndRender();
+        await loadAvailabilityAndRender();
       } else {
         alert("Fout bij opslaan: " + res.error);
+        await loadAvailabilityAndRender();
       }
     }
 
@@ -1074,7 +1213,7 @@
       container.innerHTML = "";
 
       if (!adminData.planning || adminData.planning.length === 0) {
-        container.innerHTML = `<div class="col-span-full p-8 text-center text-slate-400 bg-white rounded-2xl border text-xs">Nog geen scholen of diensten gepland. Voeg er een toe via de knop hierboven.</div>`;
+        container.innerHTML = `<div class="col-span-full p-8 text-center text-slate-400 bg-white rounded-2xl border text-xs">Nog geen scholen gepland. Voeg er een toe via de knop hierboven.</div>`;
         return;
       }
 
@@ -1138,8 +1277,8 @@
             <strong>${docent ? docent.naam : item.docentId}</strong> wil status op <strong>${item.datum}</strong> wijzigen naar <span class="font-bold">${item.status}</span>
           </div>
           <div class="flex gap-2">
-            <button onclick="approveAvailability('${item.recordId}', true)" class="px-2.5 py-1.5 bg-emerald-600 text-white font-bold rounded-lg hover:bg-emerald-700">Akkoord</button>
-            <button onclick="approveAvailability('${item.recordId}', false)" class="px-2.5 py-1.5 bg-rose-600 text-white font-bold rounded-lg hover:bg-rose-700">Afwijzen</button>
+            <button onclick="approveAvailability(this, '${item.recordId}', true)" class="px-2.5 py-1.5 bg-emerald-600 text-white font-bold rounded-lg hover:bg-emerald-700 flex items-center gap-1"><span>Akkoord</span></button>
+            <button onclick="approveAvailability(this, '${item.recordId}', false)" class="px-2.5 py-1.5 bg-rose-600 text-white font-bold rounded-lg hover:bg-rose-700 flex items-center gap-1"><span>Afwijzen</span></button>
           </div>
         `;
         container.appendChild(row);
@@ -1154,8 +1293,8 @@
             <strong>${docent ? docent.naam : item.docentId}</strong> wil <strong>${item.veldNaam}</strong> wijzigen naar: <em>${item.nieuweWaarde}</em>
           </div>
           <div class="flex gap-2">
-            <button onclick="approveProfile('${item.aanvraagId}', true)" class="px-2.5 py-1.5 bg-emerald-600 text-white font-bold rounded-lg hover:bg-emerald-700">Akkoord</button>
-            <button onclick="approveProfile('${item.aanvraagId}', false)" class="px-2.5 py-1.5 bg-rose-600 text-white font-bold rounded-lg hover:bg-rose-700">Afwijzen</button>
+            <button onclick="approveProfile(this, '${item.aanvraagId}', true)" class="px-2.5 py-1.5 bg-emerald-600 text-white font-bold rounded-lg hover:bg-emerald-700">Akkoord</button>
+            <button onclick="approveProfile(this, '${item.aanvraagId}', false)" class="px-2.5 py-1.5 bg-rose-600 text-white font-bold rounded-lg hover:bg-rose-700">Afwijzen</button>
           </div>
         `;
         container.appendChild(row);
@@ -1171,21 +1310,126 @@
         tr.innerHTML = `
           <td class="p-3 font-bold text-slate-800">${docent.naam}</td>
           <td class="p-3">
-            <select onchange="updateDocentSkill('${docent.id}', this.value)" class="bg-slate-100 border border-slate-300 rounded-lg p-1 font-bold text-xs">
+            <select onchange="updateDocentSkill(this, '${docent.id}', this.value)" class="bg-slate-100 border border-slate-300 rounded-lg p-1 font-bold text-xs">
               <option value="N1" ${docent.skillLevel === 'N1' ? 'selected' : ''}>N1 (Hoogste)</option>
               <option value="N2" ${docent.skillLevel === 'N2' ? 'selected' : ''}>N2 (Midden)</option>
               <option value="N3" ${docent.skillLevel === 'N3' ? 'selected' : ''}>N3 (Instap)</option>
             </select>
           </td>
           <td class="p-3">
-            ${docent.hasPin ? '<span class="text-emerald-700 font-semibold">Ingesteld</span>' : '<span class="text-amber-600 font-semibold">Nog niet ingesteld</span>'}
+            ${docent.hasPin ? '<span class="text-emerald-700 font-semibold">Ingesteld</span>' : '<span class="text-amber-600 font-semibold">Nog niet</span>'}
+          </td>
+          <td class="p-3 text-center">
+            <button onclick="openAdminDocentCalendar('${docent.id}')" class="text-xs bg-emerald-50 hover:bg-emerald-100 text-emerald-700 font-bold px-3 py-1.5 rounded-xl border border-emerald-200 transition flex items-center gap-1.5 mx-auto">
+              <i class="fa-regular fa-calendar-days"></i> Bekijk Agenda
+            </button>
           </td>
           <td class="p-3 text-right">
-            <button onclick="resetDocentPin('${docent.id}')" class="text-xs bg-rose-50 hover:bg-rose-100 text-rose-600 font-semibold px-2 py-1 rounded-lg border border-rose-200">Reset PIN</button>
+            <button onclick="resetDocentPin(this, '${docent.id}')" class="text-xs bg-rose-50 hover:bg-rose-100 text-rose-600 font-semibold px-2 py-1 rounded-lg border border-rose-200">Reset PIN</button>
           </td>
         `;
         tbody.appendChild(tr);
       });
+    }
+
+    // ==========================================
+    // VISUELE MAANDAGENDA PER VAKDOCENT (PUNT 3)
+    // ==========================================
+    function openAdminDocentCalendar(docentId) {
+      viewingAdminDocent = adminData.docenten.find(d => d.id === docentId);
+      if (!viewingAdminDocent) return;
+
+      adminDocentCalDate = new Date();
+      document.getElementById('adminDocentCalTitle').innerText = `Agenda van ${viewingAdminDocent.naam} (Skill: ${viewingAdminDocent.skillLevel})`;
+      renderAdminDocentCalendar();
+      document.getElementById('modalAdminDocentCalendar').classList.remove('hidden');
+    }
+
+    function closeAdminDocentCalendar() {
+      document.getElementById('modalAdminDocentCalendar').classList.add('hidden');
+    }
+
+    function changeAdminDocentMonth(delta) {
+      adminDocentCalDate.setMonth(adminDocentCalDate.getMonth() + delta);
+      renderAdminDocentCalendar();
+    }
+
+    function renderAdminDocentCalendar() {
+      const year = adminDocentCalDate.getFullYear();
+      const month = adminDocentCalDate.getMonth();
+      
+      const titleMonth = new Intl.DateTimeFormat('nl-NL', { month: 'long', year: 'numeric' }).format(adminDocentCalDate);
+      document.getElementById('adminDocentCalMonthTitle').innerText = titleMonth;
+
+      const firstDayOfMonth = new Date(year, month, 1);
+      const daysInMonth = new Date(year, month + 1, 0).getDate();
+      
+      let startDayOfWeek = firstDayOfMonth.getDay() - 1;
+      if (startDayOfWeek === -1) startDayOfWeek = 6;
+
+      const grid = document.getElementById('adminDocentCalDaysGrid');
+      grid.innerHTML = "";
+
+      for (let i = 0; i < startDayOfWeek; i++) {
+        grid.innerHTML += `<div class="h-20 bg-slate-50/50 rounded-xl border border-transparent"></div>`;
+      }
+
+      // Filter beschikbaarheid van deze docent
+      const docAvailMap = {};
+      (adminData.availability || []).forEach(av => {
+        if (av.docentId === viewingAdminDocent.id) {
+          docAvailMap[av.datum] = av;
+        }
+      });
+
+      for (let day = 1; day <= daysInMonth; day++) {
+        const isoDate = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+        const avail = docAvailMap[isoDate];
+
+        let statusBg = "bg-slate-50 border-slate-200 text-slate-600";
+        let badgeHtml = "<span class='text-[10px] text-slate-400'>Geen invoer</span>";
+
+        if (avail) {
+          if (avail.goedkeuring === "IN_BEHANDELING") {
+            statusBg = "bg-amber-50 border-amber-300 text-amber-900";
+            badgeHtml = `
+              <div class="flex flex-col gap-1">
+                <span class="text-[10px] bg-amber-500 text-white font-bold px-1 rounded">Aanvraag: ${avail.status}</span>
+                <div class="flex gap-1 mt-1">
+                  <button onclick="quickAdminApprove(event, '${avail.recordId}', true)" class="flex-1 bg-emerald-600 hover:bg-emerald-700 text-white rounded p-0.5 text-[9px] font-bold">✓</button>
+                  <button onclick="quickAdminApprove(event, '${avail.recordId}', false)" class="flex-1 bg-rose-600 hover:bg-rose-700 text-white rounded p-0.5 text-[9px] font-bold">✕</button>
+                </div>
+              </div>
+            `;
+          } else if (avail.status === "JA") {
+            statusBg = "bg-emerald-100 border-emerald-300 text-emerald-900";
+            badgeHtml = `<span class="text-[10px] bg-emerald-600 text-white px-1.5 py-0.5 rounded font-bold">🟢 Ja</span>`;
+          } else if (avail.status === "MOGELIJK") {
+            statusBg = "bg-amber-100 border-amber-300 text-amber-900";
+            badgeHtml = `<span class="text-[10px] bg-amber-600 text-white px-1.5 py-0.5 rounded font-bold">🟠 Mogelijk</span>`;
+          } else if (avail.status === "NEE") {
+            statusBg = "bg-rose-100 border-rose-300 text-rose-900";
+            badgeHtml = `<span class="text-[10px] bg-rose-600 text-white px-1.5 py-0.5 rounded font-bold">🔴 Nee</span>`;
+          }
+        }
+
+        const cell = document.createElement('div');
+        cell.className = `h-20 p-1.5 rounded-xl border flex flex-col justify-between ${statusBg} text-xs`;
+        cell.innerHTML = `
+          <div class="font-bold">${day}</div>
+          <div>${badgeHtml}</div>
+        `;
+        grid.appendChild(cell);
+      }
+    }
+
+    async function quickAdminApprove(e, recordId, approved) {
+      e.stopPropagation();
+      const target = e.currentTarget;
+      target.innerHTML = `<i class="fa-solid fa-circle-notch fa-spin"></i>`;
+      await apiCall("", "POST", { action: "adminApproveAvailability", adminPin: ADMIN_SECRET, recordId, approved });
+      await loadAdminData();
+      renderAdminDocentCalendar();
     }
 
     // ==========================================
@@ -1242,8 +1486,8 @@
               <span>Auto: ${doc.auto}</span>
             </div>
           </div>
-          <button onclick="assignCandidate('${doc.id}')" class="text-xs bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-3 py-1.5 rounded-lg transition shadow-sm">
-            Koppelen
+          <button onclick="assignCandidate(this, '${doc.id}')" class="text-xs bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-3 py-1.5 rounded-lg transition shadow-sm flex items-center gap-1">
+            <span>Koppelen</span>
           </button>
         `;
         container.appendChild(item);
@@ -1254,7 +1498,10 @@
       document.getElementById('modalCandidatePicker').classList.add('hidden');
     }
 
-    async function assignCandidate(docentId) {
+    async function assignCandidate(btn, docentId) {
+      btn.innerHTML = `<i class="fa-solid fa-circle-notch fa-spin"></i>`;
+      btn.disabled = true;
+
       await apiCall("", "POST", {
         action: "adminSavePlanning",
         adminPin: ADMIN_SECRET,
@@ -1288,22 +1535,27 @@
       }
     }
 
-    async function approveAvailability(recordId, approved) {
+    async function approveAvailability(btn, recordId, approved) {
+      btn.innerHTML = `<i class="fa-solid fa-circle-notch fa-spin"></i>`;
       await apiCall("", "POST", { action: "adminApproveAvailability", adminPin: ADMIN_SECRET, recordId, approved });
       await loadAdminData();
     }
 
-    async function approveProfile(aanvraagId, approved) {
+    async function approveProfile(btn, aanvraagId, approved) {
+      btn.innerHTML = `<i class="fa-solid fa-circle-notch fa-spin"></i>`;
       await apiCall("", "POST", { action: "adminApproveProfile", adminPin: ADMIN_SECRET, aanvraagId, approved });
       await loadAdminData();
     }
 
-    async function updateDocentSkill(docentId, skillLevel) {
+    async function updateDocentSkill(selectEl, docentId, skillLevel) {
+      selectEl.disabled = true;
       await apiCall("", "POST", { action: "adminUpdateDocent", adminPin: ADMIN_SECRET, docentId, skillLevel });
+      selectEl.disabled = false;
     }
 
-    async function resetDocentPin(docentId) {
+    async function resetDocentPin(btn, docentId) {
       if (confirm("Weet je zeker dat je de pincode wilt wissen? De docent kan dan opnieuw een pincode instellen.")) {
+        btn.innerHTML = `<i class="fa-solid fa-circle-notch fa-spin"></i>`;
         await apiCall("", "POST", { action: "adminUpdateDocent", adminPin: ADMIN_SECRET, docentId, resetPin: true });
         await loadAdminData();
       }
@@ -1377,7 +1629,9 @@
             { id: "DOC-03", naam: "Menno", skillLevel: "N2", hasPin: false, auto: "Nee" }
           ],
           availability: [],
-          planning: [],
+          planning: [
+            { planningId: "PLN-1", datum: "2026-09-01", schoolNaam: "School De Horizon", toegewezenDocentId: "" }
+          ],
           profielAanvragen: []
         };
       }
