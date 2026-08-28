@@ -5,7 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
   <title>Mediawegwijs - Beschikbaarheidsportaal</title>
   
-  <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
   <script>
     tailwind.config = {
@@ -38,7 +37,7 @@
   <header class="bg-white/90 backdrop-blur border-b border-slate-200 sticky top-0 z-30 shadow-sm">
     <div class="max-w-7xl mx-auto px-4 h-13 py-2.5 flex items-center justify-between">
       
-      <!-- Live tijd & Datum (5-klik cache reset) -->
+      <!-- Live tijd & 5-klik reset -->
       <div 
         onclick="handleClockClick()" 
         title="Klik 5x om cache & data geforceerd te legen" 
@@ -55,7 +54,6 @@
           <span id="headerDocentName">Docent</span>
         </span>
         
-        <!-- Alleen voor docenten -->
         <button id="btnHeaderPreferences" onclick="openProfileModal(true)" class="text-xs bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold px-2.5 py-1.5 rounded-lg border border-slate-300 transition flex items-center gap-1.5">
           <i class="fa-solid fa-sliders text-slate-500"></i> <span class="hidden sm:inline">Voorkeuren</span>
         </button>
@@ -77,7 +75,7 @@
   </header>
 
   <!-- MAIN INHOUD -->
-  <main class="flex-1 max-w-7xl w-full mx-auto p-4 md:p-6 flex flex-col justify-center items-center">
+  <main class="flex-1 max-w-7xl w-full mx-auto p-3 md:p-6 flex flex-col justify-center items-center">
 
     <!-- SCHERM 1: LANDINGSPAGINA -->
     <section id="viewLanding" class="w-full max-w-md my-auto text-center">
@@ -121,103 +119,133 @@
       </div>
     </section>
 
-    <!-- SCHERM 2: MAANDKALENDER VAKDOCENT -->
-    <section id="viewCalendar" class="hidden w-full flex-col gap-4">
+    <!-- SCHERM 2: MAANDKALENDER VAKDOCENT + ON TOUR SIDEBAR -->
+    <section id="viewCalendar" class="hidden w-full flex-col lg:flex-row gap-5 items-start">
       
-      <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm flex flex-col xl:flex-row items-center justify-between gap-4">
+      <!-- Linker kolom: 5-daagse Kalender (Ma t/m Vr) -->
+      <div class="flex-1 w-full space-y-4">
         
-        <div class="flex items-center gap-3">
-          <button id="btnPrevMonth" onclick="changeMonth(-1)" class="w-10 h-10 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 flex items-center justify-center transition disabled:opacity-30 disabled:cursor-not-allowed">
-            <i class="fa-solid fa-chevron-left text-xs"></i>
-          </button>
-          <h2 id="calendarMonthTitle" class="text-base md:text-lg font-extrabold text-slate-800 min-w-[170px] text-center capitalize">
-            Maand Jaar
-          </h2>
-          <button id="btnNextMonth" onclick="changeMonth(1)" class="w-10 h-10 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 flex items-center justify-center transition disabled:opacity-30 disabled:cursor-not-allowed">
-            <i class="fa-solid fa-chevron-right text-xs"></i>
-          </button>
+        <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm flex flex-col xl:flex-row items-center justify-between gap-3">
+          
+          <div class="flex items-center gap-2">
+            <button id="btnPrevMonth" onclick="changeMonth(-1)" class="w-9 h-9 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 flex items-center justify-center transition disabled:opacity-30 disabled:cursor-not-allowed">
+              <i class="fa-solid fa-chevron-left text-xs"></i>
+            </button>
+            <h2 id="calendarMonthTitle" class="text-base md:text-lg font-extrabold text-slate-800 min-w-[160px] text-center capitalize">
+              Maand Jaar
+            </h2>
+            <button id="btnNextMonth" onclick="changeMonth(1)" class="w-9 h-9 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 flex items-center justify-center transition disabled:opacity-30 disabled:cursor-not-allowed">
+              <i class="fa-solid fa-chevron-right text-xs"></i>
+            </button>
+            <button onclick="manualRefreshCalendar()" class="w-9 h-9 ml-1 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl flex items-center justify-center transition" title="Vernieuwen">
+              <i id="iconRefresh" class="fa-solid fa-arrows-rotate text-xs"></i>
+            </button>
+          </div>
+
+          <!-- Legenda -->
+          <div class="flex flex-wrap items-center justify-center gap-1.5 text-[11px] font-semibold">
+            <span class="flex items-center gap-1 bg-emerald-50 text-emerald-700 border border-emerald-200 px-2 py-0.5 rounded-lg"><span class="w-2 h-2 rounded-full bg-emerald-500"></span> Ja</span>
+            <span class="flex items-center gap-1 bg-amber-50 text-amber-700 border border-amber-200 px-2 py-0.5 rounded-lg"><span class="w-2 h-2 rounded-full bg-amber-500"></span> Mogelijk</span>
+            <span class="flex items-center gap-1 bg-rose-50 text-rose-700 border border-rose-200 px-2 py-0.5 rounded-lg"><span class="w-2 h-2 rounded-full bg-rose-500"></span> Nee</span>
+            <span class="flex items-center gap-1 bg-yellow-50 text-yellow-700 border border-yellow-200 px-2 py-0.5 rounded-lg"><i class="fa-solid fa-star text-amber-500 text-[9px]"></i> Voorkeur</span>
+          </div>
+
         </div>
 
-        <!-- Verversknop -->
-        <div class="flex items-center">
-          <button id="btnRefreshCalendar" onclick="manualRefreshCalendar()" class="text-xs bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold px-3.5 py-2 rounded-xl border border-slate-200 shadow-sm transition flex items-center gap-2">
-            <i id="iconRefresh" class="fa-solid fa-arrows-rotate text-slate-500"></i>
-            <span id="textRefresh">Vernieuwen</span>
-          </button>
-        </div>
-
-        <!-- Legenda -->
-        <div class="flex flex-wrap items-center justify-center gap-2 text-xs font-semibold">
-          <span class="flex items-center gap-1.5 bg-emerald-50 text-emerald-700 border border-emerald-200 px-2.5 py-1 rounded-xl">
-            <span class="w-2.5 h-2.5 rounded-full bg-emerald-500"></span> Ja
-          </span>
-          <span class="flex items-center gap-1.5 bg-amber-50 text-amber-700 border border-amber-200 px-2.5 py-1 rounded-xl">
-            <span class="w-2.5 h-2.5 rounded-full bg-amber-500"></span> Mogelijk
-          </span>
-          <span class="flex items-center gap-1.5 bg-rose-50 text-rose-700 border border-rose-200 px-2.5 py-1 rounded-xl">
-            <span class="w-2.5 h-2.5 rounded-full bg-rose-500"></span> Nee
-          </span>
-          <span class="flex items-center gap-1.5 bg-slate-100 text-slate-600 border border-slate-300 px-2.5 py-1 rounded-xl">
-            <span class="w-2.5 h-2.5 rounded-full bg-slate-400"></span> In Behandeling
-          </span>
-          <span class="flex items-center gap-1.5 bg-yellow-50 text-yellow-700 border border-yellow-200 px-2.5 py-1 rounded-xl">
-            <i class="fa-solid fa-star text-amber-500 text-[10px]"></i> Voorkeur
-          </span>
+        <!-- 5-Koloms Grid (Maandag t/m Vrijdag) -->
+        <div class="bg-white p-4 rounded-3xl border border-slate-200 shadow-sm overflow-x-auto">
+          <div class="grid grid-cols-5 gap-2 mb-2 text-center text-xs font-bold text-slate-500 uppercase tracking-wider">
+            <div>Ma</div><div>Di</div><div>Wo</div><div>Do</div><div>Vr</div>
+          </div>
+          <div id="calendarDaysGrid" class="grid grid-cols-5 gap-2"></div>
         </div>
 
       </div>
 
-      <!-- Grid -->
-      <div class="bg-white p-4 md:p-6 rounded-3xl border border-slate-200 shadow-sm overflow-x-auto">
-        <div class="grid grid-cols-7 gap-2 mb-2 text-center text-xs font-bold text-slate-500 uppercase tracking-wider">
-          <div>Ma</div><div>Di</div><div>Wo</div><div>Do</div><div>Vr</div><div>Za</div><div>Zo</div>
+      <!-- Rechter kolom: ON TOURS Widget -->
+      <div class="w-full lg:w-80 bg-white p-4 rounded-3xl border border-slate-200 shadow-sm flex flex-col">
+        <div class="flex items-center justify-between pb-3 border-b border-slate-100 mb-3">
+          <div class="flex items-center gap-2">
+            <span class="w-2.5 h-2.5 rounded-full bg-sky-500"></span>
+            <h3 class="font-extrabold text-slate-900 text-sm">On Tours</h3>
+          </div>
+          <span class="text-[10px] bg-slate-100 text-slate-600 font-bold px-2 py-0.5 rounded-full" id="countOnToursDocent">0</span>
         </div>
-        <div id="calendarDaysGrid" class="grid grid-cols-7 gap-2"></div>
+
+        <p class="text-[11px] text-slate-500 mb-3">
+          Klik op een On Tour om je beschikbaarheid voor de schoolweek door te geven (deadline 4 wk van tevoren).
+        </p>
+
+        <div id="docentOnToursList" class="space-y-2.5 max-h-[520px] overflow-y-auto custom-scrollbar pr-1">
+          <!-- Dynamisch geladen kaarten -->
+        </div>
       </div>
 
     </section>
 
-    <!-- SCHERM 3: PLANNER DASHBOARD (VOOR MAARTJE & RENÉE) -->
-    <section id="viewPlannerDashboard" class="hidden w-full flex-col gap-4">
+    <!-- SCHERM 3: PLANNER DASHBOARD + ON TOUR BEHEER -->
+    <section id="viewPlannerDashboard" class="hidden w-full flex-col lg:flex-row gap-5 items-start">
       
-      <!-- Planner Bovenbalk met Maand / Week filter -->
-      <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm flex flex-col md:flex-row items-center justify-between gap-4">
+      <!-- Linker Kolom: Reguliere Planning (3 Weken / Maand / Week) -->
+      <div class="flex-1 w-full space-y-4">
         
-        <div class="flex items-center gap-3">
-          <button onclick="changePlannerPeriod(-1)" class="w-10 h-10 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 flex items-center justify-center transition">
-            <i class="fa-solid fa-chevron-left text-xs"></i>
-          </button>
-          <h2 id="plannerPeriodTitle" class="text-base md:text-lg font-extrabold text-slate-800 min-w-[200px] text-center capitalize">
-            Periode
-          </h2>
-          <button onclick="changePlannerPeriod(1)" class="w-10 h-10 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 flex items-center justify-center transition">
-            <i class="fa-solid fa-chevron-right text-xs"></i>
-          </button>
+        <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm flex flex-col md:flex-row items-center justify-between gap-3">
+          
+          <div class="flex items-center gap-2">
+            <button onclick="changePlannerPeriod(-1)" class="w-9 h-9 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 flex items-center justify-center transition">
+              <i class="fa-solid fa-chevron-left text-xs"></i>
+            </button>
+            <h2 id="plannerPeriodTitle" class="text-base font-extrabold text-slate-800 min-w-[180px] text-center capitalize">
+              Periode
+            </h2>
+            <button onclick="changePlannerPeriod(1)" class="w-9 h-9 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 flex items-center justify-center transition">
+              <i class="fa-solid fa-chevron-right text-xs"></i>
+            </button>
+          </div>
+
+          <!-- 3 Toggles: 3 Weken (Default), Maand, Week -->
+          <div class="bg-slate-100 p-1 rounded-xl flex text-xs font-bold border border-slate-200">
+            <button onclick="setPlannerViewMode('3weeks')" id="btnPlanView3Weeks" class="px-3 py-1.5 rounded-lg bg-white text-slate-900 shadow-sm transition">Aankomende 3 weken</button>
+            <button onclick="setPlannerViewMode('month')" id="btnPlanViewMonth" class="px-3 py-1.5 rounded-lg text-slate-600 hover:text-slate-900 transition">Maandoverzicht</button>
+            <button onclick="setPlannerViewMode('week')" id="btnPlanViewWeek" class="px-3 py-1.5 rounded-lg text-slate-600 hover:text-slate-900 transition">Weekoverzicht</button>
+          </div>
+
+          <div class="flex items-center gap-2">
+            <button onclick="openAddSchoolPlanningModal()" class="text-xs bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-3 py-2 rounded-xl transition flex items-center gap-1.5 shadow-sm">
+              <i class="fa-solid fa-plus"></i> School Inplannen
+            </button>
+            <button onclick="loadAdminData()" class="w-9 h-9 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl flex items-center justify-center transition">
+              <i class="fa-solid fa-arrows-rotate text-xs"></i>
+            </button>
+          </div>
+
         </div>
 
-        <!-- Filter Toggle: Maand / Week -->
-        <div class="bg-slate-100 p-1 rounded-xl flex text-xs font-bold border border-slate-200">
-          <button onclick="setPlannerViewMode('month')" id="btnPlanViewMonth" class="px-3 py-1.5 rounded-lg bg-white text-slate-900 shadow-sm transition">Maandoverzicht</button>
-          <button onclick="setPlannerViewMode('week')" id="btnPlanViewWeek" class="px-3 py-1.5 rounded-lg text-slate-600 hover:text-slate-900 transition">Weekoverzicht</button>
-        </div>
-
-        <div class="flex items-center gap-2">
-          <button onclick="openAddSchoolPlanningModal()" class="text-xs bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-3.5 py-2 rounded-xl transition flex items-center gap-1.5 shadow-sm">
-            <i class="fa-solid fa-plus"></i> School Inplannen
-          </button>
-          <button onclick="loadAdminData()" class="w-9 h-9 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl flex items-center justify-center transition">
-            <i class="fa-solid fa-arrows-rotate text-xs"></i>
-          </button>
+        <!-- 5-Koloms Planner Grid (Ma t/m Vr) -->
+        <div class="bg-white p-4 rounded-3xl border border-slate-200 shadow-sm overflow-x-auto">
+          <div class="grid grid-cols-5 gap-2 mb-2 text-center text-xs font-bold text-slate-500 uppercase tracking-wider">
+            <div>Ma</div><div>Di</div><div>Wo</div><div>Do</div><div>Vr</div>
+          </div>
+          <div id="plannerDaysGrid" class="grid grid-cols-5 gap-2"></div>
         </div>
 
       </div>
 
-      <!-- Planner Grid Weergave -->
-      <div class="bg-white p-4 md:p-6 rounded-3xl border border-slate-200 shadow-sm overflow-x-auto">
-        <div id="plannerGridHeader" class="grid grid-cols-7 gap-2 mb-2 text-center text-xs font-bold text-slate-500 uppercase tracking-wider">
-          <div>Ma</div><div>Di</div><div>Wo</div><div>Do</div><div>Vr</div><div>Za</div><div>Zo</div>
+      <!-- Rechter Kolom: Planner On Tour Paneel (met Potlood toevoegen) -->
+      <div class="w-full lg:w-80 bg-white p-4 rounded-3xl border border-slate-200 shadow-sm flex flex-col">
+        <div class="flex items-center justify-between pb-3 border-b border-slate-100 mb-3">
+          <div class="flex items-center gap-2">
+            <span class="w-2.5 h-2.5 rounded-full bg-sky-500"></span>
+            <h3 class="font-extrabold text-slate-900 text-sm">On Tours Beheer</h3>
+          </div>
+          <button onclick="openAddOnTourModal()" class="text-xs bg-slate-800 hover:bg-slate-900 text-white font-bold px-2.5 py-1.5 rounded-xl transition flex items-center gap-1">
+            <i class="fa-solid fa-pen-to-square text-[10px]"></i> Nieuwe Tour
+          </button>
         </div>
-        <div id="plannerDaysGrid" class="grid grid-cols-7 gap-2"></div>
+
+        <div id="plannerOnToursList" class="space-y-2.5 max-h-[540px] overflow-y-auto custom-scrollbar pr-1">
+          <!-- Dynamisch geladen voor planner -->
+        </div>
       </div>
 
     </section>
@@ -228,7 +256,7 @@
   <footer id="landingFooterBar" class="bg-white border-t border-slate-200 py-2.5 px-4 text-[11px] md:text-xs text-slate-500 sticky bottom-0 z-20">
     <div class="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-2 text-center sm:text-left">
       <div class="flex items-center gap-2 font-medium">
-        <span>Versie <strong class="text-slate-800">V0.9.1</strong></span>
+        <span>Versie <strong class="text-slate-800">V1.0</strong></span>
         <span class="text-slate-300">•</span>
         <button onclick="openPatchNotesModal()" class="text-emerald-600 hover:text-emerald-700 font-semibold underline transition">
           Patch notes
@@ -255,20 +283,24 @@
       <div class="max-h-80 overflow-y-auto custom-scrollbar space-y-3 pr-1 text-xs">
         <div class="p-3 bg-emerald-50/50 border border-emerald-200 rounded-2xl">
           <div class="flex items-center justify-between mb-1.5">
-            <span class="font-bold text-emerald-950">Versie V0.9.1</span>
-            <span class="text-[10px] bg-emerald-600 text-white px-2 py-0.5 rounded-full font-bold">Nieuw</span>
+            <span class="font-bold text-emerald-950">Versie V1.0</span>
+            <span class="text-[10px] bg-emerald-600 text-white px-2 py-0.5 rounded-full font-bold">Major Update</span>
           </div>
           <ul class="list-disc list-inside space-y-1 text-emerald-900">
-            <li>Datumsynchronisatie in Planner Maandoverzicht hersteld.</li>
-            <li>Optimistic UI-updates: dagen kleuren direct in zonder wachttijd.</li>
-            <li>Robuuste datum-normalisatie voor alle formaten.</li>
+            <li>Kalender overal aangepast naar een 5-daagse werkweek (Ma t/m Vr). Zaterdag &amp; Zondag verwijderd.</li>
+            <li>Hoofdkalender toont uitsluitend nog reguliere lessen.</li>
+            <li>On Tours verplaatst naar dedicated rechter sidebar met deadline tracking (4 wk van tevoren).</li>
+            <li>Interactieve On Tour inschrijfflow met Hele Week (Ja), Nee of Deels (dagselectie).</li>
+            <li>Planner Dashboard standaard geopend op 'Aankomende 3 weken'.</li>
+            <li>Onboarding vraagt eerst 'Alleen On Tour?' en toont conditioneel alleen relevante vragen.</li>
+            <li>On Tour Specialisten badge voor planners bij kandidaten matching.</li>
           </ul>
         </div>
       </div>
     </div>
   </div>
 
-  <!-- MODAL: PINCODE INVOER -->
+  <!-- MODAL: PINCODE -->
   <div id="modalPin" class="fixed inset-0 bg-slate-950/90 z-50 hidden flex items-center justify-center p-4">
     <div class="w-full max-w-sm bg-white rounded-3xl p-6 md:p-8 text-center shadow-2xl relative">
       <button onclick="closePinModal()" class="absolute top-4 right-4 text-slate-400 hover:text-slate-600 w-8 h-8 rounded-full flex items-center justify-center">
@@ -308,45 +340,67 @@
     </div>
   </div>
 
-  <!-- MODAL: ONBOARDING -->
+  <!-- MODAL: ONBOARDING MET CONDITIONELE LOGICA -->
   <div id="modalOnboarding" class="fixed inset-0 bg-slate-950/90 z-50 hidden overflow-y-auto p-4 flex items-center justify-center">
     <div class="w-full max-w-xl bg-white rounded-3xl p-6 md:p-8 shadow-2xl my-auto">
       <div class="text-center mb-6">
         <h3 id="onboardingTitle" class="text-2xl font-bold text-slate-900">Welkom! Even kennismaken 👋</h3>
-        <p id="onboardingSubtitle" class="text-slate-500 text-sm mt-1">Vul onderstaande vragen in om je beschikbaarheid optimaal in te richten.</p>
+        <p id="onboardingSubtitle" class="text-slate-500 text-sm mt-1">Vul onderstaande vragen in om je voorkeuren in te stellen.</p>
       </div>
 
       <form id="onboardingForm" onsubmit="handleOnboardingSubmit(event)" class="space-y-5 text-left text-sm">
-        <div>
-          <label class="block font-bold text-slate-800 mb-1">1. Hoe vaak in de week wil je werken?</label>
-          <select id="obWerkDagen" required class="w-full p-3 bg-slate-50 border border-slate-300 rounded-xl focus:ring-2 focus:ring-emerald-500 font-medium">
-            <option value="1 dag">1 dag per week</option>
-            <option value="2 dagen">2 dagen per week</option>
-            <option value="3 dagen" selected>3 dagen per week</option>
-            <option value="4 dagen">4 dagen per week</option>
-            <option value="5 dagen">5 dagen per week (Fulltime)</option>
-          </select>
-        </div>
-
-        <div>
-          <label class="block font-bold text-slate-800 mb-1">2. Welke dag kun je altijd? <span class="text-xs font-normal text-slate-500">(Vaste dag voor vaste school)</span></label>
-          <div class="flex flex-wrap gap-2 pt-1">
-            <label class="flex items-center gap-2 bg-slate-100 hover:bg-slate-200 px-3 py-2 rounded-xl cursor-pointer font-medium"><input type="checkbox" name="vasteDagen" value="Ma" class="rounded text-emerald-600"> Ma</label>
-            <label class="flex items-center gap-2 bg-slate-100 hover:bg-slate-200 px-3 py-2 rounded-xl cursor-pointer font-medium"><input type="checkbox" name="vasteDagen" value="Di" class="rounded text-emerald-600"> Di</label>
-            <label class="flex items-center gap-2 bg-slate-100 hover:bg-slate-200 px-3 py-2 rounded-xl cursor-pointer font-medium"><input type="checkbox" name="vasteDagen" value="Wo" class="rounded text-emerald-600"> Wo</label>
-            <label class="flex items-center gap-2 bg-slate-100 hover:bg-slate-200 px-3 py-2 rounded-xl cursor-pointer font-medium"><input type="checkbox" name="vasteDagen" value="Do" class="rounded text-emerald-600"> Do</label>
-            <label class="flex items-center gap-2 bg-slate-100 hover:bg-slate-200 px-3 py-2 rounded-xl cursor-pointer font-medium"><input type="checkbox" name="vasteDagen" value="Vr" class="rounded text-emerald-600"> Vr</label>
+        
+        <!-- VRAAG 1: PRIMAIR ALLEEN ON TOUR -->
+        <div class="bg-sky-50 border border-sky-200 p-4 rounded-2xl">
+          <label class="block font-extrabold text-sky-950 mb-2">1. Wil je alleen On Tour werken?</label>
+          <div class="flex gap-3">
+            <label class="flex-1 text-center py-2 rounded-xl bg-white border border-sky-200 cursor-pointer has-[:checked]:bg-sky-600 has-[:checked]:text-white font-bold text-xs shadow-sm transition">
+              <input type="radio" name="alleenOnTour" value="Ja" onchange="toggleOnboardingRegularFields()" class="hidden"> Ja (Alleen On Tour)
+            </label>
+            <label class="flex-1 text-center py-2 rounded-xl bg-white border border-sky-200 cursor-pointer has-[:checked]:bg-sky-600 has-[:checked]:text-white font-bold text-xs shadow-sm transition">
+              <input type="radio" name="alleenOnTour" value="Nee" checked onchange="toggleOnboardingRegularFields()" class="hidden"> Nee (Ook Regulier)
+            </label>
           </div>
         </div>
 
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
-          <div class="bg-slate-50 p-3 rounded-xl border border-slate-200">
-            <label class="block font-bold text-slate-800 mb-2">Alleen on tour?</label>
-            <div class="flex gap-2">
-              <label class="flex-1 text-center py-1.5 rounded-lg bg-white border cursor-pointer has-[:checked]:bg-emerald-600 has-[:checked]:text-white font-semibold text-xs"><input type="radio" name="alleenOnTour" value="Ja" class="hidden"> Ja</label>
-              <label class="flex-1 text-center py-1.5 rounded-lg bg-white border cursor-pointer has-[:checked]:bg-emerald-600 has-[:checked]:text-white font-semibold text-xs"><input type="radio" name="alleenOnTour" value="Nee" checked class="hidden"> Nee</label>
+        <!-- CONDITIEVE REGULIERE VRAGEN (VERBORGEN BIJ JA OP TOUR) -->
+        <div id="wrapperRegularQuestions" class="space-y-4">
+          <div>
+            <label class="block font-bold text-slate-800 mb-1">2. Hoe vaak in de week wil je werken?</label>
+            <select id="obWerkDagen" class="w-full p-3 bg-slate-50 border border-slate-300 rounded-xl font-medium">
+              <option value="1 dag">1 dag per week</option>
+              <option value="2 dagen">2 dagen per week</option>
+              <option value="3 dagen" selected>3 dagen per week</option>
+              <option value="4 dagen">4 dagen per week</option>
+              <option value="5 dagen">5 dagen per week</option>
+            </select>
+          </div>
+
+          <div>
+            <label class="block font-bold text-slate-800 mb-1">3. Welke dag kun je altijd? <span class="text-xs font-normal text-slate-500">(Vaste school)</span></label>
+            <div class="flex flex-wrap gap-2 pt-1">
+              <label class="flex items-center gap-2 bg-slate-100 hover:bg-slate-200 px-3 py-2 rounded-xl cursor-pointer font-medium"><input type="checkbox" name="vasteDagen" value="Ma" class="rounded text-emerald-600"> Ma</label>
+              <label class="flex items-center gap-2 bg-slate-100 hover:bg-slate-200 px-3 py-2 rounded-xl cursor-pointer font-medium"><input type="checkbox" name="vasteDagen" value="Di" class="rounded text-emerald-600"> Di</label>
+              <label class="flex items-center gap-2 bg-slate-100 hover:bg-slate-200 px-3 py-2 rounded-xl cursor-pointer font-medium"><input type="checkbox" name="vasteDagen" value="Wo" class="rounded text-emerald-600"> Wo</label>
+              <label class="flex items-center gap-2 bg-slate-100 hover:bg-slate-200 px-3 py-2 rounded-xl cursor-pointer font-medium"><input type="checkbox" name="vasteDagen" value="Do" class="rounded text-emerald-600"> Do</label>
+              <label class="flex items-center gap-2 bg-slate-100 hover:bg-slate-200 px-3 py-2 rounded-xl cursor-pointer font-medium"><input type="checkbox" name="vasteDagen" value="Vr" class="rounded text-emerald-600"> Vr</label>
             </div>
           </div>
+
+          <div>
+            <label class="block font-bold text-slate-800 mb-1">4. Voorkeursdagen? <span class="text-xs text-amber-600 font-semibold"><i class="fa-solid fa-star"></i> Krijgen een sterretje</span></label>
+            <div class="flex flex-wrap gap-2 pt-1">
+              <label class="flex items-center gap-1.5 bg-amber-50 hover:bg-amber-100 text-amber-800 border border-amber-200 px-3 py-2 rounded-xl cursor-pointer font-bold"><input type="checkbox" name="voorkeursDagen" value="Ma" class="rounded text-amber-600"> ⭐ Ma</label>
+              <label class="flex items-center gap-1.5 bg-amber-50 hover:bg-amber-100 text-amber-800 border border-amber-200 px-3 py-2 rounded-xl cursor-pointer font-bold"><input type="checkbox" name="voorkeursDagen" value="Di" class="rounded text-amber-600"> ⭐ Di</label>
+              <label class="flex items-center gap-1.5 bg-amber-50 hover:bg-amber-100 text-amber-800 border border-amber-200 px-3 py-2 rounded-xl cursor-pointer font-bold"><input type="checkbox" name="voorkeursDagen" value="Wo" class="rounded text-amber-600"> ⭐ Wo</label>
+              <label class="flex items-center gap-1.5 bg-amber-50 hover:bg-amber-100 text-amber-800 border border-amber-200 px-3 py-2 rounded-xl cursor-pointer font-bold"><input type="checkbox" name="voorkeursDagen" value="Do" class="rounded text-amber-600"> ⭐ Do</label>
+              <label class="flex items-center gap-1.5 bg-amber-50 hover:bg-amber-100 text-amber-800 border border-amber-200 px-3 py-2 rounded-xl cursor-pointer font-bold"><input type="checkbox" name="voorkeursDagen" value="Vr" class="rounded text-amber-600"> ⭐ Vr</label>
+            </div>
+          </div>
+        </div>
+
+        <!-- RIJBEWIJS & AUTO (ALTIJD ZICHTBAAR) -->
+        <div class="grid grid-cols-2 gap-3 pt-1">
           <div class="bg-slate-50 p-3 rounded-xl border border-slate-200">
             <label class="block font-bold text-slate-800 mb-2">Rijbewijs?</label>
             <div class="flex gap-2">
@@ -360,19 +414,6 @@
               <label class="flex-1 text-center py-1.5 rounded-lg bg-white border cursor-pointer has-[:checked]:bg-emerald-600 has-[:checked]:text-white font-semibold text-xs"><input type="radio" name="auto" value="Ja" checked class="hidden"> Ja</label>
               <label class="flex-1 text-center py-1.5 rounded-lg bg-white border cursor-pointer has-[:checked]:bg-emerald-600 has-[:checked]:text-white font-semibold text-xs"><input type="radio" name="auto" value="Nee" class="hidden"> Nee</label>
             </div>
-          </div>
-        </div>
-
-        <div>
-          <label class="block font-bold text-slate-800 mb-1">
-            6. Wat zijn je voorkeursdagen? <span class="text-xs text-amber-600 font-semibold"><i class="fa-solid fa-star"></i> Deze krijgen een sterretje</span>
-          </label>
-          <div class="flex flex-wrap gap-2 pt-1">
-            <label class="flex items-center gap-1.5 bg-amber-50 hover:bg-amber-100 text-amber-800 border border-amber-200 px-3 py-2 rounded-xl cursor-pointer font-bold"><input type="checkbox" name="voorkeursDagen" value="Ma" class="rounded text-amber-600"> ⭐ Ma</label>
-            <label class="flex items-center gap-1.5 bg-amber-50 hover:bg-amber-100 text-amber-800 border border-amber-200 px-3 py-2 rounded-xl cursor-pointer font-bold"><input type="checkbox" name="voorkeursDagen" value="Di" class="rounded text-amber-600"> ⭐ Di</label>
-            <label class="flex items-center gap-1.5 bg-amber-50 hover:bg-amber-100 text-amber-800 border border-amber-200 px-3 py-2 rounded-xl cursor-pointer font-bold"><input type="checkbox" name="voorkeursDagen" value="Wo" class="rounded text-amber-600"> ⭐ Wo</label>
-            <label class="flex items-center gap-1.5 bg-amber-50 hover:bg-amber-100 text-amber-800 border border-amber-200 px-3 py-2 rounded-xl cursor-pointer font-bold"><input type="checkbox" name="voorkeursDagen" value="Do" class="rounded text-amber-600"> ⭐ Do</label>
-            <label class="flex items-center gap-1.5 bg-amber-50 hover:bg-amber-100 text-amber-800 border border-amber-200 px-3 py-2 rounded-xl cursor-pointer font-bold"><input type="checkbox" name="voorkeursDagen" value="Vr" class="rounded text-amber-600"> ⭐ Vr</label>
           </div>
         </div>
 
@@ -390,7 +431,126 @@
     </div>
   </div>
 
-  <!-- MODAL: DAG STATUS SELECTIE -->
+  <!-- MODAL: ON TOUR INSCHRIJVEN VOOR VAKDOCENT -->
+  <div id="modalOnTourRegister" class="fixed inset-0 bg-slate-950/80 z-50 hidden flex items-center justify-center p-4">
+    <div class="w-full max-w-md bg-white rounded-3xl p-6 shadow-2xl relative text-left">
+      <button onclick="closeOnTourRegisterModal()" class="absolute top-4 right-4 text-slate-400 hover:text-slate-600 w-8 h-8 rounded-full flex items-center justify-center">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+
+      <div class="flex items-center gap-2 mb-1">
+        <span class="text-xs bg-sky-100 text-sky-800 font-bold px-2 py-0.5 rounded-full" id="otRegTag">On Tour</span>
+        <span class="text-xs text-rose-600 font-bold" id="otRegDeadlinetxt"></span>
+      </div>
+      <h3 class="text-lg font-bold text-slate-900" id="otRegSchoolTitle">Schoolnaam</h3>
+      <p class="text-xs text-slate-500 mb-4" id="otRegDatesLoc"></p>
+
+      <!-- Keuze 1: Hele week / Nee / Deels -->
+      <label class="block font-bold text-slate-700 text-xs mb-2">Hele week beschikbaar?</label>
+      <div class="grid grid-cols-3 gap-2 mb-4">
+        <button type="button" onclick="setOnTourChoice('HELE_WEEK')" id="btnOtChoiceJa" class="py-2.5 rounded-xl border border-slate-200 font-bold text-xs transition">🟢 Ja</button>
+        <button type="button" onclick="setOnTourChoice('NEE')" id="btnOtChoiceNee" class="py-2.5 rounded-xl border border-slate-200 font-bold text-xs transition">🔴 Nee</button>
+        <button type="button" onclick="setOnTourChoice('DEELS')" id="btnOtChoiceDeels" class="py-2.5 rounded-xl border border-slate-200 font-bold text-xs transition">🟠 Deels</button>
+      </div>
+
+      <!-- Visuele balk Ma t/m Vr -->
+      <label class="block font-bold text-slate-700 text-xs mb-1.5">Geselecteerde dagen:</label>
+      <div class="grid grid-cols-5 gap-1.5 mb-5 text-center text-xs font-bold" id="otDaysContainer">
+        <div id="otDay_Ma" onclick="toggleOtSingleDay('Ma')" class="p-2.5 rounded-xl border transition cursor-default">Ma</div>
+        <div id="otDay_Di" onclick="toggleOtSingleDay('Di')" class="p-2.5 rounded-xl border transition cursor-default">Di</div>
+        <div id="otDay_Wo" onclick="toggleOtSingleDay('Wo')" class="p-2.5 rounded-xl border transition cursor-default">Wo</div>
+        <div id="otDay_Do" onclick="toggleOtSingleDay('Do')" class="p-2.5 rounded-xl border transition cursor-default">Do</div>
+        <div id="otDay_Vr" onclick="toggleOtSingleDay('Vr')" class="p-2.5 rounded-xl border transition cursor-default">Vr</div>
+      </div>
+
+      <div class="flex justify-end gap-2 pt-2 border-t border-slate-100">
+        <button onclick="closeOnTourRegisterModal()" class="px-4 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold rounded-xl text-xs">Annuleren</button>
+        <button onclick="submitOnTourRegistration()" id="btnSubmitOtReg" class="px-5 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-xl text-xs shadow-md shadow-emerald-600/20">Indienen</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: NIEUWE ON TOUR TOEVOEGEN (PLANNER) -->
+  <div id="modalAddOnTour" class="fixed inset-0 bg-slate-950/80 z-50 hidden flex items-center justify-center p-4">
+    <div class="w-full max-w-md bg-white rounded-3xl p-6 shadow-2xl relative text-left">
+      <button onclick="closeAddOnTourModal()" class="absolute top-4 right-4 text-slate-400 hover:text-slate-600 w-8 h-8 rounded-full flex items-center justify-center">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+
+      <h3 class="text-lg font-bold text-slate-900 mb-1">On Tour Inplannen</h3>
+      <p class="text-xs text-slate-500 mb-4">Voeg een schoolweek On Tour toe voor het rooster.</p>
+
+      <form onsubmit="handleSaveOnTourSubmit(event)" class="space-y-3.5 text-xs">
+        <div>
+          <label class="block font-bold text-slate-700 mb-1">Naam van de School</label>
+          <input type="text" id="inputOtSchoolNaam" required placeholder="bijv. RSG Westermarke" class="w-full p-2.5 bg-slate-50 border border-slate-300 rounded-xl font-medium" />
+        </div>
+
+        <div>
+          <label class="block font-bold text-slate-700 mb-1">Locatie / Plaatsnaam</label>
+          <input type="text" id="inputOtLocatie" placeholder="bijv. Schiermonnikoog" class="w-full p-2.5 bg-slate-50 border border-slate-300 rounded-xl font-medium" />
+        </div>
+
+        <!-- Buitenland Toggle -->
+        <div class="bg-slate-50 p-3 rounded-xl border border-slate-200 space-y-2">
+          <label class="flex items-center gap-2 cursor-pointer font-bold text-slate-800">
+            <input type="checkbox" id="checkOtIsBuitenland" onchange="toggleOtCountryField()" class="rounded text-sky-600" />
+            <span>Buitenlandse school (bijv. België)</span>
+          </label>
+          <div id="wrapperOtLand" class="hidden">
+            <input type="text" id="inputOtLand" placeholder="Land / Regio (bijv. België of Antwerpen)" class="w-full p-2 bg-white border border-slate-300 rounded-lg text-xs" />
+          </div>
+        </div>
+
+        <div class="grid grid-cols-2 gap-2">
+          <div>
+            <label class="block font-bold text-slate-700 mb-1">Startdatum (Ma)</label>
+            <input type="date" id="inputOtStart" required class="w-full p-2.5 bg-slate-50 border border-slate-300 rounded-xl font-medium" />
+          </div>
+          <div>
+            <label class="block font-bold text-slate-700 mb-1">Einddatum (Vr)</label>
+            <input type="date" id="inputOtEind" required class="w-full p-2.5 bg-slate-50 border border-slate-300 rounded-xl font-medium" />
+          </div>
+        </div>
+
+        <button type="submit" id="btnSaveOnTourSubmit" class="w-full py-3 bg-slate-800 hover:bg-slate-900 text-white font-bold rounded-xl transition shadow-sm mt-2">
+          On Tour Opslaan
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- MODAL: ON TOUR KANDIDATEN KOPPELEN (PLANNER) -->
+  <div id="modalOnTourCandidates" class="fixed inset-0 bg-slate-950/80 z-50 hidden flex items-center justify-center p-4">
+    <div class="w-full max-w-lg bg-white rounded-3xl p-6 shadow-2xl relative max-h-[85vh] flex flex-col">
+      <button onclick="closeOnTourCandidatesModal()" class="absolute top-4 right-4 text-slate-400 hover:text-slate-600 w-8 h-8 rounded-full flex items-center justify-center">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+
+      <h3 class="font-bold text-slate-900 text-base md:text-lg mb-0.5" id="otCandModalTitle">On Tour Kandidaten</h3>
+      <p class="text-xs text-slate-500 mb-4" id="otCandModalSubtitle"></p>
+
+      <div class="flex-1 overflow-y-auto space-y-4 custom-scrollbar pr-1">
+        <div>
+          <h4 class="text-xs font-bold uppercase text-emerald-800 bg-emerald-50 px-2.5 py-1.5 rounded-lg mb-2 flex items-center justify-between">
+            <span>🟢 Hele Week Beschikbaar</span>
+            <span id="countOtJa" class="font-bold">0</span>
+          </h4>
+          <div id="listOtCandidatesJa" class="space-y-1.5"></div>
+        </div>
+
+        <div>
+          <h4 class="text-xs font-bold uppercase text-amber-800 bg-amber-50 px-2.5 py-1.5 rounded-lg mb-2 flex items-center justify-between">
+            <span>🟠 Deels Beschikbaar</span>
+            <span id="countOtDeels" class="font-bold">0</span>
+          </h4>
+          <div id="listOtCandidatesDeels" class="space-y-1.5"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: DAG STATUS SELECTIE (REGULIERE KALENDER) -->
   <div id="modalDayPicker" class="fixed inset-0 bg-slate-950/80 z-50 hidden flex items-center justify-center p-4">
     <div class="w-full max-w-sm bg-white rounded-3xl p-6 text-center shadow-2xl relative">
       <button onclick="closeDayPicker()" class="absolute top-4 right-4 text-slate-400 hover:text-slate-600 w-8 h-8 rounded-full flex items-center justify-center">
@@ -398,7 +558,7 @@
       </button>
 
       <h3 id="dayPickerDateTitle" class="text-lg font-bold text-slate-900 mb-1">Datum</h3>
-      <p class="text-xs text-slate-500 mb-5">Geef je beschikbaarheid door voor deze dag</p>
+      <p class="text-xs text-slate-500 mb-5">Geef je reguliere beschikbaarheid door</p>
 
       <div class="space-y-2.5 mb-5">
         <button onclick="submitDayStatus('JA')" class="w-full py-3 bg-emerald-500 hover:bg-emerald-600 text-white font-bold rounded-2xl flex items-center justify-center gap-2 transition shadow-md shadow-emerald-500/20 active:scale-98">
@@ -421,15 +581,15 @@
     </div>
   </div>
 
-  <!-- MODAL: SCHOOL INPLANNEN -->
+  <!-- MODAL: REGULIERE SCHOOL INPLANNEN -->
   <div id="modalAddSchoolPlanning" class="fixed inset-0 bg-slate-950/80 z-50 hidden flex items-center justify-center p-4">
     <div class="w-full max-w-md bg-white rounded-3xl p-6 shadow-2xl relative text-left">
       <button onclick="closeAddSchoolModal()" class="absolute top-4 right-4 text-slate-400 hover:text-slate-600 w-8 h-8 rounded-full flex items-center justify-center">
         <i class="fa-solid fa-xmark"></i>
       </button>
 
-      <h3 class="text-lg font-bold text-slate-900 mb-1">School Inplannen</h3>
-      <p class="text-xs text-slate-500 mb-4">Selecteer een datum en kies een school uit de database.</p>
+      <h3 class="text-lg font-bold text-slate-900 mb-1">Reguliere School Inplannen</h3>
+      <p class="text-xs text-slate-500 mb-4">Kies een datum (Ma t/m Vr) en selecteer een reguliere school.</p>
 
       <form onsubmit="handleAddSchoolPlanningSubmit(event)" class="space-y-4 text-xs">
         <div>
@@ -438,16 +598,7 @@
         </div>
 
         <div>
-          <label class="block font-bold text-slate-700 mb-1">Categorie Filter</label>
-          <div class="grid grid-cols-3 gap-1.5">
-            <button type="button" onclick="filterSchoolSelect('Regulier')" id="btnCatRegulier" class="py-1.5 rounded-lg bg-slate-800 text-white font-bold transition">Regulier</button>
-            <button type="button" onclick="filterSchoolSelect('On tour')" id="btnCatOntour" class="py-1.5 rounded-lg bg-slate-100 text-slate-700 font-bold transition">On tour</button>
-            <button type="button" onclick="filterSchoolSelect('Buitenland')" id="btnCatBuitenland" class="py-1.5 rounded-lg bg-slate-100 text-slate-700 font-bold transition">Buitenland</button>
-          </div>
-        </div>
-
-        <div>
-          <label class="block font-bold text-slate-700 mb-1">Selecteer School (Alfabetisch)</label>
+          <label class="block font-bold text-slate-700 mb-1">Selecteer School</label>
           <select id="selectSchoolName" required class="w-full p-2.5 bg-slate-50 border border-slate-300 rounded-xl font-medium"></select>
         </div>
 
@@ -465,7 +616,7 @@
       <div class="p-4 border-b border-slate-200 flex flex-wrap items-center justify-between gap-3 bg-slate-50">
         <div class="flex items-center gap-2">
           <span class="w-3 h-3 rounded-full bg-amber-500"></span>
-          <h2 class="font-bold text-slate-900 text-base md:text-lg">Admin &amp; Planning Beheer</h2>
+          <h2 class="font-bold text-slate-900 text-base md:text-lg">Admin &amp; Beheer</h2>
         </div>
 
         <div class="flex items-center gap-2">
@@ -483,7 +634,7 @@
       <div class="flex-1 overflow-y-auto p-4 md:p-6 custom-scrollbar bg-slate-100/60">
         <div id="adminTabPlanning" class="space-y-4">
           <div class="flex justify-between items-center bg-white p-4 rounded-2xl border border-slate-200">
-            <h3 class="font-bold text-slate-800 text-sm md:text-base">Maandoverzicht Opdrachten &amp; Gaten</h3>
+            <h3 class="font-bold text-slate-800 text-sm md:text-base">Reguliere Opdrachten &amp; Gaten</h3>
             <button onclick="openAddSchoolPlanningModal()" class="text-xs bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-3 py-2 rounded-xl transition flex items-center gap-1.5">
               <i class="fa-solid fa-plus"></i> School Inplannen
             </button>
@@ -493,24 +644,23 @@
 
         <div id="adminTabApprovals" class="hidden space-y-4">
           <div class="bg-white p-4 rounded-2xl border border-slate-200">
-            <h3 class="font-bold text-slate-800 mb-3 text-sm md:text-base">Openstaande Dag- &amp; Profielwijzigingen</h3>
+            <h3 class="font-bold text-slate-800 mb-3 text-sm md:text-base">Openstaande Wijzigingsverzoeken</h3>
             <div id="adminApprovalsList" class="space-y-2"></div>
           </div>
         </div>
 
         <div id="adminTabDocenten" class="hidden space-y-4">
           <div class="bg-white p-4 rounded-2xl border border-slate-200">
-            <h3 class="font-bold text-slate-800 mb-1 text-sm md:text-base">Vakdocenten Beheer &amp; Agenda's</h3>
-            <p class="text-xs text-slate-500 mb-4">Bekijk agenda's, beheer skill levels en reset pincodes.</p>
+            <h3 class="font-bold text-slate-800 mb-1 text-sm md:text-base">Vakdocenten &amp; Skill Levels</h3>
             <div class="overflow-x-auto">
               <table class="w-full text-left text-xs">
                 <thead class="bg-slate-50 border-b text-slate-500 uppercase font-bold">
                   <tr>
                     <th class="p-3">Docent</th>
                     <th class="p-3">Rol</th>
-                    <th class="p-3">Skill Level</th>
-                    <th class="p-3">Pincode</th>
-                    <th class="p-3 text-center">Agenda</th>
+                    <th class="p-3">Tour Pref</th>
+                    <th class="p-3">Skill</th>
+                    <th class="p-3">PIN</th>
                     <th class="p-3 text-right">Actie</th>
                   </tr>
                 </thead>
@@ -524,51 +674,14 @@
     </div>
   </div>
 
-  <!-- MODAL: VISUELE MAANDAGENDA VAKDOCENT -->
-  <div id="modalAdminDocentCalendar" class="fixed inset-0 bg-slate-950/90 z-50 hidden flex items-center justify-center p-2 md:p-6">
-    <div class="bg-white rounded-3xl w-full max-w-4xl max-h-[90vh] flex flex-col overflow-hidden shadow-2xl border border-slate-200">
-      <div class="p-4 border-b border-slate-200 flex items-center justify-between bg-slate-50">
-        <div class="flex items-center gap-2">
-          <span class="w-3 h-3 rounded-full bg-emerald-500"></span>
-          <h3 class="font-bold text-slate-900 text-sm md:text-base" id="adminDocentCalTitle">Agenda van ...</h3>
-        </div>
-        <button onclick="closeAdminDocentCalendar()" class="w-8 h-8 rounded-xl bg-slate-200 hover:bg-slate-300 text-slate-700 flex items-center justify-center transition">
-          <i class="fa-solid fa-xmark"></i>
-        </button>
-      </div>
-
-      <div class="p-3 px-4 border-b border-slate-100 flex flex-wrap items-center justify-between gap-2 bg-white">
-        <div class="flex items-center gap-2">
-          <button onclick="changeAdminDocentMonth(-1)" class="w-8 h-8 rounded-lg bg-slate-100 hover:bg-slate-200 flex items-center justify-center text-xs">
-            <i class="fa-solid fa-chevron-left"></i>
-          </button>
-          <span id="adminDocentCalMonthTitle" class="font-bold text-xs md:text-sm text-slate-800 capitalize min-w-[120px] text-center">Maand Jaar</span>
-          <button onclick="changeAdminDocentMonth(1)" class="w-8 h-8 rounded-lg bg-slate-100 hover:bg-slate-200 flex items-center justify-center text-xs">
-            <i class="fa-solid fa-chevron-right"></i>
-          </button>
-        </div>
-        <p class="text-[11px] text-slate-500 italic">
-          <i class="fa-solid fa-info-circle mr-1 text-emerald-600"></i> Keur direct dagen goed of wijs af vanuit de agenda.
-        </p>
-      </div>
-
-      <div class="flex-1 overflow-y-auto p-4 custom-scrollbar">
-        <div class="grid grid-cols-7 gap-2 mb-2 text-center text-[11px] font-bold text-slate-400 uppercase">
-          <div>Ma</div><div>Di</div><div>Wo</div><div>Do</div><div>Vr</div><div>Za</div><div>Zo</div>
-        </div>
-        <div id="adminDocentCalDaysGrid" class="grid grid-cols-7 gap-2"></div>
-      </div>
-    </div>
-  </div>
-
-  <!-- MODAL: KANDIDATEN KOPPELEN -->
+  <!-- MODAL: KANDIDATEN KOPPELEN (REGULIERE SCHOOL) -->
   <div id="modalCandidatePicker" class="fixed inset-0 bg-slate-950/80 z-50 hidden flex items-center justify-center p-4">
     <div class="w-full max-w-lg bg-white rounded-3xl p-6 shadow-2xl relative max-h-[85vh] flex flex-col">
       <button onclick="closeCandidatePicker()" class="absolute top-4 right-4 text-slate-400 hover:text-slate-600 w-8 h-8 rounded-full flex items-center justify-center">
         <i class="fa-solid fa-xmark"></i>
       </button>
 
-      <h3 class="font-bold text-slate-900 text-base md:text-lg mb-1" id="candidateModalTitle">Docent koppelen aan school</h3>
+      <h3 class="font-bold text-slate-900 text-base md:text-lg mb-1" id="candidateModalTitle">Docent koppelen</h3>
       <p class="text-xs text-slate-500 mb-4" id="candidateModalDate"></p>
 
       <div class="flex-1 overflow-y-auto space-y-4 custom-scrollbar pr-1">
@@ -606,16 +719,21 @@
     let availabilityCache = {}; 
     let selectedDayForPicker = null;
 
-    let plannerViewMode = 'month';
+    // Planner Dashboard State
+    let plannerViewMode = '3weeks'; // '3weeks' (default) | 'month' | 'week'
     let plannerCurrentDate = new Date();
+
+    // On Tour State
+    let currentActiveOnTours = [];
+    let selectedTourForRegistration = null;
+    let activeOtChoice = null; // 'HELE_WEEK' | 'NEE' | 'DEELS'
+    let selectedOtDays = { Ma: false, Di: false, Wo: false, Do: false, Vr: false };
+    let selectedTourForCandidate = null;
 
     let clockClicks = 0;
     let clockTimer = null;
-
-    let adminData = { docenten: [], availability: [], planning: [], profielAanvragen: [], schools: [] };
+    let adminData = { docenten: [], availability: [], planning: [], onTours: [], onTourInschrijvingen: [], profielAanvragen: [], schools: [] };
     let selectedPlanningForCandidate = null;
-    let viewingAdminDocent = null;
-    let adminDocentCalDate = new Date();
 
     window.addEventListener('DOMContentLoaded', () => {
       startClock();
@@ -650,9 +768,6 @@
         clockClicks = 0;
         localStorage.clear();
         sessionStorage.clear();
-        if ('caches' in window) {
-          caches.keys().then(names => names.forEach(name => caches.delete(name)));
-        }
         alert("🔄 Cache & data geleegd! Pagina wordt vernieuwd.");
         window.location.href = window.location.pathname + '?t=' + Date.now();
       }
@@ -700,14 +815,11 @@
 
     async function apiCall(endpoint, method = "GET", payload = null) {
       if (!API_URL || API_URL.trim() === "") return { success: false, error: "Geen API URL" };
-
       try {
         let response;
         if (method === "GET") {
           const url = new URL(API_URL);
-          for (const key in payload) {
-            url.searchParams.append(key, payload[key]);
-          }
+          for (const key in payload) url.searchParams.append(key, payload[key]);
           response = await fetch(url.toString(), { method: "GET" });
         } else {
           response = await fetch(API_URL, {
@@ -718,7 +830,6 @@
         }
         return await response.json();
       } catch (err) {
-        console.error("API Fout:", err);
         return { success: false, error: err.toString() };
       }
     }
@@ -749,8 +860,7 @@
         renderDocentenButtons(docentenCache);
         return;
       }
-      const filtered = docentenCache.filter(d => d.naam.toLowerCase().includes(input));
-      renderDocentenButtons(filtered);
+      renderDocentenButtons(docentenCache.filter(d => d.naam.toLowerCase().includes(input)));
     }
 
     function renderDocentenButtons(list) {
@@ -798,15 +908,9 @@
           if (res.success) {
             currentPin = pin;
             currentDocent.needsPinSetup = false;
-            const cached = docentenCache.find(d => d.id === docent.id);
-            if (cached) cached.needsPinSetup = false;
-            
             closePinModal();
-            if (currentDocent.isPlanner) {
-              initPlannerView();
-            } else {
-              openProfileModal(false);
-            }
+            if (currentDocent.isPlanner) initPlannerView();
+            else openProfileModal(false);
           } else {
             showPinError(res.error || "Fout bij instellen.");
           }
@@ -819,13 +923,9 @@
             currentDocent = { ...currentDocent, ...res.docent };
             closePinModal();
 
-            if (currentDocent.isPlanner) {
-              initPlannerView();
-            } else if (!currentDocent.onboardingKlaar) {
-              openProfileModal(false);
-            } else {
-              initCalendarView();
-            }
+            if (currentDocent.isPlanner) initPlannerView();
+            else if (!currentDocent.onboardingKlaar) openProfileModal(false);
+            else initCalendarView();
           } else {
             showPinError("Onjuiste pincode. Probeer opnieuw.");
           }
@@ -853,10 +953,7 @@
         enteredPin += digit;
         updatePinDots();
         if (enteredPin.length === 4 && pinCallback) {
-          setTimeout(() => {
-            const cb = pinCallback;
-            cb(enteredPin);
-          }, 80);
+          setTimeout(() => pinCallback(enteredPin), 80);
         }
       }
     }
@@ -894,6 +991,14 @@
       updatePinDots();
     }
 
+    // ==========================================
+    // ONBOARDING MET CONDITIONELE LOGICA
+    // ==========================================
+    function toggleOnboardingRegularFields() {
+      const isAlleenTour = document.querySelector('input[name="alleenOnTour"]:checked')?.value === 'Ja';
+      document.getElementById('wrapperRegularQuestions').style.display = isAlleenTour ? 'none' : 'block';
+    }
+
     function openProfileModal(isEdit = false) {
       const modal = document.getElementById('modalOnboarding');
       const form = document.getElementById('onboardingForm');
@@ -906,25 +1011,27 @@
 
       if (isEdit) {
         title.innerText = "Voorkeuren Aanpassen";
-        subtitle.innerText = "Pas je voorkeuren en beschikbaarheidsinstellingen aan.";
+        subtitle.innerText = "Pas je voorkeuren en beschikbaarheid aan.";
         btnCancel.classList.remove('hidden');
         notice.classList.remove('hidden');
         
         if (currentDocent) {
+          setRadioGroup('alleenOnTour', currentDocent.alleenOnTour || "Nee");
           document.getElementById('obWerkDagen').value = currentDocent.werkDagenPwk || "3 dagen";
           setCheckboxGroup('vasteDagen', currentDocent.vasteDagen || []);
-          setRadioGroup('alleenOnTour', currentDocent.alleenOnTour || "Nee");
           setRadioGroup('rijbewijs', currentDocent.rijbewijs || "Ja");
           setRadioGroup('auto', currentDocent.auto || "Ja");
           setCheckboxGroup('voorkeursDagen', currentDocent.voorkeursDagen || []);
         }
       } else {
         title.innerText = "Welkom! Even kennismaken 👋";
-        subtitle.innerText = "Vul onderstaande vragen in om je beschikbaarheid optimaal in te richten.";
+        subtitle.innerText = "Geef je voorkeuren door voor het schooljaar.";
         btnCancel.classList.add('hidden');
         notice.classList.add('hidden');
+        setRadioGroup('alleenOnTour', "Nee");
       }
 
+      toggleOnboardingRegularFields();
       modal.classList.remove('hidden');
     }
 
@@ -934,18 +1041,19 @@
 
     async function handleOnboardingSubmit(e) {
       e.preventDefault();
-
       const btn = document.getElementById('btnSaveOnboarding');
       btn.innerHTML = `<i class="fa-solid fa-circle-notch fa-spin"></i> Opslaan...`;
       btn.disabled = true;
 
+      const isAlleenTour = getRadioGroup('alleenOnTour') === 'Ja';
+
       const payloadData = {
-        werkDagenPwk: document.getElementById('obWerkDagen').value,
-        vasteDagen: getCheckboxGroup('vasteDagen'),
-        alleenOnTour: getRadioGroup('alleenOnTour'),
+        alleenOnTour: isAlleenTour ? 'Ja' : 'Nee',
+        werkDagenPwk: isAlleenTour ? '' : document.getElementById('obWerkDagen').value,
+        vasteDagen: isAlleenTour ? [] : getCheckboxGroup('vasteDagen'),
         rijbewijs: getRadioGroup('rijbewijs'),
         auto: getRadioGroup('auto'),
-        voorkeursDagen: getCheckboxGroup('voorkeursDagen')
+        voorkeursDagen: isAlleenTour ? [] : getCheckboxGroup('voorkeursDagen')
       };
 
       if (!currentDocent.onboardingKlaar) {
@@ -955,7 +1063,6 @@
           pin: currentPin,
           formData: payloadData
         });
-
         btn.innerHTML = `Opslaan &amp; Doorgaan`;
         btn.disabled = false;
 
@@ -963,9 +1070,7 @@
           currentDocent = { ...currentDocent, ...payloadData, onboardingKlaar: true };
           closeOnboardingModal();
           initCalendarView();
-        } else {
-          alert("Fout bij opslaan: " + res.error);
-        }
+        } else alert("Fout: " + res.error);
       } else {
         const res = await apiCall("", "POST", {
           action: "requestProfileChange",
@@ -973,12 +1078,10 @@
           pin: currentPin,
           newProfile: payloadData
         });
-
         btn.innerHTML = `Opslaan &amp; Doorgaan`;
         btn.disabled = false;
-
         if (res.success) {
-          alert("Je wijzigingsverzoek is ingediend en wordt verwerkt na akkoord van de planning.");
+          alert("Je wijzigingsverzoek is ingediend!");
           closeOnboardingModal();
         }
       }
@@ -999,7 +1102,10 @@
       if (el) el.checked = true;
     }
 
-    function initCalendarView() {
+    // ==========================================
+    // VAKDOCENT 5-DAAGSE KALENDER & ON TOURS
+    // ==========================================
+    async function initCalendarView() {
       document.getElementById('viewLanding').classList.add('hidden');
       document.getElementById('viewPlannerDashboard').classList.add('hidden');
       document.getElementById('landingFooterBar').classList.add('hidden');
@@ -1012,15 +1118,11 @@
       document.getElementById('headerRoleBadge').className = "w-2 h-2 rounded-full bg-emerald-500";
 
       currentCalendarDate = new Date();
-      loadAvailabilityAndRender();
+      await Promise.all([loadAvailabilityAndRender(), loadDocentOnTours()]);
     }
 
     async function loadAvailabilityAndRender() {
-      const res = await apiCall("", "GET", {
-        action: "getAvailability",
-        docentId: currentDocent.id,
-        pin: currentPin
-      });
+      const res = await apiCall("", "GET", { action: "getAvailability", docentId: currentDocent.id, pin: currentPin });
       if (res.success) {
         availabilityCache = {};
         res.availability.forEach(item => {
@@ -1028,27 +1130,20 @@
           availabilityCache[normD] = { ...item, datum: normD };
         });
       }
-      renderCalendar();
+      render5DayCalendar();
     }
 
     async function manualRefreshCalendar() {
       const icon = document.getElementById('iconRefresh');
-      const text = document.getElementById('textRefresh');
       icon.classList.add('fa-spin');
-      text.innerText = "Synchroniseren...";
-      await loadAvailabilityAndRender();
-      setTimeout(() => {
-        icon.classList.remove('fa-spin');
-        text.innerText = "Vernieuwen";
-      }, 400);
+      await Promise.all([loadAvailabilityAndRender(), loadDocentOnTours()]);
+      setTimeout(() => icon.classList.remove('fa-spin'), 400);
     }
 
-    function renderCalendar() {
+    function render5DayCalendar() {
       const year = currentCalendarDate.getFullYear();
       const month = currentCalendarDate.getMonth();
-      
-      const titleMonth = new Intl.DateTimeFormat('nl-NL', { month: 'long', year: 'numeric' }).format(currentCalendarDate);
-      document.getElementById('calendarMonthTitle').innerText = titleMonth;
+      document.getElementById('calendarMonthTitle').innerText = new Intl.DateTimeFormat('nl-NL', { month: 'long', year: 'numeric' }).format(currentCalendarDate);
 
       const now = new Date();
       const diffMonths = (year - now.getFullYear()) * 12 + (month - now.getMonth());
@@ -1058,14 +1153,16 @@
       const firstDayOfMonth = new Date(year, month, 1);
       const daysInMonth = new Date(year, month + 1, 0).getDate();
       
-      let startDayOfWeek = firstDayOfMonth.getDay() - 1;
+      let startDayOfWeek = firstDayOfMonth.getDay() - 1; // 0=Ma, 4=Vr, 5=Za, 6=Zo
       if (startDayOfWeek === -1) startDayOfWeek = 6;
 
       const grid = document.getElementById('calendarDaysGrid');
       grid.innerHTML = "";
 
-      for (let i = 0; i < startDayOfWeek; i++) {
-        grid.innerHTML += `<div class="h-20 md:h-24 bg-slate-50/50 rounded-xl border border-transparent"></div>`;
+      // Indien maand start op za of zo, schuif lege vakjes niet door naar 5-daagse werkweek
+      const leadingEmpty = startDayOfWeek <= 4 ? startDayOfWeek : 0;
+      for (let i = 0; i < leadingEmpty; i++) {
+        grid.innerHTML += `<div class="h-20 bg-slate-50/50 rounded-xl border border-transparent"></div>`;
       }
 
       const prefDays = currentDocent.voorkeursDagen || [];
@@ -1073,8 +1170,13 @@
 
       for (let day = 1; day <= daysInMonth; day++) {
         const dObj = new Date(year, month, day);
+        const dayOfWeek = dObj.getDay();
+
+        // Sla Zaterdag (6) en Zondag (0) volledig over
+        if (dayOfWeek === 0 || dayOfWeek === 6) continue;
+
         const isoDate = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
-        const dayOfWeekShort = dayNamesMap[dObj.getDay()];
+        const dayOfWeekShort = dayNamesMap[dayOfWeek];
         const isPreferred = prefDays.includes(dayOfWeekShort);
 
         const avail = availabilityCache[isoDate];
@@ -1082,13 +1184,10 @@
         let statusBadge = "";
 
         if (avail) {
-          if (avail.isSaving) {
-            statusBg = "bg-amber-50 border-amber-300 text-amber-900 animate-pulse";
-            statusBadge = `<span class="text-[10px] bg-amber-500 text-white px-1.5 py-0.5 rounded font-bold flex items-center gap-1"><i class="fa-solid fa-circle-notch fa-spin"></i> Opslaan</span>`;
-          } else if (avail.goedkeuring === "IN_BEHANDELING") {
+          if (avail.goedkeuring === "IN_BEHANDELING") {
             statusBg = "bg-slate-100 border-slate-300 text-slate-800";
             const transText = avail.vorigeStatus ? `${avail.vorigeStatus} ➔ ${avail.status}` : avail.status;
-            statusBadge = `<span class="text-[9px] bg-slate-600 text-white px-1.5 py-0.5 rounded font-bold flex items-center gap-1">⏳ ${transText}</span>`;
+            statusBadge = `<span class="text-[9px] bg-slate-600 text-white px-1.5 py-0.5 rounded font-bold">⏳ ${transText}</span>`;
           } else if (avail.status === "JA") {
             statusBg = "bg-emerald-100 border-emerald-300 text-emerald-900";
             statusBadge = `<span class="text-[10px] bg-emerald-600 text-white px-1.5 py-0.5 rounded font-bold">🟢 Ja</span>`;
@@ -1102,10 +1201,10 @@
         }
 
         const cell = document.createElement('div');
-        cell.className = `h-20 md:h-24 p-2 rounded-2xl border transition-all cursor-pointer flex flex-col justify-between ${statusBg} active:scale-95 shadow-sm`;
+        cell.className = `h-20 p-2 rounded-2xl border transition cursor-pointer flex flex-col justify-between ${statusBg} active:scale-95 shadow-sm`;
         cell.innerHTML = `
           <div class="flex items-center justify-between">
-            <span class="font-bold text-sm md:text-base">${day}</span>
+            <span class="font-bold text-sm">${day}</span>
             ${isPreferred ? '<i class="fa-solid fa-star text-amber-500 text-xs" title="Voorkeursdag"></i>' : ''}
           </div>
           <div class="truncate">${statusBadge}</div>
@@ -1117,13 +1216,12 @@
 
     function changeMonth(delta) {
       currentCalendarDate.setMonth(currentCalendarDate.getMonth() + delta);
-      renderCalendar();
+      render5DayCalendar();
     }
 
     function openDayPicker(isoDate, dateObj, dayName) {
       selectedDayForPicker = { isoDate: normalizeDateStr(isoDate), dateObj, dayName };
-      const formatted = dateObj.toLocaleDateString('nl-NL', { weekday: 'long', day: 'numeric', month: 'long' });
-      document.getElementById('dayPickerDateTitle').innerText = formatted;
+      document.getElementById('dayPickerDateTitle').innerText = dateObj.toLocaleDateString('nl-NL', { weekday: 'long', day: 'numeric', month: 'long' });
       document.getElementById('labelApply3Months').innerText = `Toepassen op alle ${dayName}-dagen voor de komende 3 maanden`;
       document.getElementById('checkApply3Months').checked = false;
       document.getElementById('modalDayPicker').classList.remove('hidden');
@@ -1135,7 +1233,6 @@
 
     async function submitDayStatus(status) {
       if (!selectedDayForPicker) return;
-
       const entries = [];
       const apply3Months = document.getElementById('checkApply3Months').checked;
 
@@ -1150,29 +1247,195 @@
           if (curr.getDay() === targetDayOfWeek) {
             const iso = `${curr.getFullYear()}-${String(curr.getMonth() + 1).padStart(2, '0')}-${String(curr.getDate()).padStart(2, '0')}`;
             entries.push({ datum: iso, status: status });
-            const prev = availabilityCache[iso]?.status || "";
-            availabilityCache[iso] = { status: status, goedkeuring: "GOEDGEKEURD", vorigeStatus: prev };
+            availabilityCache[iso] = { status, goedkeuring: "GOEDGEKEURD" };
           }
           curr.setDate(curr.getDate() + 1);
         }
       } else {
         const iso = selectedDayForPicker.isoDate;
-        const prev = availabilityCache[iso]?.status || "";
         entries.push({ datum: iso, status: status });
-        availabilityCache[iso] = { status: status, goedkeuring: "GOEDGEKEURD", vorigeStatus: prev };
+        availabilityCache[iso] = { status, goedkeuring: "GOEDGEKEURD" };
       }
 
       closeDayPicker();
-      renderCalendar();
+      render5DayCalendar();
 
-      await apiCall("", "POST", {
-        action: "setAvailability",
-        docentId: currentDocent.id,
-        pin: currentPin,
-        entries: entries
+      await apiCall("", "POST", { action: "setAvailability", docentId: currentDocent.id, pin: currentPin, entries });
+    }
+
+    // ==========================================
+    // ON TOURS MODULE (DOCENT VIEW)
+    // ==========================================
+    async function loadDocentOnTours() {
+      const res = await apiCall("", "GET", { action: "getOnToursOverview", docentId: currentDocent.id });
+      if (res.success) {
+        currentActiveOnTours = res.tours || [];
+        renderDocentOnToursSidebar();
+      }
+    }
+
+    function calculateDeadlineStatus(startDatumStr) {
+      const now = new Date();
+      const startDate = new Date(startDatumStr);
+      // Deadline = 4 weken (28 dagen) voor aanvang
+      const deadlineDate = new Date(startDate.getTime() - (28 * 24 * 60 * 60 * 1000));
+      const diffDays = Math.ceil((deadlineDate - now) / (1000 * 60 * 60 * 24));
+
+      if (diffDays <= 0) {
+        return { isClosed: true, label: "Inschrijving gesloten", colorClass: "text-slate-400 bg-slate-100" };
+      } else if (diffDays <= 7) {
+        return { isClosed: false, label: `Nog ${diffDays} dag${diffDays > 1 ? 'en' : ''}`, colorClass: "text-rose-700 bg-rose-50 border border-rose-200 animate-pulse" };
+      } else if (diffDays <= 30) {
+        return { isClosed: false, label: `Nog ${Math.ceil(diffDays / 7)} weken`, colorClass: "text-amber-800 bg-amber-50 border border-amber-200" };
+      } else {
+        return { isClosed: false, label: `Nog ${Math.round(diffDays / 30)} mnd`, colorClass: "text-sky-800 bg-sky-50 border border-sky-200" };
+      }
+    }
+
+    function renderDocentOnToursSidebar() {
+      const container = document.getElementById('docentOnToursList');
+      container.innerHTML = "";
+      document.getElementById('countOnToursDocent').innerText = currentActiveOnTours.length;
+
+      if (currentActiveOnTours.length === 0) {
+        container.innerHTML = `<div class="text-xs text-slate-400 p-4 text-center">Geen actieve On Tours ingepland.</div>`;
+        return;
+      }
+
+      currentActiveOnTours.forEach(tour => {
+        const dl = calculateDeadlineStatus(tour.startDatum);
+        const myReg = tour.myRegistration;
+        let badgeStatus = '<span class="text-[10px] bg-slate-100 text-slate-500 font-bold px-2 py-0.5 rounded-full">⚪ Nog niet ingevuld</span>';
+
+        if (myReg) {
+          if (myReg.status === "HELE_WEEK") badgeStatus = '<span class="text-[10px] bg-emerald-100 text-emerald-800 font-bold px-2 py-0.5 rounded-full">🟢 Hele week</span>';
+          else if (myReg.status === "DEELS") badgeStatus = `<span class="text-[10px] bg-amber-100 text-amber-800 font-bold px-2 py-0.5 rounded-full">🟠 Deels (${myReg.gekozenDagen.join(',')})</span>`;
+          else if (myReg.status === "NEE") badgeStatus = '<span class="text-[10px] bg-rose-100 text-rose-800 font-bold px-2 py-0.5 rounded-full">🔴 Niet beschikbaar</span>';
+        }
+
+        const card = document.createElement('div');
+        card.className = "p-3 bg-slate-50 hover:bg-slate-100 rounded-2xl border border-slate-200 transition cursor-pointer shadow-sm flex flex-col justify-between";
+        card.onclick = () => openOnTourRegisterModal(tour, dl);
+
+        card.innerHTML = `
+          <div>
+            <div class="flex items-center justify-between mb-1">
+              <span class="text-[11px] font-extrabold text-slate-900 truncate">${tour.schoolNaam}</span>
+              <span class="text-[10px] font-bold px-2 py-0.5 rounded-md ${dl.colorClass}">${dl.label}</span>
+            </div>
+            <div class="text-[11px] text-slate-500 flex items-center gap-1.5 mb-2">
+              <i class="fa-regular fa-calendar text-[10px]"></i>
+              <span>${tour.startDatum} t/m ${tour.eindDatum}</span>
+              ${tour.locatie ? `<span class="text-slate-400">• 📍 ${tour.locatie}</span>` : ''}
+              ${tour.isBuitenland ? `<span class="text-sky-600 font-bold">🌍 ${tour.land}</span>` : ''}
+            </div>
+          </div>
+          <div class="pt-2 border-t border-slate-200/60 flex items-center justify-between">
+            <span class="text-[10px] text-slate-400 font-semibold">Jouw status:</span>
+            ${badgeStatus}
+          </div>
+        `;
+        container.appendChild(card);
       });
     }
 
+    function openOnTourRegisterModal(tour, dl) {
+      if (dl.isClosed) {
+        alert("De inschrijftermijn voor deze On Tour is helaas gesloten (minder dan 4 weken voor aanvang).");
+        return;
+      }
+
+      selectedTourForRegistration = tour;
+      document.getElementById('otRegSchoolTitle').innerText = tour.schoolNaam;
+      document.getElementById('otRegDatesLoc').innerText = `${tour.startDatum} t/m ${tour.eindDatum} ${tour.locatie ? `• 📍 ${tour.locatie}` : ''} ${tour.isBuitenland ? `• 🌍 ${tour.land}` : ''}`;
+      document.getElementById('otRegDeadlinetxt').innerText = dl.label;
+
+      const myReg = tour.myRegistration;
+      if (myReg) {
+        setOnTourChoice(myReg.status, myReg.gekozenDagen);
+      } else {
+        setOnTourChoice('HELE_WEEK');
+      }
+
+      document.getElementById('modalOnTourRegister').classList.remove('hidden');
+    }
+
+    function closeOnTourRegisterModal() {
+      document.getElementById('modalOnTourRegister').classList.add('hidden');
+    }
+
+    function setOnTourChoice(choice, customDays = null) {
+      activeOtChoice = choice;
+      const days = ['Ma', 'Di', 'Wo', 'Do', 'Vr'];
+
+      document.getElementById('btnOtChoiceJa').className = choice === 'HELE_WEEK' ? 'py-2.5 rounded-xl bg-emerald-600 text-white font-bold text-xs shadow-sm' : 'py-2.5 rounded-xl bg-white border font-bold text-xs';
+      document.getElementById('btnOtChoiceNee').className = choice === 'NEE' ? 'py-2.5 rounded-xl bg-rose-600 text-white font-bold text-xs shadow-sm' : 'py-2.5 rounded-xl bg-white border font-bold text-xs';
+      document.getElementById('btnOtChoiceDeels').className = choice === 'DEELS' ? 'py-2.5 rounded-xl bg-amber-500 text-white font-bold text-xs shadow-sm' : 'py-2.5 rounded-xl bg-white border font-bold text-xs';
+
+      if (choice === 'HELE_WEEK') {
+        days.forEach(d => {
+          selectedOtDays[d] = true;
+          updateOtDayBlockUi(d, true, false);
+        });
+      } else if (choice === 'NEE') {
+        days.forEach(d => {
+          selectedOtDays[d] = false;
+          updateOtDayBlockUi(d, false, false);
+        });
+      } else if (choice === 'DEELS') {
+        days.forEach(d => {
+          selectedOtDays[d] = customDays ? customDays.includes(d) : false;
+          updateOtDayBlockUi(d, selectedOtDays[d], true);
+        });
+      }
+    }
+
+    function toggleOtSingleDay(d) {
+      if (activeOtChoice !== 'DEELS') return;
+      selectedOtDays[d] = !selectedOtDays[d];
+      updateOtDayBlockUi(d, selectedOtDays[d], true);
+    }
+
+    function updateOtDayBlockUi(day, isGreen, isClickable) {
+      const el = document.getElementById(`otDay_${day}`);
+      if (isGreen) {
+        el.className = `p-2.5 rounded-xl border bg-emerald-500 text-white font-bold transition ${isClickable ? 'cursor-pointer' : 'cursor-default'}`;
+      } else {
+        el.className = `p-2.5 rounded-xl border bg-rose-500 text-white font-bold transition ${isClickable ? 'cursor-pointer' : 'cursor-default'}`;
+      }
+    }
+
+    async function submitOnTourRegistration() {
+      if (!selectedTourForRegistration) return;
+      const btn = document.getElementById('btnSubmitOtReg');
+      btn.innerHTML = `<i class="fa-solid fa-circle-notch fa-spin"></i>`;
+      btn.disabled = true;
+
+      const chosen = Object.keys(selectedOtDays).filter(d => selectedOtDays[d]);
+
+      const payload = {
+        tourId: selectedTourForRegistration.tourId,
+        status: activeOtChoice,
+        gekozenDagen: chosen,
+        startDatum: selectedTourForRegistration.startDatum,
+        eindDatum: selectedTourForRegistration.eindDatum
+      };
+
+      // Direct lokaal updaten
+      selectedTourForRegistration.myRegistration = { status: activeOtChoice, gekozenDagen: chosen };
+      closeOnTourRegisterModal();
+      renderDocentOnToursSidebar();
+
+      btn.innerHTML = `Indienen`;
+      btn.disabled = false;
+
+      await apiCall("", "POST", { action: "submitOnTourRegistration", docentId: currentDocent.id, pin: currentPin, registration: payload });
+      await loadDocentOnTours();
+    }
+
+    // ==========================================
+    // PLANNER DASHBOARD (3 WEKEN / MAAND / WEEK)
+    // ==========================================
     async function initPlannerView() {
       document.getElementById('viewLanding').classList.add('hidden');
       document.getElementById('viewCalendar').classList.add('hidden');
@@ -1186,12 +1449,13 @@
       document.getElementById('headerRoleBadge').className = "w-2 h-2 rounded-full bg-amber-500 animate-pulse";
 
       plannerCurrentDate = new Date();
+      setPlannerViewMode('3weeks');
       await loadAdminData();
-      renderPlannerGrid();
     }
 
     function setPlannerViewMode(mode) {
       plannerViewMode = mode;
+      document.getElementById('btnPlanView3Weeks').className = mode === '3weeks' ? 'px-3 py-1.5 rounded-lg bg-white text-slate-900 shadow-sm transition' : 'px-3 py-1.5 rounded-lg text-slate-600 hover:text-slate-900 transition';
       document.getElementById('btnPlanViewMonth').className = mode === 'month' ? 'px-3 py-1.5 rounded-lg bg-white text-slate-900 shadow-sm transition' : 'px-3 py-1.5 rounded-lg text-slate-600 hover:text-slate-900 transition';
       document.getElementById('btnPlanViewWeek').className = mode === 'week' ? 'px-3 py-1.5 rounded-lg bg-white text-slate-900 shadow-sm transition' : 'px-3 py-1.5 rounded-lg text-slate-600 hover:text-slate-900 transition';
       renderPlannerGrid();
@@ -1200,8 +1464,10 @@
     function changePlannerPeriod(delta) {
       if (plannerViewMode === 'month') {
         plannerCurrentDate.setMonth(plannerCurrentDate.getMonth() + delta);
-      } else {
+      } else if (plannerViewMode === 'week') {
         plannerCurrentDate.setDate(plannerCurrentDate.getDate() + (delta * 7));
+      } else {
+        plannerCurrentDate.setDate(plannerCurrentDate.getDate() + (delta * 21));
       }
       renderPlannerGrid();
     }
@@ -1210,42 +1476,66 @@
       const grid = document.getElementById('plannerDaysGrid');
       grid.innerHTML = "";
 
-      if (plannerViewMode === 'month') {
+      if (plannerViewMode === '3weeks') {
+        // Huidige week + 3 opvolgende weken (totaal 4 werkweken = 20 dagen)
+        const curr = new Date(plannerCurrentDate);
+        const dayOfWeek = curr.getDay();
+        const distanceToMonday = (dayOfWeek + 6) % 7;
+        const startMonday = new Date(curr);
+        startMonday.setDate(curr.getDate() - distanceToMonday);
+
+        const endFriday = new Date(startMonday);
+        endFriday.setDate(startMonday.getDate() + 25);
+
+        const optD = { day: 'numeric', month: 'short' };
+        document.getElementById('plannerPeriodTitle').innerText = `${startMonday.toLocaleDateString('nl-NL', optD)} - ${endFriday.toLocaleDateString('nl-NL', optD)}`;
+
+        for (let w = 0; w < 4; w++) {
+          for (let d = 0; d < 5; d++) {
+            const dayDate = new Date(startMonday);
+            dayDate.setDate(startMonday.getDate() + (w * 7) + d);
+            const isoDate = normalizeDateStr(dayDate);
+            renderPlannerDayCell(grid, isoDate, `${dayDate.getDate()} ${dayDate.toLocaleDateString('nl-NL', { month: 'short' })}`);
+          }
+        }
+      } else if (plannerViewMode === 'month') {
         const year = plannerCurrentDate.getFullYear();
         const month = plannerCurrentDate.getMonth();
-        const titleMonth = new Intl.DateTimeFormat('nl-NL', { month: 'long', year: 'numeric' }).format(plannerCurrentDate);
-        document.getElementById('plannerPeriodTitle').innerText = titleMonth;
+        document.getElementById('plannerPeriodTitle').innerText = new Intl.DateTimeFormat('nl-NL', { month: 'long', year: 'numeric' }).format(plannerCurrentDate);
 
         const firstDayOfMonth = new Date(year, month, 1);
         const daysInMonth = new Date(year, month + 1, 0).getDate();
         let startDayOfWeek = firstDayOfMonth.getDay() - 1;
         if (startDayOfWeek === -1) startDayOfWeek = 6;
+        const leadingEmpty = startDayOfWeek <= 4 ? startDayOfWeek : 0;
 
-        for (let i = 0; i < startDayOfWeek; i++) {
+        for (let i = 0; i < leadingEmpty; i++) {
           grid.innerHTML += `<div class="h-28 bg-slate-50/50 rounded-xl border border-transparent"></div>`;
         }
 
         for (let day = 1; day <= daysInMonth; day++) {
+          const dObj = new Date(year, month, day);
+          if (dObj.getDay() === 0 || dObj.getDay() === 6) continue;
           const isoDate = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
           renderPlannerDayCell(grid, isoDate, day);
         }
       } else {
+        // Weekoverzicht (Ma t/m Vr)
         const curr = new Date(plannerCurrentDate);
-        const dayOfWeek = curr.getDay();
-        const distanceToMonday = (dayOfWeek + 6) % 7;
+        const distanceToMonday = (curr.getDay() + 6) % 7;
         const monday = new Date(curr);
         monday.setDate(curr.getDate() - distanceToMonday);
 
-        const sunday = new Date(monday);
-        sunday.setDate(monday.getDate() + 6);
+        const friday = new Date(monday);
+        friday.setDate(monday.getDate() + 4);
 
         const optD = { day: 'numeric', month: 'short' };
-        document.getElementById('plannerPeriodTitle').innerText = `${monday.toLocaleDateString('nl-NL', optD)} - ${sunday.toLocaleDateString('nl-NL', optD)}`;
+        document.getElementById('plannerPeriodTitle').innerText = `${monday.toLocaleDateString('nl-NL', optD)} - ${friday.toLocaleDateString('nl-NL', optD)}`;
 
-        for (let i = 0; i < 7; i++) {
+        for (let i = 0; i < 5; i++) {
           const dayDate = new Date(monday);
           dayDate.setDate(monday.getDate() + i);
-          const isoDate = `${dayDate.getFullYear()}-${String(dayDate.getMonth() + 1).padStart(2, '0')}-${String(dayDate.getDate()).padStart(2, '0')}`;
+          const isoDate = normalizeDateStr(dayDate);
           renderPlannerDayCell(grid, isoDate, `${dayDate.getDate()} ${dayDate.toLocaleDateString('nl-NL', { month: 'short' })}`);
         }
       }
@@ -1261,14 +1551,13 @@
       plans.forEach(plan => {
         const doc = adminData.docenten.find(d => d.id === plan.toegewezenDocentId);
         const isAssigned = !!plan.toegewezenDocentId;
-        const catBadge = plan.categorie === "On tour" ? "✈️" : (plan.categorie === "Buitenland" ? "🌍" : "🏫");
 
         plansHtml += `
           <div onclick="openCandidatePicker('${plan.planningId}', '${plan.datum}', '${plan.schoolNaam}')" class="p-1.5 rounded-lg border text-[10px] cursor-pointer transition flex items-center justify-between ${
             isAssigned ? 'bg-emerald-50 border-emerald-200 text-emerald-900' : 'bg-rose-50 border-rose-200 text-rose-900 animate-pulse'
           }">
             <div class="truncate">
-              <span>${catBadge} <strong>${plan.schoolNaam}</strong></span>
+              <span>🏫 <strong>${plan.schoolNaam}</strong></span>
               <div class="text-[9px] text-slate-500">${doc ? doc.naam : 'GAT (Geen docent)'}</div>
             </div>
           </div>
@@ -1278,12 +1567,12 @@
       cell.innerHTML = `
         <div class="flex items-center justify-between">
           <span class="font-extrabold text-xs text-slate-700">${label}</span>
-          <button onclick="quickAddSchoolToDate('${normalizedIso}')" title="School toevoegen op deze dag" class="w-5 h-5 rounded-md bg-white border border-slate-200 hover:bg-emerald-50 hover:text-emerald-700 flex items-center justify-center text-[10px] text-slate-500">
+          <button onclick="quickAddSchoolToDate('${normalizedIso}')" title="School inplannen" class="w-5 h-5 rounded-md bg-white border border-slate-200 hover:bg-emerald-50 hover:text-emerald-700 flex items-center justify-center text-[10px] text-slate-500">
             <i class="fa-solid fa-plus"></i>
           </button>
         </div>
         <div class="flex-1 overflow-y-auto custom-scrollbar space-y-1 my-1">
-          ${plansHtml || '<span class="text-[10px] text-slate-300 block text-center pt-3">Geen opdrachten</span>'}
+          ${plansHtml || '<span class="text-[10px] text-slate-300 block text-center pt-3">Geen lessen</span>'}
         </div>
       `;
       container.appendChild(cell);
@@ -1294,13 +1583,205 @@
       openAddSchoolPlanningModal();
     }
 
-    let currentSchoolFilterCat = 'Regulier';
+    // ==========================================
+    // ON TOUR BEHEER (PLANNER)
+    // ==========================================
+    function renderPlannerOnToursList() {
+      const container = document.getElementById('plannerOnToursList');
+      container.innerHTML = "";
 
+      if (!adminData.onTours || adminData.onTours.length === 0) {
+        container.innerHTML = `<div class="text-xs text-slate-400 p-4 text-center">Nog geen On Tours aangemaakt.</div>`;
+        return;
+      }
+
+      adminData.onTours.forEach(tour => {
+        const assignedDoc = adminData.docenten.find(d => d.id === tour.toegewezenDocentId);
+        const card = document.createElement('div');
+        card.className = "p-3 bg-slate-50 hover:bg-slate-100 rounded-2xl border border-slate-200 transition shadow-sm flex flex-col justify-between";
+        card.innerHTML = `
+          <div>
+            <div class="flex items-center justify-between mb-1">
+              <span class="text-xs font-extrabold text-slate-900">${tour.schoolNaam}</span>
+              ${tour.toegewezenDocentId 
+                ? '<span class="text-[10px] bg-emerald-100 text-emerald-800 font-bold px-2 py-0.5 rounded-full">Bemand</span>' 
+                : '<span class="text-[10px] bg-rose-100 text-rose-800 font-bold px-2 py-0.5 rounded-full animate-pulse">GAT</span>'}
+            </div>
+            <div class="text-[11px] text-slate-500 mb-2">
+              📅 ${tour.startDatum} t/m ${tour.eindDatum}
+              ${tour.locatie ? `• 📍 ${tour.locatie}` : ''}
+              ${tour.isBuitenland ? `<span class="text-sky-600 font-bold">• 🌍 ${tour.land}</span>` : ''}
+            </div>
+            <p class="text-[11px] text-slate-600 mb-3">
+              Docent: <strong class="text-slate-800">${assignedDoc ? assignedDoc.naam : 'Geen docent gekoppeld'}</strong>
+            </p>
+          </div>
+          <div class="flex gap-1.5 pt-2 border-t border-slate-200">
+            <button onclick="openOnTourCandidatesModal('${tour.tourId}')" class="flex-1 text-xs py-1.5 bg-slate-800 hover:bg-slate-900 text-white font-bold rounded-xl transition">
+              ${tour.toegewezenDocentId ? 'Wijzigen' : 'Koppelen'}
+            </button>
+            <button onclick="deleteOnTour('${tour.tourId}')" class="text-xs px-2.5 py-1.5 bg-rose-50 hover:bg-rose-100 text-rose-600 rounded-xl transition">
+              <i class="fa-solid fa-trash"></i>
+            </button>
+          </div>
+        `;
+        container.appendChild(card);
+      });
+    }
+
+    function openAddOnTourModal() {
+      document.getElementById('inputOtSchoolNaam').value = '';
+      document.getElementById('inputOtLocatie').value = '';
+      document.getElementById('checkOtIsBuitenland').checked = false;
+      document.getElementById('inputOtLand').value = '';
+      document.getElementById('wrapperOtLand').classList.add('hidden');
+      document.getElementById('inputOtStart').value = '';
+      document.getElementById('inputOtEind').value = '';
+      document.getElementById('modalAddOnTour').classList.remove('hidden');
+    }
+
+    function closeAddOnTourModal() {
+      document.getElementById('modalAddOnTour').classList.add('hidden');
+    }
+
+    function toggleOtCountryField() {
+      const isBuitenland = document.getElementById('checkOtIsBuitenland').checked;
+      document.getElementById('wrapperOtLand').classList.toggle('hidden', !isBuitenland);
+    }
+
+    async function handleSaveOnTourSubmit(e) {
+      e.preventDefault();
+      const schoolNaam = document.getElementById('inputOtSchoolNaam').value;
+      const locatie = document.getElementById('inputOtLocatie').value;
+      const isBuitenland = document.getElementById('checkOtIsBuitenland').checked;
+      const land = isBuitenland ? (document.getElementById('inputOtLand').value || 'België') : 'Nederland';
+      const startDatum = document.getElementById('inputOtStart').value;
+      const eindDatum = document.getElementById('inputOtEind').value;
+
+      const btn = document.getElementById('btnSaveOnTourSubmit');
+      btn.innerHTML = `<i class="fa-solid fa-circle-notch fa-spin"></i> Opslaan...`;
+      btn.disabled = true;
+
+      await apiCall("", "POST", {
+        action: "saveOnTour",
+        adminPin: ADMIN_SECRET,
+        tourData: { schoolNaam, locatie, isBuitenland, land, startDatum, eindDatum }
+      });
+
+      btn.innerHTML = `On Tour Opslaan`;
+      btn.disabled = false;
+      closeAddOnTourModal();
+      await loadAdminData();
+    }
+
+    async function deleteOnTour(tourId) {
+      if (confirm("Weet je zeker dat je deze On Tour wilt verwijderen?")) {
+        await apiCall("", "POST", { action: "deleteOnTour", adminPin: ADMIN_SECRET, tourId });
+        await loadAdminData();
+      }
+    }
+
+    function openOnTourCandidatesModal(tourId) {
+      selectedTourForCandidate = tourId;
+      const tour = (adminData.onTours || []).find(t => t.tourId === tourId);
+      if (!tour) return;
+
+      document.getElementById('otCandModalTitle').innerText = `Kandidaten: ${tour.schoolNaam}`;
+      document.getElementById('otCandModalSubtitle').innerText = `${tour.startDatum} t/m ${tour.eindDatum} ${tour.locatie ? `• ${tour.locatie}` : ''}`;
+
+      const inschrijvingen = (adminData.onTourInschrijvingen || []).filter(i => i.tourId === tourId);
+      const listJa = [];
+      const listDeels = [];
+
+      inschrijvingen.forEach(ins => {
+        const doc = adminData.docenten.find(d => d.id === ins.docentId);
+        if (doc && !doc.isPlanner) {
+          if (ins.status === "HELE_WEEK") listJa.push({ doc, ins });
+          else if (ins.status === "DEELS") listDeels.push({ doc, ins });
+        }
+      });
+
+      const rankMap = { N1: 1, N2: 2, N3: 3 };
+      // Sorteer op Tour Specialist eerst, dan Skill Level
+      const sortFn = (a, b) => {
+        if (a.doc.alleenOnTour && !b.doc.alleenOnTour) return -1;
+        if (!a.doc.alleenOnTour && b.doc.alleenOnTour) return 1;
+        return (rankMap[a.doc.skillLevel] || 3) - (rankMap[b.doc.skillLevel] || 3);
+      };
+
+      listJa.sort(sortFn);
+      listDeels.sort(sortFn);
+
+      document.getElementById('countOtJa').innerText = listJa.length;
+      document.getElementById('countOtDeels').innerText = listDeels.length;
+
+      renderOtCandidateSection('listOtCandidatesJa', listJa);
+      renderOtCandidateSection('listOtCandidatesDeels', listDeels);
+
+      document.getElementById('modalOnTourCandidates').classList.remove('hidden');
+    }
+
+    function renderOtCandidateSection(containerId, list) {
+      const container = document.getElementById(containerId);
+      container.innerHTML = "";
+
+      if (list.length === 0) {
+        container.innerHTML = `<div class="text-xs text-slate-400 p-2">Geen kandidaten in deze categorie.</div>`;
+        return;
+      }
+
+      list.forEach(item => {
+        const doc = item.doc;
+        const ins = item.ins;
+        const div = document.createElement('div');
+        div.className = "p-2.5 bg-slate-50 hover:bg-slate-100 rounded-xl border border-slate-200 flex items-center justify-between transition";
+        div.innerHTML = `
+          <div>
+            <div class="font-bold text-slate-800 text-xs flex items-center gap-1.5">
+              <span>${doc.naam}</span>
+              ${doc.alleenOnTour ? '<span class="text-[9px] bg-amber-100 text-amber-900 px-1.5 py-0.2 rounded font-extrabold">⭐ Tour Specialist</span>' : ''}
+            </div>
+            <div class="text-[11px] text-slate-500 flex gap-2 mt-0.5">
+              <span class="font-bold text-brand-700">Skill: ${doc.skillLevel}</span>
+              <span>Auto: ${doc.auto}</span>
+              ${ins.gekozenDagen ? `<span class="text-amber-700 font-semibold">(${ins.gekozenDagen})</span>` : ''}
+            </div>
+          </div>
+          <button onclick="assignOnTourCandidate('${doc.id}')" class="text-xs bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-3 py-1.5 rounded-lg transition shadow-sm">
+            Koppelen
+          </button>
+        `;
+        container.appendChild(div);
+      });
+    }
+
+    function closeOnTourCandidatesModal() {
+      document.getElementById('modalOnTourCandidates').classList.add('hidden');
+    }
+
+    async function assignOnTourCandidate(docentId) {
+      await apiCall("", "POST", { action: "assignOnTourCandidate", adminPin: ADMIN_SECRET, tourId: selectedTourForCandidate, docentId });
+      closeOnTourCandidatesModal();
+      await loadAdminData();
+    }
+
+    // ==========================================
+    // REGULIERE SCHOOL INPLANNEN
+    // ==========================================
     function openAddSchoolPlanningModal() {
       if (!document.getElementById('inputPlanDate').value) {
         document.getElementById('inputPlanDate').value = new Date().toISOString().substring(0, 10);
       }
-      filterSchoolSelect('Regulier');
+      const select = document.getElementById('selectSchoolName');
+      select.innerHTML = "";
+      const filtered = (schoolsCache || []).filter(s => s.categorie === "Regulier");
+      filtered.sort((a, b) => getCleanSortName(a.naam).localeCompare(getCleanSortName(b.naam)));
+      filtered.forEach(s => {
+        const opt = document.createElement('option');
+        opt.value = s.naam;
+        opt.innerText = s.naam;
+        select.appendChild(opt);
+      });
       document.getElementById('modalAddSchoolPlanning').classList.remove('hidden');
     }
 
@@ -1308,77 +1789,36 @@
       document.getElementById('modalAddSchoolPlanning').classList.add('hidden');
     }
 
-    function filterSchoolSelect(cat) {
-      currentSchoolFilterCat = cat;
-
-      document.getElementById('btnCatRegulier').className = cat === 'Regulier' ? 'py-1.5 rounded-lg bg-slate-800 text-white font-bold transition' : 'py-1.5 rounded-lg bg-slate-100 text-slate-700 font-bold transition';
-      document.getElementById('btnCatOntour').className = cat === 'On tour' ? 'py-1.5 rounded-lg bg-slate-800 text-white font-bold transition' : 'py-1.5 rounded-lg bg-slate-100 text-slate-700 font-bold transition';
-      document.getElementById('btnCatBuitenland').className = cat === 'Buitenland' ? 'py-1.5 rounded-lg bg-slate-800 text-white font-bold transition' : 'py-1.5 rounded-lg bg-slate-100 text-slate-700 font-bold transition';
-
-      const select = document.getElementById('selectSchoolName');
-      select.innerHTML = "";
-
-      const filtered = (schoolsCache || []).filter(s => s.categorie === cat);
-      filtered.sort((a, b) => getCleanSortName(a.naam).localeCompare(getCleanSortName(b.naam)));
-
-      filtered.forEach(s => {
-        const opt = document.createElement('option');
-        opt.value = s.naam;
-        opt.innerText = s.land === "België" ? `${s.naam} (België)` : s.naam;
-        select.appendChild(opt);
-      });
-    }
-
     async function handleAddSchoolPlanningSubmit(e) {
       e.preventDefault();
-      const rawDatum = document.getElementById('inputPlanDate').value;
-      const datum = normalizeDateStr(rawDatum);
+      const datum = normalizeDateStr(document.getElementById('inputPlanDate').value);
       const schoolNaam = document.getElementById('selectSchoolName').value;
       const btn = document.getElementById('btnAddSchoolSubmit');
-
-      if (!datum || !schoolNaam) return;
 
       btn.innerHTML = `<i class="fa-solid fa-circle-notch fa-spin mr-1"></i> Inplannen...`;
       btn.disabled = true;
 
-      adminData.planning.push({
-        planningId: "PLN-" + Date.now(),
-        datum: datum,
-        schoolNaam: schoolNaam,
-        categorie: currentSchoolFilterCat,
-        toegewezenDocentId: "",
-        status: "OPEN"
+      await apiCall("", "POST", {
+        action: "adminSavePlanning",
+        adminPin: ADMIN_SECRET,
+        planningData: { datum, schoolNaam, categorie: "Regulier" }
       });
 
       btn.innerHTML = `Inplannen`;
       btn.disabled = false;
       closeAddSchoolModal();
-
-      if (currentDocent && currentDocent.isPlanner) {
-        renderPlannerGrid();
-      }
-
-      await apiCall("", "POST", {
-        action: "adminSavePlanning",
-        adminPin: ADMIN_SECRET,
-        planningData: {
-          datum: datum,
-          schoolNaam: schoolNaam,
-          categorie: currentSchoolFilterCat
-        }
-      });
-
       await loadAdminData();
     }
 
+    // ==========================================
+    // ADMIN DASHBOARD
+    // ==========================================
     function openAdminPinModal() {
       openPinModal("Admin Toegang", "Voer de master admincode in", (pin) => {
         if (pin === ADMIN_SECRET) {
           closePinModal();
           openAdminDashboard();
-        } else {
-          showPinError("Ongeldige admincode.");
-        }
+        } else showPinError("Ongeldige admincode.");
       });
     }
 
@@ -1395,17 +1835,14 @@
       const res = await apiCall("", "GET", { action: "getAdminOverview", adminPin: ADMIN_SECRET });
       if (res.success) {
         adminData = res;
-        if (adminData.planning) {
-          adminData.planning.forEach(p => p.datum = normalizeDateStr(p.datum));
-        }
-        if (adminData.availability) {
-          adminData.availability.forEach(a => a.datum = normalizeDateStr(a.datum));
-        }
         if (res.schools) schoolsCache = res.schools;
         renderAdminPlanning();
         renderAdminApprovals();
         renderAdminDocenten();
-        if (currentDocent && currentDocent.isPlanner) renderPlannerGrid();
+        if (currentDocent && currentDocent.isPlanner) {
+          renderPlannerGrid();
+          renderPlannerOnToursList();
+        }
       }
     }
 
@@ -1424,7 +1861,7 @@
       container.innerHTML = "";
 
       if (!adminData.planning || adminData.planning.length === 0) {
-        container.innerHTML = `<div class="col-span-full p-8 text-center text-slate-400 bg-white rounded-2xl border text-xs">Nog geen scholen gepland.</div>`;
+        container.innerHTML = `<div class="col-span-full p-8 text-center text-slate-400 bg-white rounded-2xl border text-xs">Nog geen reguliere scholen gepland.</div>`;
         return;
       }
 
@@ -1435,22 +1872,17 @@
         card.innerHTML = `
           <div>
             <div class="flex items-center justify-between mb-2">
-              <span class="text-xs font-bold text-slate-500 uppercase tracking-wider">${normalizeDateStr(plan.datum) || 'Geen datum'}</span>
+              <span class="text-xs font-bold text-slate-500 uppercase tracking-wider">${normalizeDateStr(plan.datum)}</span>
               ${plan.toegewezenDocentId 
                 ? '<span class="text-[10px] bg-emerald-100 text-emerald-800 font-bold px-2 py-0.5 rounded-full">Bemand</span>' 
-                : '<span class="text-[10px] bg-rose-100 text-rose-800 font-bold px-2 py-0.5 rounded-full animate-pulse">GAT / Gezocht</span>'}
+                : '<span class="text-[10px] bg-rose-100 text-rose-800 font-bold px-2 py-0.5 rounded-full animate-pulse">GAT</span>'}
             </div>
-            <div class="flex items-center gap-1.5 mb-1">
-              <span class="text-xs">${plan.categorie === "On tour" ? '✈️' : (plan.categorie === "Buitenland" ? '🌍' : '🏫')}</span>
-              <h4 class="font-bold text-slate-800 text-sm">${plan.schoolNaam}</h4>
-            </div>
-            <p class="text-xs text-slate-500 mb-3">
-              ${docent ? `Toegewezen: <strong class="text-slate-700">${docent.naam}</strong> (${docent.skillLevel})` : 'Geen docent gekoppeld'}
-            </p>
+            <h4 class="font-bold text-slate-800 text-sm mb-1">🏫 ${plan.schoolNaam}</h4>
+            <p class="text-xs text-slate-500 mb-3">Docent: <strong class="text-slate-700">${docent ? docent.naam : 'Geen docent'}</strong></p>
           </div>
           <div class="flex gap-2 pt-2 border-t border-slate-100">
             <button onclick="openCandidatePicker('${plan.planningId}', '${plan.datum}', '${plan.schoolNaam}')" class="flex-1 text-xs py-2 bg-slate-800 hover:bg-slate-900 text-white font-bold rounded-xl transition">
-              ${plan.toegewezenDocentId ? 'Docent Wijzigen' : 'Docent Koppelen'}
+              ${plan.toegewezenDocentId ? 'Wijzigen' : 'Koppelen'}
             </button>
             <button onclick="deletePlanning('${plan.planningId}')" class="text-xs px-3 py-2 bg-rose-50 hover:bg-rose-100 text-rose-600 rounded-xl transition">
               <i class="fa-solid fa-trash"></i>
@@ -1473,9 +1905,7 @@
       if (totalPending > 0) {
         badge.innerText = totalPending;
         badge.classList.remove('hidden');
-      } else {
-        badge.classList.add('hidden');
-      }
+      } else badge.classList.add('hidden');
 
       if (totalPending === 0) {
         container.innerHTML = `<div class="p-6 text-center text-slate-400 text-xs">Geen openstaande wijzigingsverzoeken.</div>`;
@@ -1488,28 +1918,10 @@
         const row = document.createElement('div');
         row.className = "p-3 bg-slate-50 rounded-xl border border-slate-200 flex items-center justify-between text-xs";
         row.innerHTML = `
-          <div>
-            <strong>${docent ? docent.naam : item.docentId}</strong> op <strong>${item.datum}</strong>: <span class="font-bold bg-amber-100 text-amber-900 px-2 py-0.5 rounded">${trans}</span>
-          </div>
+          <div><strong>${docent ? docent.naam : item.docentId}</strong> op <strong>${item.datum}</strong>: <span class="font-bold bg-amber-100 text-amber-900 px-2 py-0.5 rounded">${trans}</span></div>
           <div class="flex gap-2">
-            <button onclick="approveAvailability(this, '${item.recordId}', true)" class="px-2.5 py-1.5 bg-emerald-600 text-white font-bold rounded-lg hover:bg-emerald-700">Akkoord</button>
-            <button onclick="approveAvailability(this, '${item.recordId}', false)" class="px-2.5 py-1.5 bg-rose-600 text-white font-bold rounded-lg hover:bg-rose-700">Afwijzen</button>
-          </div>
-        `;
-        container.appendChild(row);
-      });
-
-      pendingProfiles.forEach(item => {
-        const docent = adminData.docenten.find(d => d.id === item.docentId);
-        const row = document.createElement('div');
-        row.className = "p-3 bg-slate-50 rounded-xl border border-slate-200 flex items-center justify-between text-xs";
-        row.innerHTML = `
-          <div>
-            <strong>${docent ? docent.naam : item.docentId}</strong> wil <strong>${item.veldNaam}</strong> wijzigen naar: <em>${item.nieuweWaarde}</em>
-          </div>
-          <div class="flex gap-2">
-            <button onclick="approveProfile(this, '${item.aanvraagId}', true)" class="px-2.5 py-1.5 bg-emerald-600 text-white font-bold rounded-lg hover:bg-emerald-700">Akkoord</button>
-            <button onclick="approveProfile(this, '${item.aanvraagId}', false)" class="px-2.5 py-1.5 bg-rose-600 text-white font-bold rounded-lg hover:bg-rose-700">Afwijzen</button>
+            <button onclick="approveAvailability('${item.recordId}', true)" class="px-2.5 py-1.5 bg-emerald-600 text-white font-bold rounded-lg hover:bg-emerald-700">Akkoord</button>
+            <button onclick="approveAvailability('${item.recordId}', false)" class="px-2.5 py-1.5 bg-rose-600 text-white font-bold rounded-lg hover:bg-rose-700">Afwijzen</button>
           </div>
         `;
         container.appendChild(row);
@@ -1524,129 +1936,27 @@
         const tr = document.createElement('tr');
         tr.innerHTML = `
           <td class="p-3 font-bold text-slate-800">${docent.naam}</td>
+          <td class="p-3"><span class="text-[10px] px-2 py-0.5 rounded font-bold ${docent.isPlanner ? 'bg-amber-100 text-amber-800' : 'bg-slate-100 text-slate-600'}">${docent.isPlanner ? 'Planner' : 'Vakdocent'}</span></td>
+          <td class="p-3">${docent.alleenOnTour ? '<span class="text-[10px] bg-sky-100 text-sky-800 font-bold px-2 py-0.5 rounded">Alleen Tour</span>' : '<span class="text-slate-400 text-[10px]">Regulier</span>'}</td>
           <td class="p-3">
-            <span class="text-[10px] px-2 py-0.5 rounded font-bold ${docent.isPlanner ? 'bg-amber-100 text-amber-800' : 'bg-slate-100 text-slate-600'}">
-              ${docent.isPlanner ? 'Planner' : 'Vakdocent'}
-            </span>
-          </td>
-          <td class="p-3">
-            <select onchange="updateDocentSkill(this, '${docent.id}', this.value)" class="bg-slate-100 border border-slate-300 rounded-lg p-1 font-bold text-xs">
+            <select onchange="updateDocentSkill('${docent.id}', this.value)" class="bg-slate-100 border border-slate-300 rounded-lg p-1 font-bold text-xs">
               <option value="N1" ${docent.skillLevel === 'N1' ? 'selected' : ''}>N1 (Hoogste)</option>
               <option value="N2" ${docent.skillLevel === 'N2' ? 'selected' : ''}>N2 (Midden)</option>
               <option value="N3" ${docent.skillLevel === 'N3' ? 'selected' : ''}>N3 (Instap)</option>
             </select>
           </td>
-          <td class="p-3">
-            ${docent.hasPin ? '<span class="text-emerald-700 font-semibold">Ingesteld</span>' : '<span class="text-amber-600 font-semibold">Nog niet</span>'}
-          </td>
-          <td class="p-3 text-center">
-            <button onclick="openAdminDocentCalendar('${docent.id}')" class="text-xs bg-emerald-50 hover:bg-emerald-100 text-emerald-700 font-bold px-3 py-1.5 rounded-xl border border-emerald-200 transition flex items-center gap-1.5 mx-auto">
-              <i class="fa-regular fa-calendar-days"></i> Bekijk Agenda
-            </button>
-          </td>
+          <td class="p-3">${docent.hasPin ? '<span class="text-emerald-700 font-semibold">Ja</span>' : '<span class="text-amber-600 font-semibold">Nee</span>'}</td>
           <td class="p-3 text-right">
-            <button onclick="resetDocentPin(this, '${docent.id}')" class="text-xs bg-rose-50 hover:bg-rose-100 text-rose-600 font-semibold px-2 py-1 rounded-lg border border-rose-200">Reset PIN</button>
+            <button onclick="resetDocentPin('${docent.id}')" class="text-xs bg-rose-50 hover:bg-rose-100 text-rose-600 font-semibold px-2 py-1 rounded-lg border border-rose-200">Reset PIN</button>
           </td>
         `;
         tbody.appendChild(tr);
       });
     }
 
-    function openAdminDocentCalendar(docentId) {
-      viewingAdminDocent = adminData.docenten.find(d => d.id === docentId);
-      if (!viewingAdminDocent) return;
-
-      adminDocentCalDate = new Date();
-      document.getElementById('adminDocentCalTitle').innerText = `Agenda van ${viewingAdminDocent.naam} (Skill: ${viewingAdminDocent.skillLevel})`;
-      renderAdminDocentCalendar();
-      document.getElementById('modalAdminDocentCalendar').classList.remove('hidden');
-    }
-
-    function closeAdminDocentCalendar() {
-      document.getElementById('modalAdminDocentCalendar').classList.add('hidden');
-    }
-
-    function changeAdminDocentMonth(delta) {
-      adminDocentCalDate.setMonth(adminDocentCalDate.getMonth() + delta);
-      renderAdminDocentCalendar();
-    }
-
-    function renderAdminDocentCalendar() {
-      const year = adminDocentCalDate.getFullYear();
-      const month = adminDocentCalDate.getMonth();
-      const titleMonth = new Intl.DateTimeFormat('nl-NL', { month: 'long', year: 'numeric' }).format(adminDocentCalDate);
-      document.getElementById('adminDocentCalMonthTitle').innerText = titleMonth;
-
-      const firstDayOfMonth = new Date(year, month, 1);
-      const daysInMonth = new Date(year, month + 1, 0).getDate();
-      let startDayOfWeek = firstDayOfMonth.getDay() - 1;
-      if (startDayOfWeek === -1) startDayOfWeek = 6;
-
-      const grid = document.getElementById('adminDocentCalDaysGrid');
-      grid.innerHTML = "";
-
-      for (let i = 0; i < startDayOfWeek; i++) {
-        grid.innerHTML += `<div class="h-20 bg-slate-50/50 rounded-xl border border-transparent"></div>`;
-      }
-
-      const docAvailMap = {};
-      (adminData.availability || []).forEach(av => {
-        if (av.docentId === viewingAdminDocent.id) {
-          docAvailMap[normalizeDateStr(av.datum)] = av;
-        }
-      });
-
-      for (let day = 1; day <= daysInMonth; day++) {
-        const isoDate = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
-        const avail = docAvailMap[isoDate];
-
-        let statusBg = "bg-slate-50 border-slate-200 text-slate-600";
-        let badgeHtml = "<span class='text-[10px] text-slate-400'>Geen</span>";
-
-        if (avail) {
-          if (avail.goedkeuring === "IN_BEHANDELING") {
-            statusBg = "bg-amber-50 border-amber-300 text-amber-900";
-            const trans = avail.vorigeStatus ? `${avail.vorigeStatus}➔${avail.status}` : avail.status;
-            badgeHtml = `
-              <div class="flex flex-col gap-1">
-                <span class="text-[9px] bg-amber-500 text-white font-bold px-1 rounded truncate">⏳ ${trans}</span>
-                <div class="flex gap-1 mt-0.5">
-                  <button onclick="quickAdminApprove(event, '${avail.recordId}', true)" class="flex-1 bg-emerald-600 hover:bg-emerald-700 text-white rounded p-0.5 text-[9px] font-bold">✓</button>
-                  <button onclick="quickAdminApprove(event, '${avail.recordId}', false)" class="flex-1 bg-rose-600 hover:bg-rose-700 text-white rounded p-0.5 text-[9px] font-bold">✕</button>
-                </div>
-              </div>
-            `;
-          } else if (avail.status === "JA") {
-            statusBg = "bg-emerald-100 border-emerald-300 text-emerald-900";
-            badgeHtml = `<span class="text-[10px] bg-emerald-600 text-white px-1.5 py-0.5 rounded font-bold">🟢 Ja</span>`;
-          } else if (avail.status === "MOGELIJK") {
-            statusBg = "bg-amber-100 border-amber-300 text-amber-900";
-            badgeHtml = `<span class="text-[10px] bg-amber-600 text-white px-1.5 py-0.5 rounded font-bold">🟠 Mogelijk</span>`;
-          } else if (avail.status === "NEE") {
-            statusBg = "bg-rose-100 border-rose-300 text-rose-900";
-            badgeHtml = `<span class="text-[10px] bg-rose-600 text-white px-1.5 py-0.5 rounded font-bold">🔴 Nee</span>`;
-          }
-        }
-
-        const cell = document.createElement('div');
-        cell.className = `h-20 p-1.5 rounded-xl border flex flex-col justify-between ${statusBg} text-xs`;
-        cell.innerHTML = `<div class="font-bold">${day}</div><div>${badgeHtml}</div>`;
-        grid.appendChild(cell);
-      }
-    }
-
-    async function quickAdminApprove(e, recordId, approved) {
-      e.stopPropagation();
-      const target = e.currentTarget;
-      target.innerHTML = `<i class="fa-solid fa-circle-notch fa-spin"></i>`;
-      await apiCall("", "POST", { action: "adminApproveAvailability", adminPin: ADMIN_SECRET, recordId, approved });
-      await loadAdminData();
-      renderAdminDocentCalendar();
-    }
-
     function openCandidatePicker(planningId, datum, schoolNaam) {
       selectedPlanningForCandidate = planningId;
-      document.getElementById('candidateModalTitle').innerText = `${schoolNaam}`;
+      document.getElementById('candidateModalTitle').innerText = `Koppelen: ${schoolNaam}`;
       document.getElementById('candidateModalDate').innerText = `Datum: ${normalizeDateStr(datum)}`;
 
       const normTargetDate = normalizeDateStr(datum);
@@ -1663,7 +1973,7 @@
         }
       });
 
-      const rankMap = { "N1": 1, "N2": 2, "N3": 3 };
+      const rankMap = { N1: 1, N2: 2, N3: 3 };
       listJa.sort((a, b) => (rankMap[a.skillLevel] || 3) - (rankMap[b.skillLevel] || 3));
       listMogelijk.sort((a, b) => (rankMap[a.skillLevel] || 3) - (rankMap[b.skillLevel] || 3));
 
@@ -1672,7 +1982,6 @@
 
       renderCandidateSection('listCandidatesJa', listJa);
       renderCandidateSection('listCandidatesMogelijk', listMogelijk);
-
       document.getElementById('modalCandidatePicker').classList.remove('hidden');
     }
 
@@ -1681,7 +1990,7 @@
       container.innerHTML = "";
 
       if (list.length === 0) {
-        container.innerHTML = `<div class="text-xs text-slate-400 p-2">Geen kandidaten beschikbaar.</div>`;
+        container.innerHTML = `<div class="text-xs text-slate-400 p-2">Geen kandidaten.</div>`;
         return;
       }
 
@@ -1696,8 +2005,8 @@
               <span>Auto: ${doc.auto}</span>
             </div>
           </div>
-          <button onclick="assignCandidate(this, '${doc.id}')" class="text-xs bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-3 py-1.5 rounded-lg transition shadow-sm flex items-center gap-1">
-            <span>Koppelen</span>
+          <button onclick="assignCandidate('${doc.id}')" class="text-xs bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-3 py-1.5 rounded-lg transition shadow-sm">
+            Koppelen
           </button>
         `;
         container.appendChild(item);
@@ -1708,50 +2017,30 @@
       document.getElementById('modalCandidatePicker').classList.add('hidden');
     }
 
-    async function assignCandidate(btn, docentId) {
-      btn.innerHTML = `<i class="fa-solid fa-circle-notch fa-spin"></i>`;
-      btn.disabled = true;
-
-      await apiCall("", "POST", {
-        action: "adminSavePlanning",
-        adminPin: ADMIN_SECRET,
-        planningData: {
-          planningId: selectedPlanningForCandidate,
-          toegewezenDocentId: docentId
-        }
-      });
+    async function assignCandidate(docentId) {
+      await apiCall("", "POST", { action: "adminSavePlanning", adminPin: ADMIN_SECRET, planningData: { planningId: selectedPlanningForCandidate, toegewezenDocentId: docentId } });
       closeCandidatePicker();
       await loadAdminData();
     }
 
     async function deletePlanning(id) {
-      if (confirm("Weet je zeker dat je deze schoolplanning wilt verwijderen?")) {
+      if (confirm("Weet je zeker dat je deze les wilt verwijderen?")) {
         await apiCall("", "POST", { action: "adminDeletePlanning", adminPin: ADMIN_SECRET, planningId: id });
         await loadAdminData();
       }
     }
 
-    async function approveAvailability(btn, recordId, approved) {
-      btn.innerHTML = `<i class="fa-solid fa-circle-notch fa-spin"></i>`;
+    async function approveAvailability(recordId, approved) {
       await apiCall("", "POST", { action: "adminApproveAvailability", adminPin: ADMIN_SECRET, recordId, approved });
       await loadAdminData();
     }
 
-    async function approveProfile(btn, aanvraagId, approved) {
-      btn.innerHTML = `<i class="fa-solid fa-circle-notch fa-spin"></i>`;
-      await apiCall("", "POST", { action: "adminApproveProfile", adminPin: ADMIN_SECRET, aanvraagId, approved });
-      await loadAdminData();
-    }
-
-    async function updateDocentSkill(selectEl, docentId, skillLevel) {
-      selectEl.disabled = true;
+    async function updateDocentSkill(docentId, skillLevel) {
       await apiCall("", "POST", { action: "adminUpdateDocent", adminPin: ADMIN_SECRET, docentId, skillLevel });
-      selectEl.disabled = false;
     }
 
-    async function resetDocentPin(btn, docentId) {
-      if (confirm("Weet je zeker dat je de pincode wilt wissen?")) {
-        btn.innerHTML = `<i class="fa-solid fa-circle-notch fa-spin"></i>`;
+    async function resetDocentPin(docentId) {
+      if (confirm("Pincode wissen?")) {
         await apiCall("", "POST", { action: "adminUpdateDocent", adminPin: ADMIN_SECRET, docentId, resetPin: true });
         await loadAdminData();
       }
