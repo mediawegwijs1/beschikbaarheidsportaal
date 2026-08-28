@@ -153,7 +153,7 @@
 
         </div>
 
-        <!-- 5-Koloms Grid (Maandag t/m Vrijdag) -->
+        <!-- 5-Koloms Grid -->
         <div class="bg-white p-4 rounded-3xl border border-slate-200 shadow-sm overflow-x-auto">
           <div class="grid grid-cols-5 gap-2 mb-2 text-center text-xs font-bold text-slate-500 uppercase tracking-wider">
             <div>Ma</div><div>Di</div><div>Wo</div><div>Do</div><div>Vr</div>
@@ -177,9 +177,7 @@
           Klik op een On Tour om je beschikbaarheid door te geven (deadline 4 wk van tevoren).
         </p>
 
-        <div id="docentOnToursList" class="space-y-2.5 max-h-[520px] overflow-y-auto custom-scrollbar pr-1">
-          <!-- Dynamisch geladen -->
-        </div>
+        <div id="docentOnToursList" class="space-y-2.5 max-h-[520px] overflow-y-auto custom-scrollbar pr-1"></div>
       </div>
 
     </section>
@@ -204,7 +202,6 @@
             </button>
           </div>
 
-          <!-- 3 Toggles: 3 Weken (Default), Maand, Week -->
           <div class="bg-slate-100 p-1 rounded-xl flex text-xs font-bold border border-slate-200">
             <button onclick="setPlannerViewMode('3weeks')" id="btnPlanView3Weeks" class="px-3 py-1.5 rounded-lg bg-white text-slate-900 shadow-sm transition">Aankomende 3 weken</button>
             <button onclick="setPlannerViewMode('month')" id="btnPlanViewMonth" class="px-3 py-1.5 rounded-lg text-slate-600 hover:text-slate-900 transition">Maandoverzicht</button>
@@ -244,9 +241,7 @@
           </button>
         </div>
 
-        <div id="plannerOnToursList" class="space-y-2.5 max-h-[540px] overflow-y-auto custom-scrollbar pr-1">
-          <!-- Dynamisch geladen -->
-        </div>
+        <div id="plannerOnToursList" class="space-y-2.5 max-h-[540px] overflow-y-auto custom-scrollbar pr-1"></div>
       </div>
 
     </section>
@@ -257,7 +252,7 @@
   <footer id="landingFooterBar" class="bg-white border-t border-slate-200 py-2.5 px-4 text-[11px] md:text-xs text-slate-500 sticky bottom-0 z-20">
     <div class="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-2 text-center sm:text-left">
       <div class="flex items-center gap-2 font-medium">
-        <span>Versie <strong class="text-slate-800">V1.1</strong></span>
+        <span>Versie <strong class="text-slate-800">V1.2</strong></span>
         <span class="text-slate-300">•</span>
         <button onclick="openPatchNotesModal()" class="text-emerald-600 hover:text-emerald-700 font-semibold underline transition">
           Patch notes
@@ -284,15 +279,13 @@
       <div class="max-h-80 overflow-y-auto custom-scrollbar space-y-3 pr-1 text-xs">
         <div class="p-3 bg-emerald-50/50 border border-emerald-200 rounded-2xl">
           <div class="flex items-center justify-between mb-1.5">
-            <span class="font-bold text-emerald-950">Versie V1.1</span>
+            <span class="font-bold text-emerald-950">Versie V1.2</span>
             <span class="text-[10px] bg-emerald-600 text-white px-2 py-0.5 rounded-full font-bold">Nieuw</span>
           </div>
           <ul class="list-disc list-inside space-y-1 text-emerald-900">
-            <li>'Welke dagen kan je de aankomende tijd zeker (vaste school)' met einddatum en 1/2/3 maanden presets.</li>
-            <li>Automatische login-pop-up wanneer de 'Geldt tot' periode van vaste dagen verlopen is.</li>
-            <li>Voorkeuren worden direct opgeslagen zonder goedkeuringsvertraging.</li>
-            <li>Admin toont nu duidelijk welke docenten een verlopen vaste periode hebben.</li>
-            <li>Dagstatus aanpassingen gaan nu direct naar 'Wachten op bevestiging' in het plannerpaneel.</li>
+            <li>On Tour Inplannen dropdown selecteert direct uit de database van On Tour / Buitenlandse scholen.</li>
+            <li>Automatisch voorinvullen en vergrendelen van bekende schoolgegevens, land en locaties.</li>
+            <li>Nieuw ingevoerde plaatsnamen worden direct onthouden in de Scholen-database voor toekomstig gebruik.</li>
           </ul>
         </div>
       </div>
@@ -349,7 +342,6 @@
 
       <form id="onboardingForm" onsubmit="handleOnboardingSubmit(event)" class="space-y-5 text-left text-sm">
         
-        <!-- VRAAG 1: PRIMAIR ALLEEN ON TOUR -->
         <div class="bg-sky-50 border border-sky-200 p-4 rounded-2xl">
           <label class="block font-extrabold text-sky-950 mb-2">1. Wil je alleen On Tour werken?</label>
           <div class="flex gap-3">
@@ -362,7 +354,6 @@
           </div>
         </div>
 
-        <!-- REGULIERE VRAGEN -->
         <div id="wrapperRegularQuestions" class="space-y-4">
           <div>
             <label class="block font-bold text-slate-800 mb-1">2. Hoe vaak in de week wil je werken?</label>
@@ -375,7 +366,6 @@
             </select>
           </div>
 
-          <!-- VRAAG: VASTE DAGEN MET GELDIGHEIDSDATUM & PRESETS -->
           <div class="bg-slate-50 p-4 rounded-2xl border border-slate-200">
             <label class="block font-bold text-slate-800 mb-1.5">3. Welke dagen kan je de aankomende tijd zeker? <span class="text-xs font-normal text-slate-500">(Vaste school)</span></label>
             <div class="flex flex-wrap gap-2 mb-3">
@@ -411,7 +401,6 @@
           </div>
         </div>
 
-        <!-- RIJBEWIJS & AUTO -->
         <div class="grid grid-cols-2 gap-3 pt-1">
           <div class="bg-slate-50 p-3 rounded-xl border border-slate-200">
             <label class="block font-bold text-slate-800 mb-2">Rijbewijs?</label>
@@ -513,7 +502,7 @@
     </div>
   </div>
 
-  <!-- MODAL: NIEUWE ON TOUR TOEVOEGEN (PLANNER) -->
+  <!-- MODAL: NIEUWE ON TOUR TOEVOEGEN MET SLIMME DROPDOWN -->
   <div id="modalAddOnTour" class="fixed inset-0 bg-slate-950/80 z-50 hidden flex items-center justify-center p-4">
     <div class="w-full max-w-md bg-white rounded-3xl p-6 shadow-2xl relative text-left">
       <button onclick="closeAddOnTourModal()" class="absolute top-4 right-4 text-slate-400 hover:text-slate-600 w-8 h-8 rounded-full flex items-center justify-center">
@@ -521,9 +510,16 @@
       </button>
 
       <h3 class="text-lg font-bold text-slate-900 mb-1">On Tour Inplannen</h3>
-      <p class="text-xs text-slate-500 mb-4">Voeg een schoolweek On Tour toe voor het rooster.</p>
+      <p class="text-xs text-slate-500 mb-4">Kies een school uit de database of voer handmatig in.</p>
 
       <form onsubmit="handleSaveOnTourSubmit(event)" class="space-y-3.5 text-xs">
+        
+        <!-- DROPDOWN KEUZE -->
+        <div>
+          <label class="block font-bold text-slate-700 mb-1">Selecteer On Tour / Buitenlandse School</label>
+          <select id="selectOtPresetSchool" onchange="handleOtSchoolPresetSelect()" class="w-full p-2.5 bg-slate-50 border border-slate-300 rounded-xl font-medium"></select>
+        </div>
+
         <div>
           <label class="block font-bold text-slate-700 mb-1">Naam van de School</label>
           <input type="text" id="inputOtSchoolNaam" required placeholder="bijv. RSG Westermarke" class="w-full p-2.5 bg-slate-50 border border-slate-300 rounded-xl font-medium" />
@@ -531,7 +527,7 @@
 
         <div>
           <label class="block font-bold text-slate-700 mb-1">Locatie / Plaatsnaam</label>
-          <input type="text" id="inputOtLocatie" placeholder="bijv. Schiermonnikoog" class="w-full p-2.5 bg-slate-50 border border-slate-300 rounded-xl font-medium" />
+          <input type="text" id="inputOtLocatie" placeholder="bijv. Schiermonnikoog (wordt automatisch onthouden)" class="w-full p-2.5 bg-slate-50 border border-slate-300 rounded-xl font-medium" />
         </div>
 
         <div class="bg-slate-50 p-3 rounded-xl border border-slate-200 space-y-2">
@@ -540,7 +536,7 @@
             <span>Buitenlandse school (bijv. België)</span>
           </label>
           <div id="wrapperOtLand" class="hidden">
-            <input type="text" id="inputOtLand" placeholder="Land / Regio (bijv. België of Antwerpen)" class="w-full p-2 bg-white border border-slate-300 rounded-lg text-xs" />
+            <input type="text" id="inputOtLand" placeholder="Land / Regio (bijv. België)" class="w-full p-2 bg-white border border-slate-300 rounded-lg text-xs" />
           </div>
         </div>
 
@@ -562,7 +558,7 @@
     </div>
   </div>
 
-  <!-- MODAL: ON TOUR KANDIDATEN KOPPELEN (PLANNER) -->
+  <!-- MODAL: ON TOUR KANDIDATEN KOPPELEN -->
   <div id="modalOnTourCandidates" class="fixed inset-0 bg-slate-950/80 z-50 hidden flex items-center justify-center p-4">
     <div class="w-full max-w-lg bg-white rounded-3xl p-6 shadow-2xl relative max-h-[85vh] flex flex-col">
       <button onclick="closeOnTourCandidatesModal()" class="absolute top-4 right-4 text-slate-400 hover:text-slate-600 w-8 h-8 rounded-full flex items-center justify-center">
@@ -651,7 +647,7 @@
     </div>
   </div>
 
-  <!-- MODAL: ADMIN DASHBOARD (PIN 1115) -->
+  <!-- MODAL: ADMIN DASHBOARD -->
   <div id="modalAdmin" class="fixed inset-0 bg-slate-950/90 z-50 hidden flex flex-col p-2 md:p-6 overflow-hidden">
     <div class="bg-white rounded-3xl w-full max-w-6xl mx-auto flex-1 flex flex-col overflow-hidden shadow-2xl border border-slate-200">
       
@@ -853,7 +849,6 @@
       return clean;
     }
 
-    // Helper voor 1, 2, 3 maanden presets
     function setVasteDagenPreset(months, inputId) {
       const d = new Date();
       d.setMonth(d.getMonth() + months);
@@ -975,7 +970,6 @@
             } else if (!currentDocent.onboardingKlaar) {
               openProfileModal(false);
             } else if (currentDocent.alleenOnTour !== 'Ja' && currentDocent.isVasteDagenVerlopen) {
-              // Vaste dagen periode is verlopen: toon direct de gerichte pop-up!
               openVasteDagenExpiredPopup();
             } else {
               initCalendarView();
@@ -1046,7 +1040,7 @@
     }
 
     // ==========================================
-    // ONBOARDING & PROFIELWIJZIGINGEN
+    // ONBOARDING & PROFIEL
     // ==========================================
     function toggleOnboardingRegularFields() {
       const isAlleenTour = document.querySelector('input[name="alleenOnTour"]:checked')?.value === 'Ja';
@@ -1129,9 +1123,6 @@
       }
     }
 
-    // ==========================================
-    // POPUP BIJ VERLOPEN VASTE DAGEN
-    // ==========================================
     function openVasteDagenExpiredPopup() {
       setCheckboxGroup('popVasteDagen', currentDocent.vasteDagen || []);
       setVasteDagenPreset(2, 'popVasteDagenGeldtTot');
@@ -1304,7 +1295,6 @@
       document.getElementById('modalDayPicker').classList.add('hidden');
     }
 
-    // Directe status & Wachten op Bevestiging check
     async function submitDayStatus(status) {
       if (!selectedDayForPicker) return;
       const entries = [];
@@ -1324,7 +1314,6 @@
 
             const prev = availabilityCache[iso]?.status;
             if (prev && prev !== status) {
-              // Bestaande dag gewijzigd -> direct grijs op scherm (IN_BEHANDELING)
               availabilityCache[iso] = { status, goedkeuring: "IN_BEHANDELING", vorigeStatus: prev };
             } else {
               availabilityCache[iso] = { status, goedkeuring: "GOEDGEKEURD" };
@@ -1510,7 +1499,7 @@
     }
 
     // ==========================================
-    // PLANNER DASHBOARD & AANKOMENDE 3 WEKEN
+    // PLANNER DASHBOARD (3 WEKEN / MAAND / WEEK)
     // ==========================================
     async function initPlannerView() {
       document.getElementById('viewLanding').classList.add('hidden');
@@ -1657,7 +1646,7 @@
     }
 
     // ==========================================
-    // ON TOUR BEHEER (PLANNER)
+    // ON TOUR BEHEER (PLANNER & DROPDOWN)
     // ==========================================
     function renderPlannerOnToursList() {
       const container = document.getElementById('plannerOnToursList');
@@ -1703,11 +1692,26 @@
     }
 
     function openAddOnTourModal() {
-      document.getElementById('inputOtSchoolNaam').value = '';
-      document.getElementById('inputOtLocatie').value = '';
-      document.getElementById('checkOtIsBuitenland').checked = false;
-      document.getElementById('inputOtLand').value = '';
-      document.getElementById('wrapperOtLand').classList.add('hidden');
+      const select = document.getElementById('selectOtPresetSchool');
+      select.innerHTML = '<option value="">-- Kies een On Tour / Buitenlandse School --</option>';
+
+      // Filter alleen On Tour & Buitenlandse scholen
+      const filtered = (schoolsCache || []).filter(s => s.categorie === "On tour" || s.categorie === "Buitenland");
+      filtered.sort((a, b) => getCleanSortName(a.naam).localeCompare(getCleanSortName(b.naam)));
+
+      filtered.forEach(s => {
+        const opt = document.createElement('option');
+        opt.value = s.naam;
+        opt.innerText = `${s.naam} ${s.land === 'België' ? '(België)' : ''}`;
+        select.appendChild(opt);
+      });
+
+      const optManual = document.createElement('option');
+      optManual.value = '__manual__';
+      optManual.innerText = '➕ Andere school handmatig typen...';
+      select.appendChild(optManual);
+
+      handleOtSchoolPresetSelect();
       document.getElementById('inputOtStart').value = '';
       document.getElementById('inputOtEind').value = '';
       document.getElementById('modalAddOnTour').classList.remove('hidden');
@@ -1715,6 +1719,69 @@
 
     function closeAddOnTourModal() {
       document.getElementById('modalAddOnTour').classList.add('hidden');
+    }
+
+    // Slimme Dropdown Preset Selectie
+    function handleOtSchoolPresetSelect() {
+      const val = document.getElementById('selectOtPresetSchool').value;
+      const inputNaam = document.getElementById('inputOtSchoolNaam');
+      const inputLoc = document.getElementById('inputOtLocatie');
+      const checkBuiten = document.getElementById('checkOtIsBuitenland');
+      const inputLand = document.getElementById('inputOtLand');
+      const wrapLand = document.getElementById('wrapperOtLand');
+
+      if (!val || val === '__manual__') {
+        inputNaam.value = '';
+        inputNaam.readOnly = false;
+        inputNaam.classList.remove('bg-slate-100', 'text-slate-500');
+
+        inputLoc.value = '';
+        inputLoc.readOnly = false;
+        inputLoc.classList.remove('bg-slate-100', 'text-slate-500');
+        inputLoc.placeholder = "bijv. Schiermonnikoog (wordt onthouden)";
+
+        checkBuiten.checked = false;
+        checkBuiten.disabled = false;
+        wrapLand.classList.add('hidden');
+        inputLand.value = '';
+        inputLand.readOnly = false;
+        inputLand.classList.remove('bg-slate-100', 'text-slate-500');
+        return;
+      }
+
+      const school = schoolsCache.find(s => s.naam === val);
+      if (school) {
+        inputNaam.value = school.naam;
+        inputNaam.readOnly = true;
+        inputNaam.classList.add('bg-slate-100', 'text-slate-500');
+
+        const isBuitenland = school.categorie === 'Buitenland' || (school.land && school.land !== 'Nederland');
+        checkBuiten.checked = isBuitenland;
+        checkBuiten.disabled = true;
+
+        if (isBuitenland) {
+          wrapLand.classList.remove('hidden');
+          inputLand.value = school.land || 'België';
+          inputLand.readOnly = true;
+          inputLand.classList.add('bg-slate-100', 'text-slate-500');
+        } else {
+          wrapLand.classList.add('hidden');
+          inputLand.value = 'Nederland';
+          inputLand.readOnly = true;
+        }
+
+        // Als locatie al bekend is in de database: vergrendel. Anders: laat open voor invoer!
+        if (school.locatie && String(school.locatie).trim() !== '') {
+          inputLoc.value = school.locatie;
+          inputLoc.readOnly = true;
+          inputLoc.classList.add('bg-slate-100', 'text-slate-500');
+        } else {
+          inputLoc.value = '';
+          inputLoc.readOnly = false;
+          inputLoc.classList.remove('bg-slate-100', 'text-slate-500');
+          inputLoc.placeholder = "Typ plaatsnaam/eiland (wordt direct onthouden)";
+        }
+      }
     }
 
     function toggleOtCountryField() {
