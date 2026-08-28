@@ -147,6 +147,7 @@
             <span class="flex items-center gap-1 bg-emerald-50 text-emerald-700 border border-emerald-200 px-2 py-0.5 rounded-lg"><span class="w-2 h-2 rounded-full bg-emerald-500"></span> Ja</span>
             <span class="flex items-center gap-1 bg-amber-50 text-amber-700 border border-amber-200 px-2 py-0.5 rounded-lg"><span class="w-2 h-2 rounded-full bg-amber-500"></span> Mogelijk</span>
             <span class="flex items-center gap-1 bg-rose-50 text-rose-700 border border-rose-200 px-2 py-0.5 rounded-lg"><span class="w-2 h-2 rounded-full bg-rose-500"></span> Nee</span>
+            <span class="flex items-center gap-1 bg-slate-100 text-slate-600 border border-slate-300 px-2 py-0.5 rounded-lg"><span class="w-2 h-2 rounded-full bg-slate-400"></span> In Behandeling</span>
             <span class="flex items-center gap-1 bg-yellow-50 text-yellow-700 border border-yellow-200 px-2 py-0.5 rounded-lg"><i class="fa-solid fa-star text-amber-500 text-[9px]"></i> Voorkeur</span>
           </div>
 
@@ -173,17 +174,17 @@
         </div>
 
         <p class="text-[11px] text-slate-500 mb-3">
-          Klik op een On Tour om je beschikbaarheid voor de schoolweek door te geven (deadline 4 wk van tevoren).
+          Klik op een On Tour om je beschikbaarheid door te geven (deadline 4 wk van tevoren).
         </p>
 
         <div id="docentOnToursList" class="space-y-2.5 max-h-[520px] overflow-y-auto custom-scrollbar pr-1">
-          <!-- Dynamisch geladen kaarten -->
+          <!-- Dynamisch geladen -->
         </div>
       </div>
 
     </section>
 
-    <!-- SCHERM 3: PLANNER DASHBOARD + ON TOUR BEHEER -->
+    <!-- SCHERM 3: PLANNER DASHBOARD -->
     <section id="viewPlannerDashboard" class="hidden w-full flex-col lg:flex-row gap-5 items-start">
       
       <!-- Linker Kolom: Reguliere Planning (3 Weken / Maand / Week) -->
@@ -221,7 +222,7 @@
 
         </div>
 
-        <!-- 5-Koloms Planner Grid (Ma t/m Vr) -->
+        <!-- 5-Koloms Planner Grid -->
         <div class="bg-white p-4 rounded-3xl border border-slate-200 shadow-sm overflow-x-auto">
           <div class="grid grid-cols-5 gap-2 mb-2 text-center text-xs font-bold text-slate-500 uppercase tracking-wider">
             <div>Ma</div><div>Di</div><div>Wo</div><div>Do</div><div>Vr</div>
@@ -231,7 +232,7 @@
 
       </div>
 
-      <!-- Rechter Kolom: Planner On Tour Paneel (met Potlood toevoegen) -->
+      <!-- Rechter Kolom: Planner On Tour Paneel -->
       <div class="w-full lg:w-80 bg-white p-4 rounded-3xl border border-slate-200 shadow-sm flex flex-col">
         <div class="flex items-center justify-between pb-3 border-b border-slate-100 mb-3">
           <div class="flex items-center gap-2">
@@ -244,7 +245,7 @@
         </div>
 
         <div id="plannerOnToursList" class="space-y-2.5 max-h-[540px] overflow-y-auto custom-scrollbar pr-1">
-          <!-- Dynamisch geladen voor planner -->
+          <!-- Dynamisch geladen -->
         </div>
       </div>
 
@@ -256,7 +257,7 @@
   <footer id="landingFooterBar" class="bg-white border-t border-slate-200 py-2.5 px-4 text-[11px] md:text-xs text-slate-500 sticky bottom-0 z-20">
     <div class="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-2 text-center sm:text-left">
       <div class="flex items-center gap-2 font-medium">
-        <span>Versie <strong class="text-slate-800">V1.0</strong></span>
+        <span>Versie <strong class="text-slate-800">V1.1</strong></span>
         <span class="text-slate-300">•</span>
         <button onclick="openPatchNotesModal()" class="text-emerald-600 hover:text-emerald-700 font-semibold underline transition">
           Patch notes
@@ -283,17 +284,15 @@
       <div class="max-h-80 overflow-y-auto custom-scrollbar space-y-3 pr-1 text-xs">
         <div class="p-3 bg-emerald-50/50 border border-emerald-200 rounded-2xl">
           <div class="flex items-center justify-between mb-1.5">
-            <span class="font-bold text-emerald-950">Versie V1.0</span>
-            <span class="text-[10px] bg-emerald-600 text-white px-2 py-0.5 rounded-full font-bold">Major Update</span>
+            <span class="font-bold text-emerald-950">Versie V1.1</span>
+            <span class="text-[10px] bg-emerald-600 text-white px-2 py-0.5 rounded-full font-bold">Nieuw</span>
           </div>
           <ul class="list-disc list-inside space-y-1 text-emerald-900">
-            <li>Kalender overal aangepast naar een 5-daagse werkweek (Ma t/m Vr). Zaterdag &amp; Zondag verwijderd.</li>
-            <li>Hoofdkalender toont uitsluitend nog reguliere lessen.</li>
-            <li>On Tours verplaatst naar dedicated rechter sidebar met deadline tracking (4 wk van tevoren).</li>
-            <li>Interactieve On Tour inschrijfflow met Hele Week (Ja), Nee of Deels (dagselectie).</li>
-            <li>Planner Dashboard standaard geopend op 'Aankomende 3 weken'.</li>
-            <li>Onboarding vraagt eerst 'Alleen On Tour?' en toont conditioneel alleen relevante vragen.</li>
-            <li>On Tour Specialisten badge voor planners bij kandidaten matching.</li>
+            <li>'Welke dagen kan je de aankomende tijd zeker (vaste school)' met einddatum en 1/2/3 maanden presets.</li>
+            <li>Automatische login-pop-up wanneer de 'Geldt tot' periode van vaste dagen verlopen is.</li>
+            <li>Voorkeuren worden direct opgeslagen zonder goedkeuringsvertraging.</li>
+            <li>Admin toont nu duidelijk welke docenten een verlopen vaste periode hebben.</li>
+            <li>Dagstatus aanpassingen gaan nu direct naar 'Wachten op bevestiging' in het plannerpaneel.</li>
           </ul>
         </div>
       </div>
@@ -340,7 +339,7 @@
     </div>
   </div>
 
-  <!-- MODAL: ONBOARDING MET CONDITIONELE LOGICA -->
+  <!-- MODAL: ONBOARDING & PROFIEL -->
   <div id="modalOnboarding" class="fixed inset-0 bg-slate-950/90 z-50 hidden overflow-y-auto p-4 flex items-center justify-center">
     <div class="w-full max-w-xl bg-white rounded-3xl p-6 md:p-8 shadow-2xl my-auto">
       <div class="text-center mb-6">
@@ -363,7 +362,7 @@
           </div>
         </div>
 
-        <!-- CONDITIEVE REGULIERE VRAGEN (VERBORGEN BIJ JA OP TOUR) -->
+        <!-- REGULIERE VRAGEN -->
         <div id="wrapperRegularQuestions" class="space-y-4">
           <div>
             <label class="block font-bold text-slate-800 mb-1">2. Hoe vaak in de week wil je werken?</label>
@@ -376,14 +375,27 @@
             </select>
           </div>
 
-          <div>
-            <label class="block font-bold text-slate-800 mb-1">3. Welke dag kun je altijd? <span class="text-xs font-normal text-slate-500">(Vaste school)</span></label>
-            <div class="flex flex-wrap gap-2 pt-1">
-              <label class="flex items-center gap-2 bg-slate-100 hover:bg-slate-200 px-3 py-2 rounded-xl cursor-pointer font-medium"><input type="checkbox" name="vasteDagen" value="Ma" class="rounded text-emerald-600"> Ma</label>
-              <label class="flex items-center gap-2 bg-slate-100 hover:bg-slate-200 px-3 py-2 rounded-xl cursor-pointer font-medium"><input type="checkbox" name="vasteDagen" value="Di" class="rounded text-emerald-600"> Di</label>
-              <label class="flex items-center gap-2 bg-slate-100 hover:bg-slate-200 px-3 py-2 rounded-xl cursor-pointer font-medium"><input type="checkbox" name="vasteDagen" value="Wo" class="rounded text-emerald-600"> Wo</label>
-              <label class="flex items-center gap-2 bg-slate-100 hover:bg-slate-200 px-3 py-2 rounded-xl cursor-pointer font-medium"><input type="checkbox" name="vasteDagen" value="Do" class="rounded text-emerald-600"> Do</label>
-              <label class="flex items-center gap-2 bg-slate-100 hover:bg-slate-200 px-3 py-2 rounded-xl cursor-pointer font-medium"><input type="checkbox" name="vasteDagen" value="Vr" class="rounded text-emerald-600"> Vr</label>
+          <!-- VRAAG: VASTE DAGEN MET GELDIGHEIDSDATUM & PRESETS -->
+          <div class="bg-slate-50 p-4 rounded-2xl border border-slate-200">
+            <label class="block font-bold text-slate-800 mb-1.5">3. Welke dagen kan je de aankomende tijd zeker? <span class="text-xs font-normal text-slate-500">(Vaste school)</span></label>
+            <div class="flex flex-wrap gap-2 mb-3">
+              <label class="flex items-center gap-1.5 bg-white border px-3 py-1.5 rounded-xl cursor-pointer font-semibold text-xs"><input type="checkbox" name="vasteDagen" value="Ma" class="rounded text-emerald-600"> Ma</label>
+              <label class="flex items-center gap-1.5 bg-white border px-3 py-1.5 rounded-xl cursor-pointer font-semibold text-xs"><input type="checkbox" name="vasteDagen" value="Di" class="rounded text-emerald-600"> Di</label>
+              <label class="flex items-center gap-1.5 bg-white border px-3 py-1.5 rounded-xl cursor-pointer font-semibold text-xs"><input type="checkbox" name="vasteDagen" value="Wo" class="rounded text-emerald-600"> Wo</label>
+              <label class="flex items-center gap-1.5 bg-white border px-3 py-1.5 rounded-xl cursor-pointer font-semibold text-xs"><input type="checkbox" name="vasteDagen" value="Do" class="rounded text-emerald-600"> Do</label>
+              <label class="flex items-center gap-1.5 bg-white border px-3 py-1.5 rounded-xl cursor-pointer font-semibold text-xs"><input type="checkbox" name="vasteDagen" value="Vr" class="rounded text-emerald-600"> Vr</label>
+            </div>
+
+            <div class="pt-2 border-t border-slate-200">
+              <label class="block font-bold text-slate-700 text-xs mb-1">Geldt tot:</label>
+              <div class="flex flex-col sm:flex-row gap-2 items-center">
+                <input type="date" id="obVasteDagenGeldtTot" class="w-full sm:w-auto flex-1 p-2 bg-white border border-slate-300 rounded-xl text-xs font-medium" />
+                <div class="flex gap-1.5 w-full sm:w-auto">
+                  <button type="button" onclick="setVasteDagenPreset(1, 'obVasteDagenGeldtTot')" class="flex-1 sm:flex-none px-2.5 py-1.5 bg-slate-200 hover:bg-slate-300 text-slate-700 font-bold rounded-lg text-[11px]">1 mnd</button>
+                  <button type="button" onclick="setVasteDagenPreset(2, 'obVasteDagenGeldtTot')" class="flex-1 sm:flex-none px-2.5 py-1.5 bg-slate-200 hover:bg-slate-300 text-slate-700 font-bold rounded-lg text-[11px]">2 mnd</button>
+                  <button type="button" onclick="setVasteDagenPreset(3, 'obVasteDagenGeldtTot')" class="flex-1 sm:flex-none px-2.5 py-1.5 bg-slate-200 hover:bg-slate-300 text-slate-700 font-bold rounded-lg text-[11px]">3 mnd</button>
+                </div>
+              </div>
             </div>
           </div>
 
@@ -399,7 +411,7 @@
           </div>
         </div>
 
-        <!-- RIJBEWIJS & AUTO (ALTIJD ZICHTBAAR) -->
+        <!-- RIJBEWIJS & AUTO -->
         <div class="grid grid-cols-2 gap-3 pt-1">
           <div class="bg-slate-50 p-3 rounded-xl border border-slate-200">
             <label class="block font-bold text-slate-800 mb-2">Rijbewijs?</label>
@@ -417,16 +429,49 @@
           </div>
         </div>
 
-        <div id="profileEditNotice" class="hidden p-3 bg-blue-50 border border-blue-200 text-blue-800 rounded-xl text-xs">
-          <i class="fa-solid fa-info-circle mr-1"></i> Wijzigingen worden ter goedkeuring voorgelegd aan de planning.
-        </div>
-
         <div class="pt-2 flex gap-3">
           <button type="button" id="btnCancelProfile" onclick="closeOnboardingModal()" class="hidden flex-1 py-3 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold rounded-xl transition">Annuleren</button>
           <button type="submit" id="btnSaveOnboarding" class="flex-1 py-3 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-xl shadow-lg shadow-emerald-600/20 transition flex items-center justify-center gap-2">
-            <span>Opslaan &amp; Doorgaan</span>
+            <span>Opslaan</span>
           </button>
         </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- MODAL: ALLEEN VASTE DAGEN VERLENGEN BIJ LOGIN -->
+  <div id="modalVasteDagenExpiredPopup" class="fixed inset-0 bg-slate-950/90 z-50 hidden overflow-y-auto p-4 flex items-center justify-center">
+    <div class="w-full max-w-md bg-white rounded-3xl p-6 shadow-2xl my-auto text-left">
+      <div class="w-12 h-12 bg-amber-100 text-amber-600 rounded-2xl flex items-center justify-center mb-3 text-xl">
+        <i class="fa-solid fa-calendar-check"></i>
+      </div>
+      <h3 class="text-lg font-bold text-slate-900 mb-1">Vaste Dagen Verlengen</h3>
+      <p class="text-xs text-slate-500 mb-4">Je eerdere vaste dagen periode is verlopen. Welke dagen kan je de aankomende tijd zeker?</p>
+
+      <form onsubmit="handleExpiredPopupSubmit(event)" class="space-y-4 text-xs">
+        <div class="flex flex-wrap gap-2">
+          <label class="flex items-center gap-1.5 bg-slate-100 px-3 py-2 rounded-xl cursor-pointer font-semibold"><input type="checkbox" name="popVasteDagen" value="Ma" class="rounded text-emerald-600"> Ma</label>
+          <label class="flex items-center gap-1.5 bg-slate-100 px-3 py-2 rounded-xl cursor-pointer font-semibold"><input type="checkbox" name="popVasteDagen" value="Di" class="rounded text-emerald-600"> Di</label>
+          <label class="flex items-center gap-1.5 bg-slate-100 px-3 py-2 rounded-xl cursor-pointer font-semibold"><input type="checkbox" name="popVasteDagen" value="Wo" class="rounded text-emerald-600"> Wo</label>
+          <label class="flex items-center gap-1.5 bg-slate-100 px-3 py-2 rounded-xl cursor-pointer font-semibold"><input type="checkbox" name="popVasteDagen" value="Do" class="rounded text-emerald-600"> Do</label>
+          <label class="flex items-center gap-1.5 bg-slate-100 px-3 py-2 rounded-xl cursor-pointer font-semibold"><input type="checkbox" name="popVasteDagen" value="Vr" class="rounded text-emerald-600"> Vr</label>
+        </div>
+
+        <div>
+          <label class="block font-bold text-slate-700 mb-1">Geldt tot:</label>
+          <div class="flex flex-col sm:flex-row gap-2 items-center">
+            <input type="date" id="popVasteDagenGeldtTot" required class="w-full sm:w-auto flex-1 p-2 bg-slate-50 border border-slate-300 rounded-xl font-medium" />
+            <div class="flex gap-1.5 w-full sm:w-auto">
+              <button type="button" onclick="setVasteDagenPreset(1, 'popVasteDagenGeldtTot')" class="flex-1 sm:flex-none px-2.5 py-1.5 bg-slate-200 hover:bg-slate-300 text-slate-700 font-bold rounded-lg text-[11px]">1 mnd</button>
+              <button type="button" onclick="setVasteDagenPreset(2, 'popVasteDagenGeldtTot')" class="flex-1 sm:flex-none px-2.5 py-1.5 bg-slate-200 hover:bg-slate-300 text-slate-700 font-bold rounded-lg text-[11px]">2 mnd</button>
+              <button type="button" onclick="setVasteDagenPreset(3, 'popVasteDagenGeldtTot')" class="flex-1 sm:flex-none px-2.5 py-1.5 bg-slate-200 hover:bg-slate-300 text-slate-700 font-bold rounded-lg text-[11px]">3 mnd</button>
+            </div>
+          </div>
+        </div>
+
+        <button type="submit" id="btnSaveExpiredPop" class="w-full py-3 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-xl shadow-md transition">
+          Opslaan &amp; Naar Kalender
+        </button>
       </form>
     </div>
   </div>
@@ -445,7 +490,6 @@
       <h3 class="text-lg font-bold text-slate-900" id="otRegSchoolTitle">Schoolnaam</h3>
       <p class="text-xs text-slate-500 mb-4" id="otRegDatesLoc"></p>
 
-      <!-- Keuze 1: Hele week / Nee / Deels -->
       <label class="block font-bold text-slate-700 text-xs mb-2">Hele week beschikbaar?</label>
       <div class="grid grid-cols-3 gap-2 mb-4">
         <button type="button" onclick="setOnTourChoice('HELE_WEEK')" id="btnOtChoiceJa" class="py-2.5 rounded-xl border border-slate-200 font-bold text-xs transition">🟢 Ja</button>
@@ -453,7 +497,6 @@
         <button type="button" onclick="setOnTourChoice('DEELS')" id="btnOtChoiceDeels" class="py-2.5 rounded-xl border border-slate-200 font-bold text-xs transition">🟠 Deels</button>
       </div>
 
-      <!-- Visuele balk Ma t/m Vr -->
       <label class="block font-bold text-slate-700 text-xs mb-1.5">Geselecteerde dagen:</label>
       <div class="grid grid-cols-5 gap-1.5 mb-5 text-center text-xs font-bold" id="otDaysContainer">
         <div id="otDay_Ma" onclick="toggleOtSingleDay('Ma')" class="p-2.5 rounded-xl border transition cursor-default">Ma</div>
@@ -491,7 +534,6 @@
           <input type="text" id="inputOtLocatie" placeholder="bijv. Schiermonnikoog" class="w-full p-2.5 bg-slate-50 border border-slate-300 rounded-xl font-medium" />
         </div>
 
-        <!-- Buitenland Toggle -->
         <div class="bg-slate-50 p-3 rounded-xl border border-slate-200 space-y-2">
           <label class="flex items-center gap-2 cursor-pointer font-bold text-slate-800">
             <input type="checkbox" id="checkOtIsBuitenland" onchange="toggleOtCountryField()" class="rounded text-sky-600" />
@@ -550,7 +592,7 @@
     </div>
   </div>
 
-  <!-- MODAL: DAG STATUS SELECTIE (REGULIERE KALENDER) -->
+  <!-- MODAL: DAG STATUS SELECTIE -->
   <div id="modalDayPicker" class="fixed inset-0 bg-slate-950/80 z-50 hidden flex items-center justify-center p-4">
     <div class="w-full max-w-sm bg-white rounded-3xl p-6 text-center shadow-2xl relative">
       <button onclick="closeDayPicker()" class="absolute top-4 right-4 text-slate-400 hover:text-slate-600 w-8 h-8 rounded-full flex items-center justify-center">
@@ -651,14 +693,14 @@
 
         <div id="adminTabDocenten" class="hidden space-y-4">
           <div class="bg-white p-4 rounded-2xl border border-slate-200">
-            <h3 class="font-bold text-slate-800 mb-1 text-sm md:text-base">Vakdocenten &amp; Skill Levels</h3>
+            <h3 class="font-bold text-slate-800 mb-1 text-sm md:text-base">Vakdocenten &amp; Status Vaste Dagen</h3>
             <div class="overflow-x-auto">
               <table class="w-full text-left text-xs">
                 <thead class="bg-slate-50 border-b text-slate-500 uppercase font-bold">
                   <tr>
                     <th class="p-3">Docent</th>
                     <th class="p-3">Rol</th>
-                    <th class="p-3">Tour Pref</th>
+                    <th class="p-3">Vaste Dagen Periode</th>
                     <th class="p-3">Skill</th>
                     <th class="p-3">PIN</th>
                     <th class="p-3 text-right">Actie</th>
@@ -674,7 +716,7 @@
     </div>
   </div>
 
-  <!-- MODAL: KANDIDATEN KOPPELEN (REGULIERE SCHOOL) -->
+  <!-- MODAL: KANDIDATEN KOPPELEN -->
   <div id="modalCandidatePicker" class="fixed inset-0 bg-slate-950/80 z-50 hidden flex items-center justify-center p-4">
     <div class="w-full max-w-lg bg-white rounded-3xl p-6 shadow-2xl relative max-h-[85vh] flex flex-col">
       <button onclick="closeCandidatePicker()" class="absolute top-4 right-4 text-slate-400 hover:text-slate-600 w-8 h-8 rounded-full flex items-center justify-center">
@@ -719,20 +761,18 @@
     let availabilityCache = {}; 
     let selectedDayForPicker = null;
 
-    // Planner Dashboard State
-    let plannerViewMode = '3weeks'; // '3weeks' (default) | 'month' | 'week'
+    let plannerViewMode = '3weeks';
     let plannerCurrentDate = new Date();
 
-    // On Tour State
     let currentActiveOnTours = [];
     let selectedTourForRegistration = null;
-    let activeOtChoice = null; // 'HELE_WEEK' | 'NEE' | 'DEELS'
+    let activeOtChoice = null;
     let selectedOtDays = { Ma: false, Di: false, Wo: false, Do: false, Vr: false };
     let selectedTourForCandidate = null;
 
     let clockClicks = 0;
     let clockTimer = null;
-    let adminData = { docenten: [], availability: [], planning: [], onTours: [], onTourInschrijvingen: [], profielAanvragen: [], schools: [] };
+    let adminData = { docenten: [], availability: [], planning: [], onTours: [], onTourInschrijvingen: [], schools: [] };
     let selectedPlanningForCandidate = null;
 
     window.addEventListener('DOMContentLoaded', () => {
@@ -811,6 +851,13 @@
         }
       }
       return clean;
+    }
+
+    // Helper voor 1, 2, 3 maanden presets
+    function setVasteDagenPreset(months, inputId) {
+      const d = new Date();
+      d.setMonth(d.getMonth() + months);
+      document.getElementById(inputId).value = normalizeDateStr(d);
     }
 
     async function apiCall(endpoint, method = "GET", payload = null) {
@@ -923,9 +970,16 @@
             currentDocent = { ...currentDocent, ...res.docent };
             closePinModal();
 
-            if (currentDocent.isPlanner) initPlannerView();
-            else if (!currentDocent.onboardingKlaar) openProfileModal(false);
-            else initCalendarView();
+            if (currentDocent.isPlanner) {
+              initPlannerView();
+            } else if (!currentDocent.onboardingKlaar) {
+              openProfileModal(false);
+            } else if (currentDocent.alleenOnTour !== 'Ja' && currentDocent.isVasteDagenVerlopen) {
+              // Vaste dagen periode is verlopen: toon direct de gerichte pop-up!
+              openVasteDagenExpiredPopup();
+            } else {
+              initCalendarView();
+            }
           } else {
             showPinError("Onjuiste pincode. Probeer opnieuw.");
           }
@@ -992,7 +1046,7 @@
     }
 
     // ==========================================
-    // ONBOARDING MET CONDITIONELE LOGICA
+    // ONBOARDING & PROFIELWIJZIGINGEN
     // ==========================================
     function toggleOnboardingRegularFields() {
       const isAlleenTour = document.querySelector('input[name="alleenOnTour"]:checked')?.value === 'Ja';
@@ -1005,20 +1059,19 @@
       const title = document.getElementById('onboardingTitle');
       const subtitle = document.getElementById('onboardingSubtitle');
       const btnCancel = document.getElementById('btnCancelProfile');
-      const notice = document.getElementById('profileEditNotice');
 
       form.reset();
 
       if (isEdit) {
         title.innerText = "Voorkeuren Aanpassen";
-        subtitle.innerText = "Pas je voorkeuren en beschikbaarheid aan.";
+        subtitle.innerText = "Pas je voorkeuren en beschikbaarheid direct aan.";
         btnCancel.classList.remove('hidden');
-        notice.classList.remove('hidden');
         
         if (currentDocent) {
           setRadioGroup('alleenOnTour', currentDocent.alleenOnTour || "Nee");
           document.getElementById('obWerkDagen').value = currentDocent.werkDagenPwk || "3 dagen";
           setCheckboxGroup('vasteDagen', currentDocent.vasteDagen || []);
+          document.getElementById('obVasteDagenGeldtTot').value = currentDocent.vasteDagenGeldtTot || "";
           setRadioGroup('rijbewijs', currentDocent.rijbewijs || "Ja");
           setRadioGroup('auto', currentDocent.auto || "Ja");
           setCheckboxGroup('voorkeursDagen', currentDocent.voorkeursDagen || []);
@@ -1027,8 +1080,8 @@
         title.innerText = "Welkom! Even kennismaken 👋";
         subtitle.innerText = "Geef je voorkeuren door voor het schooljaar.";
         btnCancel.classList.add('hidden');
-        notice.classList.add('hidden');
         setRadioGroup('alleenOnTour', "Nee");
+        setVasteDagenPreset(2, 'obVasteDagenGeldtTot');
       }
 
       toggleOnboardingRegularFields();
@@ -1051,40 +1104,63 @@
         alleenOnTour: isAlleenTour ? 'Ja' : 'Nee',
         werkDagenPwk: isAlleenTour ? '' : document.getElementById('obWerkDagen').value,
         vasteDagen: isAlleenTour ? [] : getCheckboxGroup('vasteDagen'),
+        vasteDagenGeldtTot: isAlleenTour ? '' : document.getElementById('obVasteDagenGeldtTot').value,
         rijbewijs: getRadioGroup('rijbewijs'),
         auto: getRadioGroup('auto'),
         voorkeursDagen: isAlleenTour ? [] : getCheckboxGroup('voorkeursDagen')
       };
 
-      if (!currentDocent.onboardingKlaar) {
-        const res = await apiCall("", "POST", {
-          action: "submitOnboarding",
-          docentId: currentDocent.id,
-          pin: currentPin,
-          formData: payloadData
-        });
-        btn.innerHTML = `Opslaan &amp; Doorgaan`;
-        btn.disabled = false;
+      const res = await apiCall("", "POST", {
+        action: "submitOnboarding",
+        docentId: currentDocent.id,
+        pin: currentPin,
+        formData: payloadData
+      });
 
-        if (res.success) {
-          currentDocent = { ...currentDocent, ...payloadData, onboardingKlaar: true };
-          closeOnboardingModal();
-          initCalendarView();
-        } else alert("Fout: " + res.error);
+      btn.innerHTML = `Opslaan`;
+      btn.disabled = false;
+
+      if (res.success) {
+        currentDocent = { ...currentDocent, ...payloadData, onboardingKlaar: true, isVasteDagenVerlopen: false };
+        closeOnboardingModal();
+        initCalendarView();
       } else {
-        const res = await apiCall("", "POST", {
-          action: "requestProfileChange",
-          docentId: currentDocent.id,
-          pin: currentPin,
-          newProfile: payloadData
-        });
-        btn.innerHTML = `Opslaan &amp; Doorgaan`;
-        btn.disabled = false;
-        if (res.success) {
-          alert("Je wijzigingsverzoek is ingediend!");
-          closeOnboardingModal();
-        }
+        alert("Fout bij opslaan: " + res.error);
       }
+    }
+
+    // ==========================================
+    // POPUP BIJ VERLOPEN VASTE DAGEN
+    // ==========================================
+    function openVasteDagenExpiredPopup() {
+      setCheckboxGroup('popVasteDagen', currentDocent.vasteDagen || []);
+      setVasteDagenPreset(2, 'popVasteDagenGeldtTot');
+      document.getElementById('modalVasteDagenExpiredPopup').classList.remove('hidden');
+    }
+
+    async function handleExpiredPopupSubmit(e) {
+      e.preventDefault();
+      const btn = document.getElementById('btnSaveExpiredPop');
+      btn.innerHTML = `<i class="fa-solid fa-circle-notch fa-spin"></i>`;
+      btn.disabled = true;
+
+      const gekozen = getCheckboxGroup('popVasteDagen');
+      const geldtTot = document.getElementById('popVasteDagenGeldtTot').value;
+
+      await apiCall("", "POST", {
+        action: "updateVasteDagenOnly",
+        docentId: currentDocent.id,
+        pin: currentPin,
+        vasteDagen: gekozen,
+        geldtTot: geldtTot
+      });
+
+      currentDocent.vasteDagen = gekozen;
+      currentDocent.vasteDagenGeldtTot = geldtTot;
+      currentDocent.isVasteDagenVerlopen = false;
+
+      document.getElementById('modalVasteDagenExpiredPopup').classList.add('hidden');
+      initCalendarView();
     }
 
     function getCheckboxGroup(name) {
@@ -1153,13 +1229,12 @@
       const firstDayOfMonth = new Date(year, month, 1);
       const daysInMonth = new Date(year, month + 1, 0).getDate();
       
-      let startDayOfWeek = firstDayOfMonth.getDay() - 1; // 0=Ma, 4=Vr, 5=Za, 6=Zo
+      let startDayOfWeek = firstDayOfMonth.getDay() - 1;
       if (startDayOfWeek === -1) startDayOfWeek = 6;
 
       const grid = document.getElementById('calendarDaysGrid');
       grid.innerHTML = "";
 
-      // Indien maand start op za of zo, schuif lege vakjes niet door naar 5-daagse werkweek
       const leadingEmpty = startDayOfWeek <= 4 ? startDayOfWeek : 0;
       for (let i = 0; i < leadingEmpty; i++) {
         grid.innerHTML += `<div class="h-20 bg-slate-50/50 rounded-xl border border-transparent"></div>`;
@@ -1171,8 +1246,6 @@
       for (let day = 1; day <= daysInMonth; day++) {
         const dObj = new Date(year, month, day);
         const dayOfWeek = dObj.getDay();
-
-        // Sla Zaterdag (6) en Zondag (0) volledig over
         if (dayOfWeek === 0 || dayOfWeek === 6) continue;
 
         const isoDate = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
@@ -1231,6 +1304,7 @@
       document.getElementById('modalDayPicker').classList.add('hidden');
     }
 
+    // Directe status & Wachten op Bevestiging check
     async function submitDayStatus(status) {
       if (!selectedDayForPicker) return;
       const entries = [];
@@ -1247,14 +1321,27 @@
           if (curr.getDay() === targetDayOfWeek) {
             const iso = `${curr.getFullYear()}-${String(curr.getMonth() + 1).padStart(2, '0')}-${String(curr.getDate()).padStart(2, '0')}`;
             entries.push({ datum: iso, status: status });
-            availabilityCache[iso] = { status, goedkeuring: "GOEDGEKEURD" };
+
+            const prev = availabilityCache[iso]?.status;
+            if (prev && prev !== status) {
+              // Bestaande dag gewijzigd -> direct grijs op scherm (IN_BEHANDELING)
+              availabilityCache[iso] = { status, goedkeuring: "IN_BEHANDELING", vorigeStatus: prev };
+            } else {
+              availabilityCache[iso] = { status, goedkeuring: "GOEDGEKEURD" };
+            }
           }
           curr.setDate(curr.getDate() + 1);
         }
       } else {
         const iso = selectedDayForPicker.isoDate;
+        const prev = availabilityCache[iso]?.status;
         entries.push({ datum: iso, status: status });
-        availabilityCache[iso] = { status, goedkeuring: "GOEDGEKEURD" };
+
+        if (prev && prev !== status) {
+          availabilityCache[iso] = { status, goedkeuring: "IN_BEHANDELING", vorigeStatus: prev };
+        } else {
+          availabilityCache[iso] = { status, goedkeuring: "GOEDGEKEURD" };
+        }
       }
 
       closeDayPicker();
@@ -1277,18 +1364,17 @@
     function calculateDeadlineStatus(startDatumStr) {
       const now = new Date();
       const startDate = new Date(startDatumStr);
-      // Deadline = 4 weken (28 dagen) voor aanvang
       const deadlineDate = new Date(startDate.getTime() - (28 * 24 * 60 * 60 * 1000));
       const diffDays = Math.ceil((deadlineDate - now) / (1000 * 60 * 60 * 24));
 
       if (diffDays <= 0) {
-        return { isClosed: true, label: "Inschrijving gesloten", colorClass: "text-slate-400 bg-slate-100" };
+        return { isClosed: true, label: "Gesloten", colorClass: "text-slate-400 bg-slate-100" };
       } else if (diffDays <= 7) {
-        return { isClosed: false, label: `Nog ${diffDays} dag${diffDays > 1 ? 'en' : ''}`, colorClass: "text-rose-700 bg-rose-50 border border-rose-200 animate-pulse" };
+        return { isClosed: false, label: `Nog ${diffDays}d`, colorClass: "text-rose-700 bg-rose-50 border border-rose-200 animate-pulse" };
       } else if (diffDays <= 30) {
-        return { isClosed: false, label: `Nog ${Math.ceil(diffDays / 7)} weken`, colorClass: "text-amber-800 bg-amber-50 border border-amber-200" };
+        return { isClosed: false, label: `Nog ${Math.ceil(diffDays / 7)}w`, colorClass: "text-amber-800 bg-amber-50 border border-amber-200" };
       } else {
-        return { isClosed: false, label: `Nog ${Math.round(diffDays / 30)} mnd`, colorClass: "text-sky-800 bg-sky-50 border border-sky-200" };
+        return { isClosed: false, label: `Nog ${Math.round(diffDays / 30)}m`, colorClass: "text-sky-800 bg-sky-50 border border-sky-200" };
       }
     }
 
@@ -1305,12 +1391,12 @@
       currentActiveOnTours.forEach(tour => {
         const dl = calculateDeadlineStatus(tour.startDatum);
         const myReg = tour.myRegistration;
-        let badgeStatus = '<span class="text-[10px] bg-slate-100 text-slate-500 font-bold px-2 py-0.5 rounded-full">⚪ Nog niet ingevuld</span>';
+        let badgeStatus = '<span class="text-[10px] bg-slate-100 text-slate-500 font-bold px-2 py-0.5 rounded-full">⚪ Niet ingevuld</span>';
 
         if (myReg) {
           if (myReg.status === "HELE_WEEK") badgeStatus = '<span class="text-[10px] bg-emerald-100 text-emerald-800 font-bold px-2 py-0.5 rounded-full">🟢 Hele week</span>';
-          else if (myReg.status === "DEELS") badgeStatus = `<span class="text-[10px] bg-amber-100 text-amber-800 font-bold px-2 py-0.5 rounded-full">🟠 Deels (${myReg.gekozenDagen.join(',')})</span>`;
-          else if (myReg.status === "NEE") badgeStatus = '<span class="text-[10px] bg-rose-100 text-rose-800 font-bold px-2 py-0.5 rounded-full">🔴 Niet beschikbaar</span>';
+          else if (myReg.status === "DEELS") badgeStatus = `<span class="text-[10px] bg-amber-100 text-amber-800 font-bold px-2 py-0.5 rounded-full">🟠 Deels</span>`;
+          else if (myReg.status === "NEE") badgeStatus = '<span class="text-[10px] bg-rose-100 text-rose-800 font-bold px-2 py-0.5 rounded-full">🔴 Niet</span>';
         }
 
         const card = document.createElement('div');
@@ -1341,7 +1427,7 @@
 
     function openOnTourRegisterModal(tour, dl) {
       if (dl.isClosed) {
-        alert("De inschrijftermijn voor deze On Tour is helaas gesloten (minder dan 4 weken voor aanvang).");
+        alert("De inschrijftermijn voor deze On Tour is gesloten (minder dan 4 weken voor aanvang).");
         return;
       }
 
@@ -1351,11 +1437,8 @@
       document.getElementById('otRegDeadlinetxt').innerText = dl.label;
 
       const myReg = tour.myRegistration;
-      if (myReg) {
-        setOnTourChoice(myReg.status, myReg.gekozenDagen);
-      } else {
-        setOnTourChoice('HELE_WEEK');
-      }
+      if (myReg) setOnTourChoice(myReg.status, myReg.gekozenDagen);
+      else setOnTourChoice('HELE_WEEK');
 
       document.getElementById('modalOnTourRegister').classList.remove('hidden');
     }
@@ -1373,15 +1456,9 @@
       document.getElementById('btnOtChoiceDeels').className = choice === 'DEELS' ? 'py-2.5 rounded-xl bg-amber-500 text-white font-bold text-xs shadow-sm' : 'py-2.5 rounded-xl bg-white border font-bold text-xs';
 
       if (choice === 'HELE_WEEK') {
-        days.forEach(d => {
-          selectedOtDays[d] = true;
-          updateOtDayBlockUi(d, true, false);
-        });
+        days.forEach(d => { selectedOtDays[d] = true; updateOtDayBlockUi(d, true, false); });
       } else if (choice === 'NEE') {
-        days.forEach(d => {
-          selectedOtDays[d] = false;
-          updateOtDayBlockUi(d, false, false);
-        });
+        days.forEach(d => { selectedOtDays[d] = false; updateOtDayBlockUi(d, false, false); });
       } else if (choice === 'DEELS') {
         days.forEach(d => {
           selectedOtDays[d] = customDays ? customDays.includes(d) : false;
@@ -1421,7 +1498,6 @@
         eindDatum: selectedTourForRegistration.eindDatum
       };
 
-      // Direct lokaal updaten
       selectedTourForRegistration.myRegistration = { status: activeOtChoice, gekozenDagen: chosen };
       closeOnTourRegisterModal();
       renderDocentOnToursSidebar();
@@ -1434,7 +1510,7 @@
     }
 
     // ==========================================
-    // PLANNER DASHBOARD (3 WEKEN / MAAND / WEEK)
+    // PLANNER DASHBOARD & AANKOMENDE 3 WEKEN
     // ==========================================
     async function initPlannerView() {
       document.getElementById('viewLanding').classList.add('hidden');
@@ -1477,10 +1553,8 @@
       grid.innerHTML = "";
 
       if (plannerViewMode === '3weeks') {
-        // Huidige week + 3 opvolgende weken (totaal 4 werkweken = 20 dagen)
         const curr = new Date(plannerCurrentDate);
-        const dayOfWeek = curr.getDay();
-        const distanceToMonday = (dayOfWeek + 6) % 7;
+        const distanceToMonday = (curr.getDay() + 6) % 7;
         const startMonday = new Date(curr);
         startMonday.setDate(curr.getDate() - distanceToMonday);
 
@@ -1520,7 +1594,6 @@
           renderPlannerDayCell(grid, isoDate, day);
         }
       } else {
-        // Weekoverzicht (Ma t/m Vr)
         const curr = new Date(plannerCurrentDate);
         const distanceToMonday = (curr.getDay() + 6) % 7;
         const monday = new Date(curr);
@@ -1702,7 +1775,6 @@
       });
 
       const rankMap = { N1: 1, N2: 2, N3: 3 };
-      // Sorteer op Tour Specialist eerst, dan Skill Level
       const sortFn = (a, b) => {
         if (a.doc.alleenOnTour && !b.doc.alleenOnTour) return -1;
         if (!a.doc.alleenOnTour && b.doc.alleenOnTour) return 1;
@@ -1717,7 +1789,6 @@
 
       renderOtCandidateSection('listOtCandidatesJa', listJa);
       renderOtCandidateSection('listOtCandidatesDeels', listDeels);
-
       document.getElementById('modalOnTourCandidates').classList.remove('hidden');
     }
 
@@ -1835,10 +1906,14 @@
       const res = await apiCall("", "GET", { action: "getAdminOverview", adminPin: ADMIN_SECRET });
       if (res.success) {
         adminData = res;
+        if (adminData.planning) adminData.planning.forEach(p => p.datum = normalizeDateStr(p.datum));
+        if (adminData.availability) adminData.availability.forEach(a => a.datum = normalizeDateStr(a.datum));
         if (res.schools) schoolsCache = res.schools;
+        
         renderAdminPlanning();
         renderAdminApprovals();
         renderAdminDocenten();
+        
         if (currentDocent && currentDocent.isPlanner) {
           renderPlannerGrid();
           renderPlannerOnToursList();
@@ -1898,16 +1973,14 @@
       container.innerHTML = "";
 
       const pendingDays = (adminData.availability || []).filter(a => a.goedkeuring === "IN_BEHANDELING");
-      const pendingProfiles = adminData.profielAanvragen || [];
-      const totalPending = pendingDays.length + pendingProfiles.length;
-
       const badge = document.getElementById('badgeOpenApprovals');
-      if (totalPending > 0) {
-        badge.innerText = totalPending;
+
+      if (pendingDays.length > 0) {
+        badge.innerText = pendingDays.length;
         badge.classList.remove('hidden');
       } else badge.classList.add('hidden');
 
-      if (totalPending === 0) {
+      if (pendingDays.length === 0) {
         container.innerHTML = `<div class="p-6 text-center text-slate-400 text-xs">Geen openstaande wijzigingsverzoeken.</div>`;
         return;
       }
@@ -1934,10 +2007,22 @@
 
       adminData.docenten.forEach(docent => {
         const tr = document.createElement('tr');
+        
+        let vasteDagenStatus = '<span class="text-slate-400 text-[10px]">Geen vaste dagen</span>';
+        if (docent.alleenOnTour) {
+          vasteDagenStatus = '<span class="text-[10px] bg-sky-100 text-sky-800 font-bold px-2 py-0.5 rounded">Alleen On Tour</span>';
+        } else if (docent.isPlanner) {
+          vasteDagenStatus = '<span class="text-slate-400 text-[10px]">-</span>';
+        } else if (docent.isVasteDagenVerlopen) {
+          vasteDagenStatus = `<span class="text-[10px] bg-rose-100 text-rose-800 font-bold px-2 py-0.5 rounded animate-pulse">⚠️ Verlopen (${docent.vasteDagenGeldtTot || 'geen datum'})</span>`;
+        } else if (docent.vasteDagenGeldtTot) {
+          vasteDagenStatus = `<span class="text-[10px] bg-emerald-100 text-emerald-800 font-bold px-2 py-0.5 rounded">Geldig tot ${docent.vasteDagenGeldtTot}</span>`;
+        }
+
         tr.innerHTML = `
           <td class="p-3 font-bold text-slate-800">${docent.naam}</td>
           <td class="p-3"><span class="text-[10px] px-2 py-0.5 rounded font-bold ${docent.isPlanner ? 'bg-amber-100 text-amber-800' : 'bg-slate-100 text-slate-600'}">${docent.isPlanner ? 'Planner' : 'Vakdocent'}</span></td>
-          <td class="p-3">${docent.alleenOnTour ? '<span class="text-[10px] bg-sky-100 text-sky-800 font-bold px-2 py-0.5 rounded">Alleen Tour</span>' : '<span class="text-slate-400 text-[10px]">Regulier</span>'}</td>
+          <td class="p-3">${vasteDagenStatus}</td>
           <td class="p-3">
             <select onchange="updateDocentSkill('${docent.id}', this.value)" class="bg-slate-100 border border-slate-300 rounded-lg p-1 font-bold text-xs">
               <option value="N1" ${docent.skillLevel === 'N1' ? 'selected' : ''}>N1 (Hoogste)</option>
