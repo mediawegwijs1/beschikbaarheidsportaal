@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
   <title>Mediawegwijs - Beschikbaarheidsportaal</title>
   
+  <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
   <script>
     tailwind.config = {
@@ -33,7 +34,9 @@
 </head>
 <body class="bg-slate-100 text-slate-800 min-h-screen flex flex-col justify-between selection:bg-brand-500 selection:text-white">
 
-  <!-- HEADER -->
+  <!-- ==========================================
+       HEADER
+       ========================================== -->
   <header class="bg-white/90 backdrop-blur border-b border-slate-200 sticky top-0 z-30 shadow-sm">
     <div class="max-w-7xl mx-auto px-4 h-13 py-2.5 flex items-center justify-between">
       
@@ -74,7 +77,9 @@
     </div>
   </header>
 
-  <!-- MAIN INHOUD -->
+  <!-- ==========================================
+       MAIN INHOUD
+       ========================================== -->
   <main class="flex-1 max-w-7xl w-full mx-auto p-3 md:p-6 flex flex-col justify-center items-center">
 
     <!-- SCHERM 1: LANDINGSPAGINA -->
@@ -153,7 +158,7 @@
 
         </div>
 
-        <!-- 5-Koloms Grid -->
+        <!-- 5-Koloms Grid (Maandag t/m Vrijdag) -->
         <div class="bg-white p-4 rounded-3xl border border-slate-200 shadow-sm overflow-x-auto">
           <div class="grid grid-cols-5 gap-2 mb-2 text-center text-xs font-bold text-slate-500 uppercase tracking-wider">
             <div>Ma</div><div>Di</div><div>Wo</div><div>Do</div><div>Vr</div>
@@ -202,6 +207,7 @@
             </button>
           </div>
 
+          <!-- 3 Toggles: 3 Weken (Default), Maand, Week -->
           <div class="bg-slate-100 p-1 rounded-xl flex text-xs font-bold border border-slate-200">
             <button onclick="setPlannerViewMode('3weeks')" id="btnPlanView3Weeks" class="px-3 py-1.5 rounded-lg bg-white text-slate-900 shadow-sm transition">Aankomende 3 weken</button>
             <button onclick="setPlannerViewMode('month')" id="btnPlanViewMonth" class="px-3 py-1.5 rounded-lg text-slate-600 hover:text-slate-900 transition">Maandoverzicht</button>
@@ -252,7 +258,7 @@
   <footer id="landingFooterBar" class="bg-white border-t border-slate-200 py-2.5 px-4 text-[11px] md:text-xs text-slate-500 sticky bottom-0 z-20">
     <div class="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-2 text-center sm:text-left">
       <div class="flex items-center gap-2 font-medium">
-        <span>Versie <strong class="text-slate-800">V1.2</strong></span>
+        <span>Versie <strong class="text-slate-800">V1.2.1</strong></span>
         <span class="text-slate-300">•</span>
         <button onclick="openPatchNotesModal()" class="text-emerald-600 hover:text-emerald-700 font-semibold underline transition">
           Patch notes
@@ -279,13 +285,15 @@
       <div class="max-h-80 overflow-y-auto custom-scrollbar space-y-3 pr-1 text-xs">
         <div class="p-3 bg-emerald-50/50 border border-emerald-200 rounded-2xl">
           <div class="flex items-center justify-between mb-1.5">
-            <span class="font-bold text-emerald-950">Versie V1.2</span>
-            <span class="text-[10px] bg-emerald-600 text-white px-2 py-0.5 rounded-full font-bold">Nieuw</span>
+            <span class="font-bold text-emerald-950">Versie V1.2.1</span>
+            <span class="text-[10px] bg-emerald-600 text-white px-2 py-0.5 rounded-full font-bold">Fix &amp; Update</span>
           </div>
           <ul class="list-disc list-inside space-y-1 text-emerald-900">
+            <li>Bestaande dagwijzigingen gaan nu gegarandeerd naar 'In Behandeling' en blijven staan na verversen.</li>
             <li>On Tour Inplannen dropdown selecteert direct uit de database van On Tour / Buitenlandse scholen.</li>
             <li>Automatisch voorinvullen en vergrendelen van bekende schoolgegevens, land en locaties.</li>
-            <li>Nieuw ingevoerde plaatsnamen worden direct onthouden in de Scholen-database voor toekomstig gebruik.</li>
+            <li>Nieuwe locaties worden direct opgeslagen in de Scholen-database.</li>
+            <li>Vaste dagen met 'Geldt tot' datum + automatische pop-up bij verlopen periode.</li>
           </ul>
         </div>
       </div>
@@ -428,7 +436,7 @@
     </div>
   </div>
 
-  <!-- MODAL: ALLEEN VASTE DAGEN VERLENGEN BIJ LOGIN -->
+  <!-- MODAL: VASTE DAGEN EXPIRED POPUP -->
   <div id="modalVasteDagenExpiredPopup" class="fixed inset-0 bg-slate-950/90 z-50 hidden overflow-y-auto p-4 flex items-center justify-center">
     <div class="w-full max-w-md bg-white rounded-3xl p-6 shadow-2xl my-auto text-left">
       <div class="w-12 h-12 bg-amber-100 text-amber-600 rounded-2xl flex items-center justify-center mb-3 text-xl">
@@ -742,7 +750,9 @@
     </div>
   </div>
 
-  <!-- JAVASCRIPT LOGICA -->
+  <!-- ==========================================
+       JAVASCRIPT LOGICA
+       ========================================== -->
   <script>
     const API_URL = "https://script.google.com/macros/s/AKfycbxEzGC3ZSIYceQ4E01sBg_YEY14rv13h38DzavDU4NKO7N_l3zM2TpQcCw4nd2S_JQ/exec"; 
     const ADMIN_SECRET = "1115";
@@ -1309,14 +1319,14 @@
         let curr = new Date(start);
         while (curr <= end) {
           if (curr.getDay() === targetDayOfWeek) {
-            const iso = `${curr.getFullYear()}-${String(curr.getMonth() + 1).padStart(2, '0')}-${String(curr.getDate()).padStart(2, '0')}`;
+            const iso = normalizeDateStr(curr);
             entries.push({ datum: iso, status: status });
 
             const prev = availabilityCache[iso]?.status;
             if (prev && prev !== status) {
-              availabilityCache[iso] = { status, goedkeuring: "IN_BEHANDELING", vorigeStatus: prev };
+              availabilityCache[iso] = { status: status, goedkeuring: "IN_BEHANDELING", vorigeStatus: prev, datum: iso };
             } else {
-              availabilityCache[iso] = { status, goedkeuring: "GOEDGEKEURD" };
+              availabilityCache[iso] = { status: status, goedkeuring: "GOEDGEKEURD", datum: iso };
             }
           }
           curr.setDate(curr.getDate() + 1);
@@ -1327,16 +1337,22 @@
         entries.push({ datum: iso, status: status });
 
         if (prev && prev !== status) {
-          availabilityCache[iso] = { status, goedkeuring: "IN_BEHANDELING", vorigeStatus: prev };
+          availabilityCache[iso] = { status: status, goedkeuring: "IN_BEHANDELING", vorigeStatus: prev, datum: iso };
         } else {
-          availabilityCache[iso] = { status, goedkeuring: "GOEDGEKEURD" };
+          availabilityCache[iso] = { status: status, goedkeuring: "GOEDGEKEURD", datum: iso };
         }
       }
 
       closeDayPicker();
       render5DayCalendar();
 
-      await apiCall("", "POST", { action: "setAvailability", docentId: currentDocent.id, pin: currentPin, entries });
+      const res = await apiCall("", "POST", { action: "setAvailability", docentId: currentDocent.id, pin: currentPin, entries });
+      if (res && res.success) {
+        await loadAvailabilityAndRender();
+      } else {
+        alert("Fout bij opslaan: " + (res.error || "Onbekend"));
+        await loadAvailabilityAndRender();
+      }
     }
 
     // ==========================================
@@ -1499,7 +1515,7 @@
     }
 
     // ==========================================
-    // PLANNER DASHBOARD (3 WEKEN / MAAND / WEEK)
+    // PLANNER DASHBOARD & AANKOMENDE 3 WEKEN
     // ==========================================
     async function initPlannerView() {
       document.getElementById('viewLanding').classList.add('hidden');
@@ -1695,7 +1711,6 @@
       const select = document.getElementById('selectOtPresetSchool');
       select.innerHTML = '<option value="">-- Kies een On Tour / Buitenlandse School --</option>';
 
-      // Filter alleen On Tour & Buitenlandse scholen
       const filtered = (schoolsCache || []).filter(s => s.categorie === "On tour" || s.categorie === "Buitenland");
       filtered.sort((a, b) => getCleanSortName(a.naam).localeCompare(getCleanSortName(b.naam)));
 
@@ -1721,7 +1736,6 @@
       document.getElementById('modalAddOnTour').classList.add('hidden');
     }
 
-    // Slimme Dropdown Preset Selectie
     function handleOtSchoolPresetSelect() {
       const val = document.getElementById('selectOtPresetSchool').value;
       const inputNaam = document.getElementById('inputOtSchoolNaam');
@@ -1770,7 +1784,6 @@
           inputLand.readOnly = true;
         }
 
-        // Als locatie al bekend is in de database: vergrendel. Anders: laat open voor invoer!
         if (school.locatie && String(school.locatie).trim() !== '') {
           inputLoc.value = school.locatie;
           inputLoc.readOnly = true;
