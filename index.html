@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <title>Mediawegwijs - Beschikbaarheidsportaal</title>
+  <title>Mediawegwijs - Beschikbaarheid</title>
   
   <script src="https://cdn.tailwindcss.com"></script>
   <script>
@@ -33,13 +33,10 @@
 </head>
 <body class="bg-slate-100 text-slate-800 min-h-screen flex flex-col justify-between selection:bg-brand-500 selection:text-white">
 
-  <!-- ==========================================
-       HEADER
-       ========================================== -->
+  <!-- HEADER -->
   <header class="bg-white/90 backdrop-blur border-b border-slate-200 sticky top-0 z-30 shadow-sm">
     <div class="max-w-7xl mx-auto px-4 h-13 py-2.5 flex items-center justify-between">
       
-      <!-- Live tijd & 5-klik reset -->
       <div 
         onclick="handleClockClick()" 
         title="Klik 5x om cache & data geforceerd te legen" 
@@ -49,7 +46,6 @@
         <span id="liveClock">laden...</span>
       </div>
 
-      <!-- Midden: Docent / Planner Acties -->
       <div id="headerUserSection" class="hidden flex items-center gap-2 md:gap-3">
         <span class="font-bold text-slate-800 text-xs md:text-sm flex items-center gap-1.5">
           <span id="headerRoleBadge" class="w-2 h-2 rounded-full bg-emerald-500"></span>
@@ -65,7 +61,6 @@
         </button>
       </div>
 
-      <!-- Rechts: Admin knop -->
       <div class="flex items-center">
         <button onclick="openAdminPinModal()" class="text-xs bg-white hover:bg-slate-50 text-slate-700 font-medium px-2.5 py-1.5 rounded-lg border border-slate-300 shadow-sm transition flex items-center gap-1.5">
           <i class="fa-solid fa-gear text-slate-400 text-xs"></i>
@@ -76,9 +71,7 @@
     </div>
   </header>
 
-  <!-- ==========================================
-       MAIN INHOUD
-       ========================================== -->
+  <!-- MAIN INHOUD -->
   <main class="flex-1 max-w-7xl w-full mx-auto p-3 md:p-6 flex flex-col justify-center items-center">
 
     <!-- SCHERM 1: LANDINGSPAGINA -->
@@ -90,8 +83,8 @@
             <div class="text-xl font-extrabold text-slate-900 tracking-tight flex items-center gap-1.5">
               <span class="text-cyan-600">MEDIA</span><span class="text-pink-600">WEGWIJS</span>
             </div>
-            <div class="text-[10px] font-bold tracking-widest text-slate-400 uppercase mt-0.5">
-              Beschikbaarheid &amp; Rooster
+            <div class="text-[11px] font-bold tracking-widest text-slate-400 uppercase mt-0.5">
+              Beschikbaarheid
             </div>
           </div>
           <p class="text-slate-500 text-xs mt-3">Typ je naam of klik op je naam hieronder</p>
@@ -126,9 +119,14 @@
     <!-- SCHERM 2: MAANDKALENDER VAKDOCENT + ON TOUR SIDEBAR -->
     <section id="viewCalendar" class="hidden w-full flex-col lg:flex-row gap-5 items-start">
       
-      <!-- Linker kolom: 5-daagse Kalender (Ma t/m Vr) -->
       <div class="flex-1 w-full space-y-4">
         
+        <!-- Attentie Banner als er open dagen zijn in de komende 3 weken -->
+        <div id="alertBannerUnfilledDays" class="hidden p-3 bg-amber-50 border border-amber-300 rounded-2xl text-amber-900 text-xs font-bold flex items-center gap-2 shadow-sm animate-pulse">
+          <i class="fa-solid fa-triangle-exclamation text-amber-600 text-sm"></i>
+          <span>Let op: Je hebt voor de komende 3 weken nog niet al je dagen doorgegeven! (Zie knipperende vakjes)</span>
+        </div>
+
         <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm flex flex-col xl:flex-row items-center justify-between gap-3">
           
           <div class="flex items-center gap-2">
@@ -146,18 +144,16 @@
             </button>
           </div>
 
-          <!-- Legenda -->
           <div class="flex flex-wrap items-center justify-center gap-1.5 text-[11px] font-semibold">
             <span class="flex items-center gap-1 bg-emerald-50 text-emerald-700 border border-emerald-200 px-2 py-0.5 rounded-lg"><span class="w-2 h-2 rounded-full bg-emerald-500"></span> Ja</span>
             <span class="flex items-center gap-1 bg-amber-50 text-amber-700 border border-amber-200 px-2 py-0.5 rounded-lg"><span class="w-2 h-2 rounded-full bg-amber-500"></span> Mogelijk</span>
             <span class="flex items-center gap-1 bg-rose-50 text-rose-700 border border-rose-200 px-2 py-0.5 rounded-lg"><span class="w-2 h-2 rounded-full bg-rose-500"></span> Nee</span>
+            <span class="flex items-center gap-1 bg-sky-50 text-sky-700 border border-sky-200 px-2 py-0.5 rounded-lg">✈️ On Tour</span>
             <span class="flex items-center gap-1 bg-slate-100 text-slate-600 border border-slate-300 px-2 py-0.5 rounded-lg"><span class="w-2 h-2 rounded-full bg-slate-400"></span> In Behandeling</span>
-            <span class="flex items-center gap-1 bg-yellow-50 text-yellow-700 border border-yellow-200 px-2 py-0.5 rounded-lg"><i class="fa-solid fa-star text-amber-500 text-[9px]"></i> Voorkeur</span>
           </div>
 
         </div>
 
-        <!-- 5-Koloms Grid -->
         <div class="bg-white p-4 rounded-3xl border border-slate-200 shadow-sm overflow-x-auto">
           <div class="grid grid-cols-5 gap-2 mb-2 text-center text-xs font-bold text-slate-500 uppercase tracking-wider">
             <div>Ma</div><div>Di</div><div>Wo</div><div>Do</div><div>Vr</div>
@@ -168,7 +164,7 @@
       </div>
 
       <!-- Rechter kolom: ON TOURS Widget -->
-      <div class="w-full lg:w-80 bg-white p-4 rounded-3xl border border-slate-200 shadow-sm flex flex-col">
+      <div class="w-full lg:w-80 bg-white p-4 rounded-3xl border border-slate-200 shadow-sm flex flex-col shrink-0">
         <div class="flex items-center justify-between pb-3 border-b border-slate-100 mb-3">
           <div class="flex items-center gap-2">
             <span class="w-2.5 h-2.5 rounded-full bg-sky-500"></span>
@@ -178,7 +174,7 @@
         </div>
 
         <p class="text-[11px] text-slate-500 mb-3">
-          Klik op een On Tour om je beschikbaarheid door te geven (deadline 4 wk van tevoren).
+          Geef je beschikbaarheid door per On Tour schoolweek.
         </p>
 
         <div id="docentOnToursList" class="space-y-2.5 max-h-[520px] overflow-y-auto custom-scrollbar pr-1"></div>
@@ -186,10 +182,36 @@
 
     </section>
 
-    <!-- SCHERM 3: PLANNER DASHBOARD -->
-    <section id="viewPlannerDashboard" class="hidden w-full flex-col lg:flex-row gap-5 items-start">
+    <!-- SCHERM 3: PLANNER DASHBOARD (3-KOLOMS) -->
+    <section id="viewPlannerDashboard" class="hidden w-full flex-col xl:flex-row gap-5 items-start">
       
-      <!-- Linker Kolom: Reguliere Planning (3 Weken / Maand / Week) -->
+      <!-- LINKER KOLOM: FILTERPANEEL & OPENSTAANDE GATEN -->
+      <div class="w-full xl:w-72 bg-white p-4 rounded-3xl border border-slate-200 shadow-sm flex flex-col shrink-0">
+        
+        <div class="flex items-center justify-between pb-3 border-b border-slate-100 mb-3">
+          <div class="flex items-center gap-2">
+            <span class="w-2.5 h-2.5 rounded-full bg-rose-500"></span>
+            <h3 class="font-extrabold text-slate-900 text-sm">Openstaande Gaten</h3>
+          </div>
+          <span class="text-[10px] bg-rose-100 text-rose-800 font-bold px-2 py-0.5 rounded-full" id="badgeGatenCount">0</span>
+        </div>
+
+        <div class="mb-3">
+          <button 
+            id="btnFilterOnlyGaten" 
+            onclick="toggleFilterOnlyGaten()" 
+            class="w-full py-2 px-3 rounded-xl border border-slate-300 font-bold text-xs flex items-center justify-center gap-2 transition bg-slate-50 text-slate-700 hover:bg-slate-100 shadow-sm"
+          >
+            <i class="fa-solid fa-filter text-slate-400"></i>
+            <span id="textFilterOnlyGaten">Toon alleen open gaten</span>
+          </button>
+        </div>
+
+        <div id="plannerGatenList" class="space-y-2 max-h-[480px] overflow-y-auto custom-scrollbar pr-1"></div>
+
+      </div>
+
+      <!-- MIDDEN KOLOM: KALENDER (3 WEKEN / MAAND / WEEK) -->
       <div class="flex-1 w-full space-y-4">
         
         <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm flex flex-col md:flex-row items-center justify-between gap-3">
@@ -213,7 +235,7 @@
           </div>
 
           <div class="flex items-center gap-2">
-            <button onclick="openAddSchoolPlanningModal()" class="text-xs bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-3 py-2 rounded-xl transition flex items-center gap-1.5 shadow-sm">
+            <button onclick="openAddSchoolPlanningModal()" class="text-xs bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-3.5 py-2 rounded-xl transition flex items-center gap-1.5 shadow-sm">
               <i class="fa-solid fa-plus"></i> School Inplannen
             </button>
             <button onclick="loadAdminData()" class="w-9 h-9 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl flex items-center justify-center transition">
@@ -223,7 +245,6 @@
 
         </div>
 
-        <!-- 5-Koloms Planner Grid -->
         <div class="bg-white p-4 rounded-3xl border border-slate-200 shadow-sm overflow-x-auto">
           <div class="grid grid-cols-5 gap-2 mb-2 text-center text-xs font-bold text-slate-500 uppercase tracking-wider">
             <div>Ma</div><div>Di</div><div>Wo</div><div>Do</div><div>Vr</div>
@@ -233,8 +254,8 @@
 
       </div>
 
-      <!-- Rechter Kolom: Planner On Tour Paneel -->
-      <div class="w-full lg:w-80 bg-white p-4 rounded-3xl border border-slate-200 shadow-sm flex flex-col">
+      <!-- RECHTER KOLOM: PLANNER ON TOURS PANEEL -->
+      <div class="w-full xl:w-80 bg-white p-4 rounded-3xl border border-slate-200 shadow-sm flex flex-col shrink-0">
         <div class="flex items-center justify-between pb-3 border-b border-slate-100 mb-3">
           <div class="flex items-center gap-2">
             <span class="w-2.5 h-2.5 rounded-full bg-sky-500"></span>
@@ -256,7 +277,7 @@
   <footer id="landingFooterBar" class="bg-white border-t border-slate-200 py-2.5 px-4 text-[11px] md:text-xs text-slate-500 sticky bottom-0 z-20">
     <div class="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-2 text-center sm:text-left">
       <div class="flex items-center gap-2 font-medium">
-        <span>Versie <strong class="text-slate-800">V1.3</strong></span>
+        <span>Versie <strong class="text-slate-800">V1.5</strong></span>
         <span class="text-slate-300">•</span>
         <button onclick="openPatchNotesModal()" class="text-emerald-600 hover:text-emerald-700 font-semibold underline transition">
           Patch notes
@@ -283,21 +304,22 @@
       <div class="max-h-80 overflow-y-auto custom-scrollbar space-y-3 pr-1 text-xs">
         <div class="p-3 bg-emerald-50/50 border border-emerald-200 rounded-2xl">
           <div class="flex items-center justify-between mb-1.5">
-            <span class="font-bold text-emerald-950">Versie V1.3</span>
-            <span class="text-[10px] bg-emerald-600 text-white px-2 py-0.5 rounded-full font-bold">Update</span>
+            <span class="font-bold text-emerald-950">Versie V1.5</span>
+            <span class="text-[10px] bg-emerald-600 text-white px-2 py-0.5 rounded-full font-bold">Nieuw</span>
           </div>
           <ul class="list-disc list-inside space-y-1 text-emerald-900">
-            <li>Verbeterde goedkeuringskaarten: toont nu dagnaam, tijdstip en dagen-van-tevoren teller met waarschuwingsbadge.</li>
-            <li>Dagen vóór vandaag zijn nu grijs en vergrendeld tegen onbedoelde aanpassingen.</li>
-            <li>Elk tabblad in Admin voorzien van een directe verversknop met laadspinner.</li>
-            <li>Directe laadanimatie op actieknoppen tot de spreadsheet-bevestiging voltooid is.</li>
+            <li>On Tour flexibele weekduur + dag-niveau dekkingsmatrix per lesgever slot.</li>
+            <li>On Tour dagen overschrijven direct met 'On Tour' status in de kalender van de vakdocent.</li>
+            <li>Knipperende attentie (amber pulse) op alle niet-ingevulde dagen in de komende 3 weken.</li>
+            <li>Nieuw vraag 4 'Periodes waarin ik op een vaste dag kan werken' met ghost box bulkinvoer.</li>
+            <li>Vaste School toewijzing in admin met gepinde top-positie in de koppelmodal.</li>
           </ul>
         </div>
       </div>
     </div>
   </div>
 
-  <!-- MODAL: PINCODE -->
+  <!-- MODAL: PINCODE MET LAADANIMATIE -->
   <div id="modalPin" class="fixed inset-0 bg-slate-950/90 z-50 hidden flex items-center justify-center p-4">
     <div class="w-full max-w-sm bg-white rounded-3xl p-6 md:p-8 text-center shadow-2xl relative">
       <button onclick="closePinModal()" class="absolute top-4 right-4 text-slate-400 hover:text-slate-600 w-8 h-8 rounded-full flex items-center justify-center">
@@ -318,7 +340,7 @@
         <div class="pin-dot w-4 h-4 rounded-full border-2 border-slate-300 bg-transparent transition-all"></div>
       </div>
 
-      <div class="grid grid-cols-3 gap-3 max-w-[260px] mx-auto">
+      <div id="pinKeypadContainer" class="grid grid-cols-3 gap-3 max-w-[260px] mx-auto">
         <button onclick="pressPinKey('1')" class="h-14 rounded-2xl bg-slate-50 hover:bg-slate-200 text-xl font-bold text-slate-800 transition active:scale-95 shadow-sm">1</button>
         <button onclick="pressPinKey('2')" class="h-14 rounded-2xl bg-slate-50 hover:bg-slate-200 text-xl font-bold text-slate-800 transition active:scale-95 shadow-sm">2</button>
         <button onclick="pressPinKey('3')" class="h-14 rounded-2xl bg-slate-50 hover:bg-slate-200 text-xl font-bold text-slate-800 transition active:scale-95 shadow-sm">3</button>
@@ -333,11 +355,16 @@
         <button onclick="deletePinKey()" class="h-14 rounded-2xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold transition active:scale-95"><i class="fa-solid fa-delete-left"></i></button>
       </div>
 
+      <div id="pinLoadingSpinner" class="hidden py-8 flex-col items-center justify-center gap-3">
+        <i class="fa-solid fa-circle-notch fa-spin text-3xl text-emerald-600"></i>
+        <span class="text-xs font-bold text-slate-600">Inloggen en gegevens ophalen...</span>
+      </div>
+
       <div id="pinErrorMsg" class="hidden mt-4 text-xs font-semibold text-rose-600"></div>
     </div>
   </div>
 
-  <!-- MODAL: ONBOARDING & PROFIEL -->
+  <!-- MODAL: ONBOARDING & PROFIEL (MET GHOST BOXES VOOR VRAAG 4) -->
   <div id="modalOnboarding" class="fixed inset-0 bg-slate-950/90 z-50 hidden overflow-y-auto p-4 flex items-center justify-center">
     <div class="w-full max-w-xl bg-white rounded-3xl p-6 md:p-8 shadow-2xl my-auto">
       <div class="text-center mb-6">
@@ -347,6 +374,7 @@
 
       <form id="onboardingForm" onsubmit="handleOnboardingSubmit(event)" class="space-y-5 text-left text-sm">
         
+        <!-- VRAAG 1: ALLEEN ON TOUR -->
         <div class="bg-sky-50 border border-sky-200 p-4 rounded-2xl">
           <label class="block font-extrabold text-sky-950 mb-2">1. Wil je alleen On Tour werken?</label>
           <div class="flex gap-3">
@@ -360,6 +388,7 @@
         </div>
 
         <div id="wrapperRegularQuestions" class="space-y-4">
+          <!-- VRAAG 2 -->
           <div>
             <label class="block font-bold text-slate-800 mb-1">2. Hoe vaak in de week wil je werken?</label>
             <select id="obWerkDagen" class="w-full p-3 bg-slate-50 border border-slate-300 rounded-xl font-medium">
@@ -371,9 +400,15 @@
             </select>
           </div>
 
-          <div class="bg-slate-50 p-4 rounded-2xl border border-slate-200">
-            <label class="block font-bold text-slate-800 mb-1.5">3. Welke dagen kan je de aankomende tijd zeker? <span class="text-xs font-normal text-slate-500">(Vaste school)</span></label>
-            <div class="flex flex-wrap gap-2 mb-3">
+          <!-- VRAAG 3: AANKOMENDE TIJD ZEKER (OPTIONEEL) -->
+          <div class="bg-slate-50 p-4 rounded-2xl border border-slate-200 space-y-2.5">
+            <div class="flex items-center justify-between">
+              <label class="block font-bold text-slate-800 text-xs">
+                3. Welke dagen kan je de aankomende tijd zeker? <span class="text-[11px] font-normal text-slate-500">(Optioneel)</span>
+              </label>
+            </div>
+            
+            <div class="flex flex-wrap gap-2">
               <label class="flex items-center gap-1.5 bg-white border px-3 py-1.5 rounded-xl cursor-pointer font-semibold text-xs"><input type="checkbox" name="vasteDagen" value="Ma" class="rounded text-emerald-600"> Ma</label>
               <label class="flex items-center gap-1.5 bg-white border px-3 py-1.5 rounded-xl cursor-pointer font-semibold text-xs"><input type="checkbox" name="vasteDagen" value="Di" class="rounded text-emerald-600"> Di</label>
               <label class="flex items-center gap-1.5 bg-white border px-3 py-1.5 rounded-xl cursor-pointer font-semibold text-xs"><input type="checkbox" name="vasteDagen" value="Wo" class="rounded text-emerald-600"> Wo</label>
@@ -394,14 +429,15 @@
             </div>
           </div>
 
-          <div>
-            <label class="block font-bold text-slate-800 mb-1">4. Voorkeursdagen? <span class="text-xs text-amber-600 font-semibold"><i class="fa-solid fa-star"></i> Krijgen een sterretje</span></label>
-            <div class="flex flex-wrap gap-2 pt-1">
-              <label class="flex items-center gap-1.5 bg-amber-50 hover:bg-amber-100 text-amber-800 border border-amber-200 px-3 py-2 rounded-xl cursor-pointer font-bold"><input type="checkbox" name="voorkeursDagen" value="Ma" class="rounded text-amber-600"> ⭐ Ma</label>
-              <label class="flex items-center gap-1.5 bg-amber-50 hover:bg-amber-100 text-amber-800 border border-amber-200 px-3 py-2 rounded-xl cursor-pointer font-bold"><input type="checkbox" name="voorkeursDagen" value="Di" class="rounded text-amber-600"> ⭐ Di</label>
-              <label class="flex items-center gap-1.5 bg-amber-50 hover:bg-amber-100 text-amber-800 border border-amber-200 px-3 py-2 rounded-xl cursor-pointer font-bold"><input type="checkbox" name="voorkeursDagen" value="Wo" class="rounded text-amber-600"> ⭐ Wo</label>
-              <label class="flex items-center gap-1.5 bg-amber-50 hover:bg-amber-100 text-amber-800 border border-amber-200 px-3 py-2 rounded-xl cursor-pointer font-bold"><input type="checkbox" name="voorkeursDagen" value="Do" class="rounded text-amber-600"> ⭐ Do</label>
-              <label class="flex items-center gap-1.5 bg-amber-50 hover:bg-amber-100 text-amber-800 border border-amber-200 px-3 py-2 rounded-xl cursor-pointer font-bold"><input type="checkbox" name="voorkeursDagen" value="Vr" class="rounded text-amber-600"> ⭐ Vr</label>
+          <!-- VRAAG 4: PERIODES MET GHOST BOXES -->
+          <div class="bg-slate-50 p-4 rounded-2xl border border-slate-200">
+            <label class="block font-bold text-slate-800 text-xs mb-1">
+              4. Periodes waarin ik op een vaste dag kan werken <span class="text-[11px] font-normal text-slate-500">(Optioneel)</span>
+            </label>
+            <p class="text-[11px] text-slate-500 mb-3">Vink een periode aan om datums en dagen op te geven. Er verschijnt vanzelf een nieuw vakje eronder.</p>
+
+            <div id="periodesGhostContainer" class="space-y-2.5">
+              <!-- Dynamische Ghost Boxes -->
             </div>
           </div>
         </div>
@@ -493,11 +529,7 @@
 
       <label class="block font-bold text-slate-700 text-xs mb-1.5">Geselecteerde dagen:</label>
       <div class="grid grid-cols-5 gap-1.5 mb-5 text-center text-xs font-bold" id="otDaysContainer">
-        <div id="otDay_Ma" onclick="toggleOtSingleDay('Ma')" class="p-2.5 rounded-xl border transition cursor-default">Ma</div>
-        <div id="otDay_Di" onclick="toggleOtSingleDay('Di')" class="p-2.5 rounded-xl border transition cursor-default">Di</div>
-        <div id="otDay_Wo" onclick="toggleOtSingleDay('Wo')" class="p-2.5 rounded-xl border transition cursor-default">Wo</div>
-        <div id="otDay_Do" onclick="toggleOtSingleDay('Do')" class="p-2.5 rounded-xl border transition cursor-default">Do</div>
-        <div id="otDay_Vr" onclick="toggleOtSingleDay('Vr')" class="p-2.5 rounded-xl border transition cursor-default">Vr</div>
+        <!-- Dynamische dagblokjes op basis van tourstart/eind -->
       </div>
 
       <div class="flex justify-end gap-2 pt-2 border-t border-slate-100">
@@ -507,7 +539,7 @@
     </div>
   </div>
 
-  <!-- MODAL: NIEUWE ON TOUR TOEVOEGEN MET SLIMME DROPDOWN -->
+  <!-- MODAL: NIEUWE ON TOUR TOEVOEGEN (PLANNER) -->
   <div id="modalAddOnTour" class="fixed inset-0 bg-slate-950/80 z-50 hidden flex items-center justify-center p-4">
     <div class="w-full max-w-md bg-white rounded-3xl p-6 shadow-2xl relative text-left">
       <button onclick="closeAddOnTourModal()" class="absolute top-4 right-4 text-slate-400 hover:text-slate-600 w-8 h-8 rounded-full flex items-center justify-center">
@@ -528,9 +560,15 @@
           <input type="text" id="inputOtSchoolNaam" required placeholder="bijv. RSG Westermarke" class="w-full p-2.5 bg-slate-50 border border-slate-300 rounded-xl font-medium" />
         </div>
 
-        <div>
-          <label class="block font-bold text-slate-700 mb-1">Locatie / Plaatsnaam</label>
-          <input type="text" id="inputOtLocatie" placeholder="bijv. Schiermonnikoog (wordt automatisch onthouden)" class="w-full p-2.5 bg-slate-50 border border-slate-300 rounded-xl font-medium" />
+        <div class="grid grid-cols-2 gap-2">
+          <div>
+            <label class="block font-bold text-slate-700 mb-1">Locatie / Plaatsnaam</label>
+            <input type="text" id="inputOtLocatie" placeholder="bijv. Schiermonnikoog" class="w-full p-2.5 bg-slate-50 border border-slate-300 rounded-xl font-medium" />
+          </div>
+          <div>
+            <label class="block font-bold text-slate-700 mb-1">Aantal Lesgevers Nodig</label>
+            <input type="number" id="inputOtAantalNodig" required min="1" max="10" value="1" class="w-full p-2.5 bg-slate-50 border border-slate-300 rounded-xl font-bold text-emerald-800" />
+          </div>
         </div>
 
         <div class="bg-slate-50 p-3 rounded-xl border border-slate-200 space-y-2">
@@ -545,11 +583,11 @@
 
         <div class="grid grid-cols-2 gap-2">
           <div>
-            <label class="block font-bold text-slate-700 mb-1">Startdatum (Ma)</label>
+            <label class="block font-bold text-slate-700 mb-1">Startdatum (bijv. Ma)</label>
             <input type="date" id="inputOtStart" required class="w-full p-2.5 bg-slate-50 border border-slate-300 rounded-xl font-medium" />
           </div>
           <div>
-            <label class="block font-bold text-slate-700 mb-1">Einddatum (Vr)</label>
+            <label class="block font-bold text-slate-700 mb-1">Einddatum (bijv. Do/Vr)</label>
             <input type="date" id="inputOtEind" required class="w-full p-2.5 bg-slate-50 border border-slate-300 rounded-xl font-medium" />
           </div>
         </div>
@@ -561,37 +599,95 @@
     </div>
   </div>
 
-  <!-- MODAL: ON TOUR KANDIDATEN KOPPELEN -->
-  <div id="modalOnTourCandidates" class="fixed inset-0 bg-slate-950/80 z-50 hidden flex items-center justify-center p-4">
-    <div class="w-full max-w-lg bg-white rounded-3xl p-6 shadow-2xl relative max-h-[85vh] flex flex-col">
-      <button onclick="closeOnTourCandidatesModal()" class="absolute top-4 right-4 text-slate-400 hover:text-slate-600 w-8 h-8 rounded-full flex items-center justify-center">
+  <!-- MODAL: REGULIERE SCHOOL INPLANNEN -->
+  <div id="modalAddSchoolPlanning" class="fixed inset-0 bg-slate-950/80 z-50 hidden flex items-center justify-center p-4">
+    <div class="w-full max-w-md bg-white rounded-3xl p-6 shadow-2xl relative text-left">
+      <button onclick="closeAddSchoolModal()" class="absolute top-4 right-4 text-slate-400 hover:text-slate-600 w-8 h-8 rounded-full flex items-center justify-center">
         <i class="fa-solid fa-xmark"></i>
       </button>
 
-      <h3 class="font-bold text-slate-900 text-base md:text-lg mb-0.5" id="otCandModalTitle">On Tour Kandidaten</h3>
-      <p class="text-xs text-slate-500 mb-4" id="otCandModalSubtitle"></p>
+      <h3 class="text-lg font-bold text-slate-900 mb-1">Reguliere School Inplannen</h3>
+      <p class="text-xs text-slate-500 mb-4">Kies datum, school en aantal lesgevers.</p>
+
+      <form onsubmit="handleAddSchoolPlanningSubmit(event)" class="space-y-4 text-xs">
+        <div class="grid grid-cols-3 gap-2">
+          <div class="col-span-2">
+            <label class="block font-bold text-slate-700 mb-1">Datum</label>
+            <input type="date" id="inputPlanDate" required class="w-full p-2.5 bg-slate-50 border border-slate-300 rounded-xl font-medium" />
+          </div>
+          <div>
+            <label class="block font-bold text-slate-700 mb-1">Aantal Nodig</label>
+            <input type="number" id="inputPlanAantalNodig" required min="1" max="10" value="1" class="w-full p-2.5 bg-slate-50 border border-slate-300 rounded-xl font-bold text-emerald-800" />
+          </div>
+        </div>
+
+        <div>
+          <label class="block font-bold text-slate-700 mb-1">Selecteer School</label>
+          <select id="selectSchoolName" required class="w-full p-2.5 bg-slate-50 border border-slate-300 rounded-xl font-medium"></select>
+        </div>
+
+        <button type="submit" id="btnAddSchoolSubmit" class="w-full py-3 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-xl transition shadow-md shadow-emerald-600/20">
+          Inplannen
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- ==========================================
+       SLIMME SLOT-KOPPEL MODAL (MET PINNED VASTE DOCENT & ON TOUR MATRIX)
+       ========================================== -->
+  <div id="modalSlotManager" class="fixed inset-0 bg-slate-950/80 z-50 hidden flex items-center justify-center p-4">
+    <div class="w-full max-w-2xl bg-white rounded-3xl p-6 shadow-2xl relative max-h-[90vh] flex flex-col">
+      <button onclick="closeSlotManagerModal()" class="absolute top-4 right-4 text-slate-400 hover:text-slate-600 w-8 h-8 rounded-full flex items-center justify-center">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+
+      <div class="flex items-center gap-2 mb-1">
+        <span id="slotModalTypeBadge" class="text-xs bg-emerald-100 text-emerald-800 font-bold px-2.5 py-0.5 rounded-full">School</span>
+        <span id="slotModalProgressBadge" class="text-xs font-bold px-2 py-0.5 rounded-full">0/1 Bezet</span>
+      </div>
+      <h3 class="font-extrabold text-slate-900 text-lg" id="slotModalTitle">Schoolnaam</h3>
+      <p class="text-xs text-slate-500 mb-3" id="slotModalSubtitle">Datum &amp; Details</p>
 
       <div class="flex-1 overflow-y-auto space-y-4 custom-scrollbar pr-1">
-        <div>
-          <h4 class="text-xs font-bold uppercase text-emerald-800 bg-emerald-50 px-2.5 py-1.5 rounded-lg mb-2 flex items-center justify-between">
-            <span>🟢 Hele Week Beschikbaar</span>
-            <span id="countOtJa" class="font-bold">0</span>
-          </h4>
-          <div id="listOtCandidatesJa" class="space-y-1.5"></div>
+        
+        <!-- PINNED VASTE DOCENT SECTIE (ALLEEN BIJ REGULIERE SCHOOL) -->
+        <div id="pinnedVasteDocentContainer" class="hidden"></div>
+
+        <!-- SECTIE: SLOTS STATUS / MATRIX -->
+        <div class="bg-slate-50 p-3.5 rounded-2xl border border-slate-200">
+          <h4 class="text-xs font-extrabold text-slate-700 uppercase tracking-wider mb-2" id="slotSectionHeaderTitle">Toegewezen Docenten:</h4>
+          <div id="slotRowsContainer" class="space-y-2"></div>
         </div>
 
-        <div>
-          <h4 class="text-xs font-bold uppercase text-amber-800 bg-amber-50 px-2.5 py-1.5 rounded-lg mb-2 flex items-center justify-between">
-            <span>🟠 Deels Beschikbaar</span>
-            <span id="countOtDeels" class="font-bold">0</span>
+        <!-- SECTIE: KANDIDATEN SELECTIE -->
+        <div id="candidatesSectionWrapper">
+          <h4 class="text-xs font-bold uppercase text-slate-600 mb-2 flex items-center justify-between">
+            <span id="candidateFilterHeaderTitle">Kies een beschikbare docent voor het open slot:</span>
           </h4>
-          <div id="listOtCandidatesDeels" class="space-y-1.5"></div>
+
+          <div class="mb-3">
+            <h5 class="text-[11px] font-bold uppercase text-emerald-800 bg-emerald-50 px-2.5 py-1 rounded-lg mb-1.5 flex justify-between items-center">
+              <span>🟢 Beschikbaar (N1 ➔ N3)</span>
+              <span id="countSlotCandJa" class="font-bold">0</span>
+            </h5>
+            <div id="listSlotCandJa" class="space-y-1"></div>
+          </div>
+
+          <div>
+            <h5 class="text-[11px] font-bold uppercase text-amber-800 bg-amber-50 px-2.5 py-1 rounded-lg mb-1.5 flex justify-between items-center">
+              <span id="labelSlotCandAlt">🟠 Mogelijk (N1 ➔ N3)</span>
+              <span id="countSlotCandAlt" class="font-bold">0</span>
+            </h5>
+            <div id="listSlotCandAlt" class="space-y-1"></div>
+          </div>
         </div>
+
       </div>
     </div>
   </div>
 
-  <!-- MODAL: DAG STATUS SELECTIE -->
+  <!-- MODAL: DAG STATUS SELECTIE (DOCENT) -->
   <div id="modalDayPicker" class="fixed inset-0 bg-slate-950/80 z-50 hidden flex items-center justify-center p-4">
     <div class="w-full max-w-sm bg-white rounded-3xl p-6 text-center shadow-2xl relative">
       <button onclick="closeDayPicker()" class="absolute top-4 right-4 text-slate-400 hover:text-slate-600 w-8 h-8 rounded-full flex items-center justify-center">
@@ -622,35 +718,7 @@
     </div>
   </div>
 
-  <!-- MODAL: REGULIERE SCHOOL INPLANNEN -->
-  <div id="modalAddSchoolPlanning" class="fixed inset-0 bg-slate-950/80 z-50 hidden flex items-center justify-center p-4">
-    <div class="w-full max-w-md bg-white rounded-3xl p-6 shadow-2xl relative text-left">
-      <button onclick="closeAddSchoolModal()" class="absolute top-4 right-4 text-slate-400 hover:text-slate-600 w-8 h-8 rounded-full flex items-center justify-center">
-        <i class="fa-solid fa-xmark"></i>
-      </button>
-
-      <h3 class="text-lg font-bold text-slate-900 mb-1">Reguliere School Inplannen</h3>
-      <p class="text-xs text-slate-500 mb-4">Kies een datum (Ma t/m Vr) en selecteer een reguliere school.</p>
-
-      <form onsubmit="handleAddSchoolPlanningSubmit(event)" class="space-y-4 text-xs">
-        <div>
-          <label class="block font-bold text-slate-700 mb-1">Datum</label>
-          <input type="date" id="inputPlanDate" required class="w-full p-2.5 bg-slate-50 border border-slate-300 rounded-xl font-medium" />
-        </div>
-
-        <div>
-          <label class="block font-bold text-slate-700 mb-1">Selecteer School</label>
-          <select id="selectSchoolName" required class="w-full p-2.5 bg-slate-50 border border-slate-300 rounded-xl font-medium"></select>
-        </div>
-
-        <button type="submit" id="btnAddSchoolSubmit" class="w-full py-3 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-xl transition shadow-md shadow-emerald-600/20">
-          Inplannen
-        </button>
-      </form>
-    </div>
-  </div>
-
-  <!-- MODAL: ADMIN DASHBOARD MET VERVERSKNOP OP ELK TABBLAD -->
+  <!-- MODAL: ADMIN DASHBOARD (MET REFRESH OP ELK TABBLAD & VASTE SCHOOL SELECTIE) -->
   <div id="modalAdmin" class="fixed inset-0 bg-slate-950/90 z-50 hidden flex flex-col p-2 md:p-6 overflow-hidden">
     <div class="bg-white rounded-3xl w-full max-w-6xl mx-auto flex-1 flex flex-col overflow-hidden shadow-2xl border border-slate-200">
       
@@ -701,10 +769,10 @@
           <div id="adminApprovalsList" class="space-y-2"></div>
         </div>
 
-        <!-- TAB 3: VAKDOCENTEN -->
+        <!-- TAB 3: VAKDOCENTEN (MET VASTE SCHOOL TAG) -->
         <div id="adminTabDocenten" class="hidden space-y-4">
           <div class="flex justify-between items-center bg-white p-4 rounded-2xl border border-slate-200">
-            <h3 class="font-bold text-slate-800 text-sm md:text-base">Vakdocenten &amp; Status Vaste Dagen</h3>
+            <h3 class="font-bold text-slate-800 text-sm md:text-base">Vakdocenten &amp; Vaste School Koppeling</h3>
             <button onclick="adminManualRefresh(this)" class="text-xs bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold px-3 py-2 rounded-xl border border-slate-200 transition flex items-center gap-1.5">
               <i class="fa-solid fa-arrows-rotate text-slate-500"></i> <span>Vernieuwen</span>
             </button>
@@ -715,6 +783,7 @@
                 <tr>
                   <th class="p-3">Docent</th>
                   <th class="p-3">Rol</th>
+                  <th class="p-3">Vaste School</th>
                   <th class="p-3">Vaste Dagen Periode</th>
                   <th class="p-3">Skill</th>
                   <th class="p-3">PIN</th>
@@ -731,39 +800,7 @@
     </div>
   </div>
 
-  <!-- MODAL: KANDIDATEN KOPPELEN -->
-  <div id="modalCandidatePicker" class="fixed inset-0 bg-slate-950/80 z-50 hidden flex items-center justify-center p-4">
-    <div class="w-full max-w-lg bg-white rounded-3xl p-6 shadow-2xl relative max-h-[85vh] flex flex-col">
-      <button onclick="closeCandidatePicker()" class="absolute top-4 right-4 text-slate-400 hover:text-slate-600 w-8 h-8 rounded-full flex items-center justify-center">
-        <i class="fa-solid fa-xmark"></i>
-      </button>
-
-      <h3 class="font-bold text-slate-900 text-base md:text-lg mb-1" id="candidateModalTitle">Docent koppelen</h3>
-      <p class="text-xs text-slate-500 mb-4" id="candidateModalDate"></p>
-
-      <div class="flex-1 overflow-y-auto space-y-4 custom-scrollbar pr-1">
-        <div>
-          <h4 class="text-xs font-bold uppercase text-emerald-700 bg-emerald-50 px-2.5 py-1.5 rounded-lg mb-2 flex items-center justify-between">
-            <span>🟢 Beschikbaar (N1 ➔ N3)</span>
-            <span id="countCandidatesJa" class="font-bold">0</span>
-          </h4>
-          <div id="listCandidatesJa" class="space-y-1.5"></div>
-        </div>
-
-        <div>
-          <h4 class="text-xs font-bold uppercase text-amber-700 bg-amber-50 px-2.5 py-1.5 rounded-lg mb-2 flex items-center justify-between">
-            <span>🟠 Mogelijk (N1 ➔ N3)</span>
-            <span id="countCandidatesMogelijk" class="font-bold">0</span>
-          </h4>
-          <div id="listCandidatesMogelijk" class="space-y-1.5"></div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- ==========================================
-       JAVASCRIPT LOGICA
-       ========================================== -->
+  <!-- JAVASCRIPT CODE -->
   <script>
     const API_URL = "https://script.google.com/macros/s/AKfycbxEzGC3ZSIYceQ4E01sBg_YEY14rv13h38DzavDU4NKO7N_l3zM2TpQcCw4nd2S_JQ/exec"; 
     const ADMIN_SECRET = "1115";
@@ -780,17 +817,18 @@
 
     let plannerViewMode = '3weeks';
     let plannerCurrentDate = new Date();
+    let filterOnlyGaten = false;
 
     let currentActiveOnTours = [];
     let selectedTourForRegistration = null;
     let activeOtChoice = null;
-    let selectedOtDays = { Ma: false, Di: false, Wo: false, Do: false, Vr: false };
-    let selectedTourForCandidate = null;
+    let selectedOtDays = {};
+
+    let currentSlotTarget = null; // { type, item, selectedDayFilter }
 
     let clockClicks = 0;
     let clockTimer = null;
     let adminData = { docenten: [], availability: [], planning: [], onTours: [], onTourInschrijvingen: [], schools: [] };
-    let selectedPlanningForCandidate = null;
 
     window.addEventListener('DOMContentLoaded', () => {
       startClock();
@@ -967,7 +1005,10 @@
 
       if (docent.needsPinSetup) {
         openPinModal("Kies een 4-cijferige pincode", "Onthoud deze goed voor volgende keer", async (pin) => {
+          showPinLoading(true);
           const res = await apiCall("", "POST", { action: "setInitialPin", docentId: docent.id, newPin: pin });
+          showPinLoading(false);
+
           if (res.success) {
             currentPin = pin;
             currentDocent.needsPinSetup = false;
@@ -980,7 +1021,10 @@
         });
       } else {
         openPinModal("Voer je pincode in", `Welkom terug, ${docent.naam}`, async (pin) => {
+          showPinLoading(true);
           const res = await apiCall("", "GET", { action: "getDocentData", docentId: docent.id, pin: pin });
+          showPinLoading(false);
+
           if (res.success) {
             currentPin = pin;
             currentDocent = { ...currentDocent, ...res.docent };
@@ -1008,6 +1052,7 @@
       document.getElementById('pinModalTitle').innerText = title;
       document.getElementById('pinModalSubtitle').innerText = subtitle;
       document.getElementById('pinErrorMsg').classList.add('hidden');
+      showPinLoading(false);
       updatePinDots();
       document.getElementById('modalPin').classList.remove('hidden');
     }
@@ -1015,6 +1060,13 @@
     function closePinModal() {
       document.getElementById('modalPin').classList.add('hidden');
       enteredPin = "";
+      showPinLoading(false);
+    }
+
+    function showPinLoading(isLoading) {
+      document.getElementById('pinKeypadContainer').classList.toggle('hidden', isLoading);
+      document.getElementById('pinLoadingSpinner').classList.toggle('hidden', !isLoading);
+      document.getElementById('pinLoadingSpinner').classList.toggle('flex', isLoading);
     }
 
     function pressPinKey(digit) {
@@ -1022,7 +1074,7 @@
         enteredPin += digit;
         updatePinDots();
         if (enteredPin.length === 4 && pinCallback) {
-          setTimeout(() => pinCallback(enteredPin), 80);
+          setTimeout(() => pinCallback(enteredPin), 60);
         }
       }
     }
@@ -1061,8 +1113,10 @@
     }
 
     // ==========================================
-    // ONBOARDING & PROFIEL
+    // ONBOARDING & PROFIEL (GHOST BOXES VRAAG 4)
     // ==========================================
+    let ghostPeriodesData = [];
+
     function toggleOnboardingRegularFields() {
       const isAlleenTour = document.querySelector('input[name="alleenOnTour"]:checked')?.value === 'Ja';
       document.getElementById('wrapperRegularQuestions').style.display = isAlleenTour ? 'none' : 'block';
@@ -1079,7 +1133,7 @@
 
       if (isEdit) {
         title.innerText = "Voorkeuren Aanpassen";
-        subtitle.innerText = "Pas je voorkeuren en beschikbaarheid direct aan.";
+        subtitle.innerText = "Pas je voorkeuren en periodes direct aan.";
         btnCancel.classList.remove('hidden');
         
         if (currentDocent) {
@@ -1089,7 +1143,7 @@
           document.getElementById('obVasteDagenGeldtTot').value = currentDocent.vasteDagenGeldtTot || "";
           setRadioGroup('rijbewijs', currentDocent.rijbewijs || "Ja");
           setRadioGroup('auto', currentDocent.auto || "Ja");
-          setCheckboxGroup('voorkeursDagen', currentDocent.voorkeursDagen || []);
+          ghostPeriodesData = (currentDocent.vastePeriodes || []).map(p => ({ ...p, active: true }));
         }
       } else {
         title.innerText = "Welkom! Even kennismaken 👋";
@@ -1097,14 +1151,95 @@
         btnCancel.classList.add('hidden');
         setRadioGroup('alleenOnTour', "Nee");
         setVasteDagenPreset(2, 'obVasteDagenGeldtTot');
+        ghostPeriodesData = [];
       }
 
+      renderGhostPeriodes();
       toggleOnboardingRegularFields();
       modal.classList.remove('hidden');
     }
 
     function closeOnboardingModal() {
       document.getElementById('modalOnboarding').classList.add('hidden');
+    }
+
+    function renderGhostPeriodes() {
+      const container = document.getElementById('periodesGhostContainer');
+      container.innerHTML = "";
+
+      // Zorg dat er altijd minimaal 1 lege (ghost) rij onderaan staat
+      const rows = [...ghostPeriodesData];
+      if (rows.length === 0 || rows[rows.length - 1].active) {
+        rows.push({ active: false, van: "", tot: "", dagen: [] });
+      }
+
+      rows.forEach((p, idx) => {
+        const div = document.createElement('div');
+        div.className = `p-3 rounded-2xl border transition ${p.active ? 'bg-white border-slate-300 shadow-sm' : 'bg-slate-100/70 border-slate-200 opacity-60'}`;
+
+        const isAct = p.active;
+        div.innerHTML = `
+          <div class="flex items-center gap-3">
+            <input type="checkbox" onchange="toggleGhostRow(${idx}, this.checked)" ${isAct ? 'checked' : ''} class="w-4 h-4 rounded text-emerald-600 focus:ring-emerald-500 cursor-pointer" />
+            
+            <div class="flex-1 flex flex-col md:flex-row items-center gap-2 ${isAct ? '' : 'pointer-events-none'}">
+              <div class="flex items-center gap-1.5 w-full md:w-auto">
+                <span class="text-[11px] font-bold text-slate-500">Van</span>
+                <input type="date" value="${p.van || ''}" onchange="updateGhostRowData(${idx}, 'van', this.value)" ${isAct ? '' : 'disabled'} class="p-1.5 bg-slate-50 border border-slate-200 rounded-lg text-xs font-medium w-full md:w-auto" />
+              </div>
+              <div class="flex items-center gap-1.5 w-full md:w-auto">
+                <span class="text-[11px] font-bold text-slate-500">Tot</span>
+                <input type="date" value="${p.tot || ''}" onchange="updateGhostRowData(${idx}, 'tot', this.value)" ${isAct ? '' : 'disabled'} class="p-1.5 bg-slate-50 border border-slate-200 rounded-lg text-xs font-medium w-full md:w-auto" />
+              </div>
+              <div class="flex items-center gap-1 pt-1 md:pt-0">
+                <span class="text-[11px] font-bold text-slate-500 mr-1">op:</span>
+                ${['Ma', 'Di', 'Wo', 'Do', 'Vr'].map(d => `
+                  <label class="text-[10px] font-bold px-1.5 py-0.5 rounded border ${isAct ? 'cursor-pointer' : ''} ${(p.dagen || []).includes(d) ? 'bg-emerald-600 text-white border-emerald-600' : 'bg-slate-50 text-slate-600'}">
+                    <input type="checkbox" onchange="toggleGhostDay(${idx}, '${d}', this.checked)" ${(p.dagen || []).includes(d) ? 'checked' : ''} ${isAct ? '' : 'disabled'} class="hidden" /> ${d}
+                  </label>
+                `).join('')}
+              </div>
+            </div>
+
+            ${isAct ? `
+              <button type="button" onclick="deleteGhostRow(${idx})" class="text-rose-500 hover:text-rose-700 p-1">
+                <i class="fa-solid fa-trash-can text-xs"></i>
+              </button>
+            ` : ''}
+          </div>
+        `;
+        container.appendChild(div);
+      });
+    }
+
+    function toggleGhostRow(idx, checked) {
+      if (idx >= ghostPeriodesData.length) {
+        ghostPeriodesData.push({ active: checked, van: "", tot: "", dagen: [] });
+      } else {
+        ghostPeriodesData[idx].active = checked;
+      }
+      renderGhostPeriodes();
+    }
+
+    function updateGhostRowData(idx, key, val) {
+      if (ghostPeriodesData[idx]) {
+        ghostPeriodesData[idx][key] = val;
+      }
+    }
+
+    function toggleGhostDay(idx, day, checked) {
+      if (ghostPeriodesData[idx]) {
+        let arr = ghostPeriodesData[idx].dagen || [];
+        if (checked && !arr.includes(day)) arr.push(day);
+        else if (!checked) arr = arr.filter(d => d !== day);
+        ghostPeriodesData[idx].dagen = arr;
+        renderGhostPeriodes();
+      }
+    }
+
+    function deleteGhostRow(idx) {
+      ghostPeriodesData.splice(idx, 1);
+      renderGhostPeriodes();
     }
 
     async function handleOnboardingSubmit(e) {
@@ -1114,15 +1249,16 @@
       btn.disabled = true;
 
       const isAlleenTour = getRadioGroup('alleenOnTour') === 'Ja';
+      const activePeriodes = ghostPeriodesData.filter(p => p.active && p.van && p.tot);
 
       const payloadData = {
         alleenOnTour: isAlleenTour ? 'Ja' : 'Nee',
         werkDagenPwk: isAlleenTour ? '' : document.getElementById('obWerkDagen').value,
         vasteDagen: isAlleenTour ? [] : getCheckboxGroup('vasteDagen'),
         vasteDagenGeldtTot: isAlleenTour ? '' : document.getElementById('obVasteDagenGeldtTot').value,
+        vastePeriodes: isAlleenTour ? [] : activePeriodes,
         rijbewijs: getRadioGroup('rijbewijs'),
-        auto: getRadioGroup('auto'),
-        voorkeursDagen: isAlleenTour ? [] : getCheckboxGroup('voorkeursDagen')
+        auto: getRadioGroup('auto')
       };
 
       const res = await apiCall("", "POST", {
@@ -1191,7 +1327,7 @@
     }
 
     // ==========================================
-    // VAKDOCENT 5-DAAGSE KALENDER (VERLEDEN VERGRENDELD)
+    // VAKDOCENT 5-DAAGSE KALENDER (ATTENTIE OP 3 WEKEN)
     // ==========================================
     async function initCalendarView() {
       document.getElementById('viewLanding').classList.add('hidden');
@@ -1235,6 +1371,14 @@
 
       const now = new Date();
       const todayIso = normalizeDateStr(now);
+      
+      // Bereken deadline 3 weken vanaf vandaag (21 dagen)
+      const end3WeeksDate = new Date(now);
+      end3WeeksDate.setDate(end3WeeksDate.getDate() + 21);
+      const end3WeeksIso = normalizeDateStr(end3WeeksDate);
+
+      let hasUnfilledIn3Weeks = false;
+
       const diffMonths = (year - now.getFullYear()) * 12 + (month - now.getMonth());
       document.getElementById('btnPrevMonth').disabled = diffMonths <= 0;
       document.getElementById('btnNextMonth').disabled = diffMonths >= 3;
@@ -1253,25 +1397,24 @@
         grid.innerHTML += `<div class="h-20 bg-slate-50/50 rounded-xl border border-transparent"></div>`;
       }
 
-      const prefDays = currentDocent.voorkeursDagen || [];
-      const dayNamesMap = ["Zo", "Ma", "Di", "Wo", "Do", "Vr", "Za"];
-
       for (let day = 1; day <= daysInMonth; day++) {
         const dObj = new Date(year, month, day);
         const dayOfWeek = dObj.getDay();
         if (dayOfWeek === 0 || dayOfWeek === 6) continue;
 
         const isoDate = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
-        const dayOfWeekShort = dayNamesMap[dayOfWeek];
-        const isPreferred = prefDays.includes(dayOfWeekShort);
         const isPast = isoDate < todayIso;
+        const isInNext3Weeks = isoDate >= todayIso && isoDate <= end3WeeksIso;
 
         const avail = availabilityCache[isoDate];
         let statusBg = "bg-slate-50 border-slate-200 text-slate-700 hover:border-slate-300";
         let statusBadge = "";
 
         if (avail) {
-          if (avail.goedkeuring === "IN_BEHANDELING") {
+          if (avail.status === "ON_TOUR") {
+            statusBg = "bg-sky-100 border-sky-300 text-sky-900";
+            statusBadge = `<span class="text-[10px] bg-sky-600 text-white px-2 py-0.5 rounded-full font-extrabold shadow-sm">✈️ On Tour</span>`;
+          } else if (avail.goedkeuring === "IN_BEHANDELING") {
             statusBg = "bg-slate-100 border-slate-300 text-slate-800";
             const transText = avail.vorigeStatus ? `${avail.vorigeStatus} ➔ ${avail.status}` : avail.status;
             statusBadge = `<span class="text-[9px] bg-slate-600 text-white px-1.5 py-0.5 rounded font-bold">⏳ ${transText}</span>`;
@@ -1285,11 +1428,14 @@
             statusBg = "bg-rose-100 border-rose-300 text-rose-900";
             statusBadge = `<span class="text-[10px] bg-rose-600 text-white px-1.5 py-0.5 rounded font-bold">🔴 Nee</span>`;
           }
+        } else if (isInNext3Weeks) {
+          // Knipperende alert voor niet ingevulde dagen in de komende 3 weken!
+          hasUnfilledIn3Weeks = true;
+          statusBg = "bg-amber-50/60 border-2 border-amber-400 ring-2 ring-amber-300 animate-pulse text-amber-900";
+          statusBadge = `<span class="text-[9px] bg-amber-500 text-white px-1.5 py-0.5 rounded font-bold">⚠️ Invullen</span>`;
         }
 
         const cell = document.createElement('div');
-        
-        // Verleden dagen zijn grijs & vergrendeld
         if (isPast) {
           cell.className = `h-20 p-2 rounded-2xl border bg-slate-100/70 border-slate-200 text-slate-400 opacity-60 cursor-not-allowed flex flex-col justify-between shadow-none`;
           cell.innerHTML = `
@@ -1299,21 +1445,21 @@
             </div>
             <div class="truncate opacity-75">${statusBadge}</div>
           `;
-          cell.onclick = null;
         } else {
           cell.className = `h-20 p-2 rounded-2xl border transition cursor-pointer flex flex-col justify-between ${statusBg} active:scale-95 shadow-sm`;
           cell.innerHTML = `
             <div class="flex items-center justify-between">
               <span class="font-bold text-sm">${day}</span>
-              ${isPreferred ? '<i class="fa-solid fa-star text-amber-500 text-xs" title="Voorkeursdag"></i>' : ''}
             </div>
             <div class="truncate">${statusBadge}</div>
           `;
-          cell.onclick = () => openDayPicker(isoDate, dObj, dayOfWeekShort);
+          cell.onclick = () => openDayPicker(isoDate, dObj);
         }
 
         grid.appendChild(cell);
       }
+
+      document.getElementById('alertBannerUnfilledDays').classList.toggle('hidden', !hasUnfilledIn3Weeks);
     }
 
     function changeMonth(delta) {
@@ -1321,10 +1467,9 @@
       render5DayCalendar();
     }
 
-    function openDayPicker(isoDate, dateObj, dayName) {
-      selectedDayForPicker = { isoDate: normalizeDateStr(isoDate), dateObj, dayName };
+    function openDayPicker(isoDate, dateObj) {
+      selectedDayForPicker = { isoDate: normalizeDateStr(isoDate), dateObj };
       document.getElementById('dayPickerDateTitle').innerText = dateObj.toLocaleDateString('nl-NL', { weekday: 'long', day: 'numeric', month: 'long' });
-      document.getElementById('labelApply3Months').innerText = `Toepassen op alle ${dayName}-dagen voor de komende 3 maanden`;
       document.getElementById('checkApply3Months').checked = false;
       document.getElementById('modalDayPicker').classList.remove('hidden');
     }
@@ -1375,12 +1520,8 @@
       render5DayCalendar();
 
       const res = await apiCall("", "POST", { action: "setAvailability", docentId: currentDocent.id, pin: currentPin, entries });
-      if (res && res.success) {
-        await loadAvailabilityAndRender();
-      } else {
-        alert("Fout bij opslaan: " + (res.error || "Onbekend"));
-        await loadAvailabilityAndRender();
-      }
+      if (res && res.success) await loadAvailabilityAndRender();
+      else alert("Fout bij opslaan: " + (res.error || "Onbekend"));
     }
 
     // ==========================================
@@ -1469,11 +1610,38 @@
       document.getElementById('otRegDatesLoc').innerText = `${tour.startDatum} t/m ${tour.eindDatum} ${tour.locatie ? `• 📍 ${tour.locatie}` : ''} ${tour.isBuitenland ? `• 🌍 ${tour.land}` : ''}`;
       document.getElementById('otRegDeadlinetxt').innerText = dl.label;
 
+      renderOtRegistrationDayBlocks(tour);
+
       const myReg = tour.myRegistration;
       if (myReg) setOnTourChoice(myReg.status, myReg.gekozenDagen);
       else setOnTourChoice('HELE_WEEK');
 
       document.getElementById('modalOnTourRegister').classList.remove('hidden');
+    }
+
+    function renderOtRegistrationDayBlocks(tour) {
+      const container = document.getElementById('otDaysContainer');
+      container.innerHTML = "";
+      selectedOtDays = {};
+
+      const dayNamesMap = ["Zo", "Ma", "Di", "Wo", "Do", "Vr", "Za"];
+      let c = new Date(tour.startDatum);
+      const eDate = new Date(tour.eindDatum);
+
+      while (c <= eDate) {
+        if (c.getDay() >= 1 && c.getDay() <= 5) {
+          const dName = dayNamesMap[c.getDay()];
+          selectedOtDays[dName] = false;
+
+          const div = document.createElement('div');
+          div.id = `otDay_${dName}`;
+          div.onclick = () => toggleOtSingleDay(dName);
+          div.className = "p-2.5 rounded-xl border transition cursor-default font-bold text-xs";
+          div.innerText = dName;
+          container.appendChild(div);
+        }
+        c.setDate(c.getDate() + 1);
+      }
     }
 
     function closeOnTourRegisterModal() {
@@ -1482,7 +1650,7 @@
 
     function setOnTourChoice(choice, customDays = null) {
       activeOtChoice = choice;
-      const days = ['Ma', 'Di', 'Wo', 'Do', 'Vr'];
+      const days = Object.keys(selectedOtDays);
 
       document.getElementById('btnOtChoiceJa').className = choice === 'HELE_WEEK' ? 'py-2.5 rounded-xl bg-emerald-600 text-white font-bold text-xs shadow-sm' : 'py-2.5 rounded-xl bg-white border font-bold text-xs';
       document.getElementById('btnOtChoiceNee').className = choice === 'NEE' ? 'py-2.5 rounded-xl bg-rose-600 text-white font-bold text-xs shadow-sm' : 'py-2.5 rounded-xl bg-white border font-bold text-xs';
@@ -1508,6 +1676,7 @@
 
     function updateOtDayBlockUi(day, isGreen, isClickable) {
       const el = document.getElementById(`otDay_${day}`);
+      if (!el) return;
       if (isGreen) {
         el.className = `p-2.5 rounded-xl border bg-emerald-500 text-white font-bold transition ${isClickable ? 'cursor-pointer' : 'cursor-default'}`;
       } else {
@@ -1539,11 +1708,11 @@
       btn.disabled = false;
 
       await apiCall("", "POST", { action: "submitOnTourRegistration", docentId: currentDocent.id, pin: currentPin, registration: payload });
-      await loadDocentOnTours();
+      await Promise.all([loadAvailabilityAndRender(), loadDocentOnTours()]);
     }
 
     // ==========================================
-    // PLANNER DASHBOARD (3 WEKEN / MAAND / WEEK)
+    // PLANNER DASHBOARD (3-KOLOMS MET GATEN FILTER)
     // ==========================================
     async function initPlannerView() {
       document.getElementById('viewLanding').classList.add('hidden');
@@ -1560,6 +1729,22 @@
       plannerCurrentDate = new Date();
       setPlannerViewMode('3weeks');
       await loadAdminData();
+    }
+
+    function toggleFilterOnlyGaten() {
+      filterOnlyGaten = !filterOnlyGaten;
+      const btn = document.getElementById('btnFilterOnlyGaten');
+      const text = document.getElementById('textFilterOnlyGaten');
+
+      if (filterOnlyGaten) {
+        btn.className = "w-full py-2 px-3 rounded-xl border border-rose-300 font-bold text-xs flex items-center justify-center gap-2 transition bg-rose-500 text-white shadow-sm";
+        text.innerText = "Filter actief (Alleen gaten)";
+      } else {
+        btn.className = "w-full py-2 px-3 rounded-xl border border-slate-300 font-bold text-xs flex items-center justify-center gap-2 transition bg-slate-50 text-slate-700 hover:bg-slate-100 shadow-sm";
+        text.innerText = "Toon alleen open gaten";
+      }
+
+      renderPlannerGrid();
     }
 
     function setPlannerViewMode(mode) {
@@ -1649,22 +1834,33 @@
 
     function renderPlannerDayCell(container, isoDate, label) {
       const normalizedIso = normalizeDateStr(isoDate);
-      const plans = (adminData.planning || []).filter(p => normalizeDateStr(p.datum) === normalizedIso);
+      let plans = (adminData.planning || []).filter(p => normalizeDateStr(p.datum) === normalizedIso);
+
+      if (filterOnlyGaten) {
+        plans = plans.filter(p => (p.toegewezenDocentIds || []).length < p.aantalNodig);
+      }
+
       const cell = document.createElement('div');
       cell.className = "h-32 md:h-36 p-2 bg-slate-50 hover:bg-slate-100/80 rounded-2xl border border-slate-200 transition flex flex-col justify-between overflow-hidden";
 
       let plansHtml = "";
       plans.forEach(plan => {
-        const doc = adminData.docenten.find(d => d.id === plan.toegewezenDocentId);
-        const isAssigned = !!plan.toegewezenDocentId;
+        const assignedCount = (plan.toegewezenDocentIds || []).length;
+        const total = plan.aantalNodig;
+        const isComplete = assignedCount >= total;
+        const isPartial = assignedCount > 0 && assignedCount < total;
+
+        let badgeStyle = "bg-rose-50 border-rose-200 text-rose-900 animate-pulse";
+        if (isComplete) badgeStyle = "bg-emerald-50 border-emerald-200 text-emerald-900";
+        else if (isPartial) badgeStyle = "bg-amber-50 border-amber-200 text-amber-900";
 
         plansHtml += `
-          <div onclick="openCandidatePicker('${plan.planningId}', '${plan.datum}', '${plan.schoolNaam}')" class="p-1.5 rounded-lg border text-[10px] cursor-pointer transition flex items-center justify-between ${
-            isAssigned ? 'bg-emerald-50 border-emerald-200 text-emerald-900' : 'bg-rose-50 border-rose-200 text-rose-900 animate-pulse'
-          }">
-            <div class="truncate">
-              <span>🏫 <strong>${plan.schoolNaam}</strong></span>
-              <div class="text-[9px] text-slate-500">${doc ? doc.naam : 'GAT (Geen docent)'}</div>
+          <div onclick="openSlotManagerModal('PLANNING', '${plan.planningId}')" class="p-1.5 rounded-lg border text-[10px] cursor-pointer transition flex items-center justify-between ${badgeStyle}">
+            <div class="truncate flex-1">
+              <div class="flex items-center justify-between">
+                <span class="font-extrabold truncate">🏫 ${plan.schoolNaam}</span>
+                <span class="font-extrabold px-1.5 py-0.2 rounded text-[9px] ${isComplete ? 'bg-emerald-600 text-white' : (isPartial ? 'bg-amber-500 text-white' : 'bg-rose-600 text-white')}">${assignedCount}/${total}</span>
+              </div>
             </div>
           </div>
         `;
@@ -1678,7 +1874,7 @@
           </button>
         </div>
         <div class="flex-1 overflow-y-auto custom-scrollbar space-y-1 my-1">
-          ${plansHtml || '<span class="text-[10px] text-slate-300 block text-center pt-3">Geen lessen</span>'}
+          ${plansHtml || (filterOnlyGaten ? '<span class="text-[10px] text-slate-300 block text-center pt-3">-</span>' : '<span class="text-[10px] text-slate-300 block text-center pt-3">Geen lessen</span>')}
         </div>
       `;
       container.appendChild(cell);
@@ -1689,8 +1885,423 @@
       openAddSchoolPlanningModal();
     }
 
+    function renderPlannerGatenSidebar() {
+      const container = document.getElementById('plannerGatenList');
+      container.innerHTML = "";
+
+      const gaten = (adminData.planning || []).filter(p => (p.toegewezenDocentIds || []).length < p.aantalNodig);
+      document.getElementById('badgeGatenCount').innerText = gaten.length;
+
+      if (gaten.length === 0) {
+        container.innerHTML = `<div class="p-4 text-center text-xs text-slate-400 bg-slate-50 rounded-2xl border border-slate-200">Geen openstaande gaten! 🎉</div>`;
+        return;
+      }
+
+      gaten.sort((a, b) => a.datum.localeCompare(b.datum));
+
+      gaten.forEach(g => {
+        const assigned = (g.toegewezenDocentIds || []).length;
+        const total = g.aantalNodig;
+        const div = document.createElement('div');
+        div.className = "p-2.5 bg-rose-50/60 hover:bg-rose-100/80 rounded-xl border border-rose-200 text-xs cursor-pointer transition flex items-center justify-between";
+        div.onclick = () => openSlotManagerModal('PLANNING', g.planningId);
+
+        div.innerHTML = `
+          <div class="truncate">
+            <div class="font-extrabold text-slate-900 truncate">🏫 ${g.schoolNaam}</div>
+            <div class="text-[10px] text-slate-500">📅 ${g.datum}</div>
+          </div>
+          <span class="px-2 py-0.5 rounded-md text-[10px] font-extrabold bg-rose-600 text-white">${assigned}/${total}</span>
+        `;
+        container.appendChild(div);
+      });
+    }
+
     // ==========================================
-    // ON TOUR BEHEER (PLANNER & DROPDOWN)
+    // SLIMME SLOT-KOPPELING (MET PINNED VASTE DOCENT & DAG-NIVEAU MATRIX)
+    // ==========================================
+    function openSlotManagerModal(type, id, selectedDayFilter = null) {
+      let item = null;
+      if (type === 'PLANNING') {
+        item = (adminData.planning || []).find(p => p.planningId === id);
+      } else {
+        item = (adminData.onTours || []).find(t => t.tourId === id);
+      }
+
+      if (!item) return;
+      currentSlotTarget = { type, item, selectedDayFilter };
+
+      document.getElementById('slotModalTypeBadge').innerText = type === 'PLANNING' ? 'Reguliere School' : 'On Tour';
+      document.getElementById('slotModalTypeBadge').className = type === 'PLANNING' ? 'text-xs bg-emerald-100 text-emerald-800 font-bold px-2.5 py-0.5 rounded-full' : 'text-xs bg-sky-100 text-sky-800 font-bold px-2.5 py-0.5 rounded-full';
+      
+      document.getElementById('slotModalTitle').innerText = item.schoolNaam;
+      document.getElementById('slotModalSubtitle').innerText = type === 'PLANNING' 
+        ? `Datum: ${normalizeDateStr(item.datum)}` 
+        : `Periode: ${item.startDatum} t/m ${item.eindDatum} ${item.locatie ? `• 📍 ${item.locatie}` : ''}`;
+
+      renderPinnedVasteDocentSection();
+      renderSlotManagerSlots();
+      renderSlotManagerCandidates();
+
+      document.getElementById('modalSlotManager').classList.remove('hidden');
+    }
+
+    function closeSlotManagerModal() {
+      document.getElementById('modalSlotManager').classList.add('hidden');
+      currentSlotTarget = null;
+    }
+
+    function renderPinnedVasteDocentSection() {
+      const container = document.getElementById('pinnedVasteDocentContainer');
+      container.innerHTML = "";
+
+      if (currentSlotTarget.type !== 'PLANNING') {
+        container.classList.add('hidden');
+        return;
+      }
+
+      const item = currentSlotTarget.item;
+      const vasteDocent = (adminData.docenten || []).find(d => d.vasteSchool === item.schoolNaam);
+
+      if (!vasteDocent) {
+        container.classList.add('hidden');
+        return;
+      }
+
+      container.classList.remove('hidden');
+      const targetDate = normalizeDateStr(item.datum);
+      const avail = (adminData.availability || []).find(a => a.docentId === vasteDocent.id && normalizeDateStr(a.datum) === targetDate);
+      
+      let statusBadge = `<span class="px-2 py-0.5 rounded bg-slate-100 text-slate-600 font-bold text-[10px]">⚪ Niet ingevuld</span>`;
+      if (avail) {
+        if (avail.status === "JA") statusBadge = `<span class="px-2 py-0.5 rounded bg-emerald-100 text-emerald-800 font-bold text-[10px]">🟢 Ja ingevuld</span>`;
+        else if (avail.status === "MOGELIJK") statusBadge = `<span class="px-2 py-0.5 rounded bg-amber-100 text-amber-800 font-bold text-[10px]">🟠 Mogelijk ingevuld</span>`;
+        else if (avail.status === "NEE") statusBadge = `<span class="px-2 py-0.5 rounded bg-rose-100 text-rose-800 font-bold text-[10px]">🔴 Nee ingevuld</span>`;
+        else if (avail.status === "ON_TOUR") statusBadge = `<span class="px-2 py-0.5 rounded bg-sky-100 text-sky-800 font-bold text-[10px]">✈️ On Tour</span>`;
+      }
+
+      const isAlreadyIn = (item.toegewezenDocentIds || []).includes(vasteDocent.id);
+
+      container.innerHTML = `
+        <div class="p-3 bg-indigo-50/80 border-2 border-indigo-200 rounded-2xl flex items-center justify-between gap-3">
+          <div>
+            <div class="flex items-center gap-1.5 mb-1">
+              <span class="text-[10px] bg-indigo-600 text-white font-extrabold px-2 py-0.5 rounded-full">⭐ Vaste Vakdocent</span>
+              <span class="font-extrabold text-sm text-slate-800">${vasteDocent.naam}</span>
+              <span class="text-[10px] text-slate-500">(Skill: ${vasteDocent.skillLevel})</span>
+            </div>
+            <div class="text-xs text-slate-600 flex items-center gap-1">
+              <span>Status op deze dag:</span> ${statusBadge}
+            </div>
+          </div>
+          <button 
+            onclick="assignDocentToNextSlot('${vasteDocent.id}')" 
+            ${isAlreadyIn ? 'disabled' : ''}
+            class="px-3.5 py-2 bg-indigo-600 hover:bg-indigo-700 disabled:opacity-40 disabled:cursor-not-allowed text-white font-bold rounded-xl text-xs transition shadow-sm"
+          >
+            ${isAlreadyIn ? 'Al Gekoppeld' : 'Direct Koppelen'}
+          </button>
+        </div>
+      `;
+    }
+
+    function renderSlotManagerSlots() {
+      const container = document.getElementById('slotRowsContainer');
+      container.innerHTML = "";
+      const item = currentSlotTarget.item;
+
+      if (currentSlotTarget.type === 'PLANNING') {
+        document.getElementById('slotSectionHeaderTitle').innerText = "Toegewezen Lesgevers Slots:";
+        const assigned = item.toegewezenDocentIds || [];
+        const total = item.aantalNodig || 1;
+
+        for (let s = 0; s < total; s++) {
+          const docId = assigned[s];
+          const doc = docId ? adminData.docenten.find(d => d.id === docId) : null;
+          const row = document.createElement('div');
+          row.className = "p-2 bg-white rounded-xl border flex items-center justify-between text-xs";
+
+          if (doc) {
+            row.innerHTML = `
+              <div class="flex items-center gap-2">
+                <span class="w-5 h-5 rounded-full bg-emerald-100 text-emerald-800 font-extrabold flex items-center justify-center text-[10px]">${s + 1}</span>
+                <span class="font-extrabold text-slate-800">${doc.naam}</span>
+                <span class="text-[10px] text-slate-500">(Skill: ${doc.skillLevel})</span>
+                ${doc.alleenOnTour ? '<span class="text-[9px] bg-amber-100 text-amber-900 px-1 rounded font-bold">⭐ Tour Specialist</span>' : ''}
+              </div>
+              <button onclick="unassignDocentFromSlot('${doc.id}')" class="text-xs bg-rose-50 hover:bg-rose-100 text-rose-600 font-bold px-2 py-1 rounded-lg border border-rose-200 transition">
+                <i class="fa-solid fa-xmark mr-1"></i> Ontkoppel
+              </button>
+            `;
+          } else {
+            row.innerHTML = `
+              <div class="flex items-center gap-2 text-slate-400">
+                <span class="w-5 h-5 rounded-full bg-slate-100 text-slate-400 font-extrabold flex items-center justify-center text-[10px]">${s + 1}</span>
+                <span class="italic">Open Slot (Geen lesgever)</span>
+              </div>
+              <span class="text-[10px] text-amber-600 font-bold bg-amber-50 px-2 py-0.5 rounded">Gezocht</span>
+            `;
+          }
+          container.appendChild(row);
+        }
+      } else {
+        // ON TOUR DAG-NIVEAU MATRIX PER LESGEVER SLOT
+        document.getElementById('slotSectionHeaderTitle').innerText = "Lesgever Slots & Dag-Dekking:";
+
+        const dayNamesMap = ["Zo", "Ma", "Di", "Wo", "Do", "Vr", "Za"];
+        const tourDays = [];
+        let c = new Date(item.startDatum);
+        const eDate = new Date(item.eindDatum);
+        while (c <= eDate) {
+          if (c.getDay() >= 1 && c.getDay() <= 5) {
+            tourDays.push({ iso: normalizeDateStr(c), name: dayNamesMap[c.getDay()] });
+          }
+          c.setDate(c.getDate() + 1);
+        }
+
+        const totalSlots = item.aantalNodig || 1;
+        const slotsArray = item.slotAssignments || [];
+
+        for (let s = 0; s < totalSlots; s++) {
+          const slotObj = slotsArray.find(x => x.slotIndex === s) || { slotIndex: s, dayDocents: {} };
+          const slotCard = document.createElement('div');
+          slotCard.className = "p-3 bg-white rounded-2xl border space-y-2";
+
+          let chipsHtml = "";
+          tourDays.forEach(td => {
+            const docId = slotObj.dayDocents ? slotObj.dayDocents[td.iso] : null;
+            const doc = docId ? adminData.docenten.find(d => d.id === docId) : null;
+
+            if (doc) {
+              chipsHtml += `
+                <div class="flex items-center gap-1.5 p-1.5 bg-emerald-50 border border-emerald-200 text-emerald-900 rounded-xl text-xs">
+                  <span class="font-extrabold">${td.name}:</span>
+                  <span class="font-semibold truncate max-w-[90px]">${doc.naam}</span>
+                  <button onclick="unassignOnTourDaySlot(${s}, '${td.iso}')" class="text-rose-500 hover:text-rose-700 font-bold ml-1">✕</button>
+                </div>
+              `;
+            } else {
+              const isSelected = currentSlotTarget.selectedDayFilter && currentSlotTarget.selectedDayFilter.slotIndex === s && currentSlotTarget.selectedDayFilter.dayIso === td.iso;
+              chipsHtml += `
+                <button onclick="selectOnTourDayGapFilter(${s}, '${td.iso}', '${td.name}')" class="p-1.5 rounded-xl border text-xs font-bold transition flex items-center gap-1 ${isSelected ? 'bg-amber-500 text-white border-amber-500 shadow-sm' : 'bg-rose-50 border-rose-200 text-rose-800 hover:bg-rose-100'}">
+                  <span>${td.name}: GAT ➕</span>
+                </button>
+              `;
+            }
+          });
+
+          slotCard.innerHTML = `
+            <div class="flex items-center justify-between">
+              <span class="font-extrabold text-xs text-slate-800">Lesgever Slot ${s + 1}</span>
+            </div>
+            <div class="flex flex-wrap gap-1.5">
+              ${chipsHtml}
+            </div>
+          `;
+          container.appendChild(slotCard);
+        }
+      }
+    }
+
+    function selectOnTourDayGapFilter(slotIndex, dayIso, dayName) {
+      currentSlotTarget.selectedDayFilter = { slotIndex, dayIso, dayName };
+      renderSlotManagerSlots();
+      renderSlotManagerCandidates();
+    }
+
+    function renderSlotManagerCandidates() {
+      const listJaEl = document.getElementById('listSlotCandJa');
+      const listAltEl = document.getElementById('listSlotCandAlt');
+      listJaEl.innerHTML = "";
+      listAltEl.innerHTML = "";
+
+      const item = currentSlotTarget.item;
+      const rankMap = { N1: 1, N2: 2, N3: 3 };
+      const listJa = [];
+      const listAlt = [];
+
+      if (currentSlotTarget.type === 'PLANNING') {
+        document.getElementById('candidateFilterHeaderTitle').innerText = "Kies een beschikbare docent:";
+        document.getElementById('labelSlotCandAlt').innerText = "🟠 Mogelijk (N1 ➔ N3)";
+        
+        const targetDate = normalizeDateStr(item.datum);
+        const dayAvail = (adminData.availability || []).filter(a => normalizeDateStr(a.datum) === targetDate && a.goedkeuring === "GOEDGEKEURD");
+        const assigned = item.toegewezenDocentIds || [];
+
+        dayAvail.forEach(av => {
+          const doc = adminData.docenten.find(d => d.id === av.docentId);
+          if (doc && !doc.isPlanner && !assigned.includes(doc.id)) {
+            if (av.status === "JA") listJa.push(doc);
+            else if (av.status === "MOGELIJK") listAlt.push(doc);
+          }
+        });
+
+        listJa.sort((a, b) => (rankMap[a.skillLevel] || 3) - (rankMap[b.skillLevel] || 3));
+        listAlt.sort((a, b) => (rankMap[a.skillLevel] || 3) - (rankMap[b.skillLevel] || 3));
+
+        renderSlotCandidateButtons(listJaEl, listJa);
+        renderSlotCandidateButtons(listAltEl, listAlt);
+      } else {
+        // ON TOUR KANDIDATEN FILTEREN OP GESELECTEERDE DAG
+        const filter = currentSlotTarget.selectedDayFilter;
+        if (filter) {
+          document.getElementById('candidateFilterHeaderTitle').innerText = `Kandidaten beschikbaar voor Slot ${filter.slotIndex + 1} op ${filter.dayName}:`;
+        } else {
+          document.getElementById('candidateFilterHeaderTitle').innerText = "Klik hierboven op een GAT (bijv. Wo) om gerichte kandidaten te zien:";
+        }
+
+        document.getElementById('labelSlotCandAlt').innerText = "🟠 Deels Beschikbaar";
+
+        const tourIns = (adminData.onTourInschrijvingen || []).filter(i => i.tourId === item.tourId);
+        
+        tourIns.forEach(ins => {
+          const doc = adminData.docenten.find(d => d.id === ins.docentId);
+          if (doc && !doc.isPlanner) {
+            if (ins.status === "HELE_WEEK") {
+              listJa.push(doc);
+            } else if (ins.status === "DEELS") {
+              const daysArr = ins.gekozenDagen ? ins.gekozenDagen.split(", ") : [];
+              if (!filter || daysArr.includes(filter.dayName)) {
+                listAlt.push({ ...doc, matchedDays: daysArr.join(', ') });
+              }
+            }
+          }
+        });
+
+        const sortFn = (a, b) => {
+          if (a.alleenOnTour && !b.alleenOnTour) return -1;
+          if (!a.alleenOnTour && b.alleenOnTour) return 1;
+          return (rankMap[a.skillLevel] || 3) - (rankMap[b.skillLevel] || 3);
+        };
+        listJa.sort(sortFn);
+        listAlt.sort(sortFn);
+
+        renderSlotCandidateButtons(listJaEl, listJa);
+        renderSlotCandidateButtons(listAltEl, listAlt);
+      }
+
+      document.getElementById('countSlotCandJa').innerText = listJa.length;
+      document.getElementById('countSlotCandAlt').innerText = listAlt.length;
+    }
+
+    function renderSlotCandidateButtons(container, list) {
+      if (list.length === 0) {
+        container.innerHTML = `<div class="text-[11px] text-slate-400 p-2">Geen kandidaten beschikbaar.</div>`;
+        return;
+      }
+
+      list.forEach(doc => {
+        const div = document.createElement('div');
+        div.className = "p-2 bg-slate-50 hover:bg-slate-100 rounded-xl border border-slate-200 flex items-center justify-between text-xs transition";
+        div.innerHTML = `
+          <div>
+            <div class="font-bold text-slate-800 flex items-center gap-1.5">
+              <span>${doc.naam}</span>
+              ${doc.alleenOnTour ? '<span class="text-[9px] bg-amber-100 text-amber-900 px-1 rounded font-bold">⭐ Tour Specialist</span>' : ''}
+            </div>
+            <div class="text-[10px] text-slate-500">
+              Skill: <strong>${doc.skillLevel}</strong> | Auto: ${doc.auto}
+              ${doc.matchedDays ? `<span class="text-amber-700 font-bold ml-1">(${doc.matchedDays})</span>` : ''}
+            </div>
+          </div>
+          <button 
+            onclick="assignDocentToNextSlot('${doc.id}')" 
+            class="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-lg text-xs transition shadow-sm"
+          >
+            Koppel
+          </button>
+        `;
+        container.appendChild(div);
+      });
+    }
+
+    async function assignDocentToNextSlot(docentId) {
+      const item = currentSlotTarget.item;
+
+      if (currentSlotTarget.type === 'PLANNING') {
+        const assigned = [...(item.toegewezenDocentIds || [])];
+        if (assigned.length >= item.aantalNodig) {
+          alert("Alle slots zijn al vol.");
+          return;
+        }
+        if (assigned.includes(docentId)) return;
+
+        assigned.push(docentId);
+        item.toegewezenDocentIds = assigned;
+
+        renderSlotManagerSlots();
+        renderSlotManagerCandidates();
+
+        await apiCall("", "POST", { action: "adminUpdatePlanningAssignments", adminPin: ADMIN_SECRET, planningId: item.planningId, toegewezenDocentIds: assigned });
+      } else {
+        // ON TOUR DAG-ASSIGNMENT
+        const filter = currentSlotTarget.selectedDayFilter;
+        let slotsArray = item.slotAssignments || [];
+
+        const targetSlotIdx = filter ? filter.slotIndex : 0;
+        let slotObj = slotsArray.find(x => x.slotIndex === targetSlotIdx);
+        if (!slotObj) {
+          slotObj = { slotIndex: targetSlotIdx, dayDocents: {} };
+          slotsArray.push(slotObj);
+        }
+
+        if (filter) {
+          slotObj.dayDocents[filter.dayIso] = docentId;
+        } else {
+          // Vul alle nog open dagen in dit slot
+          const dayNamesMap = ["Zo", "Ma", "Di", "Wo", "Do", "Vr", "Za"];
+          let c = new Date(item.startDatum);
+          const eDate = new Date(item.eindDatum);
+          while (c <= eDate) {
+            if (c.getDay() >= 1 && c.getDay() <= 5) {
+              const iso = normalizeDateStr(c);
+              if (!slotObj.dayDocents[iso]) slotObj.dayDocents[iso] = docentId;
+            }
+            c.setDate(c.getDate() + 1);
+          }
+        }
+
+        item.slotAssignments = slotsArray;
+        renderSlotManagerSlots();
+        renderSlotManagerCandidates();
+
+        await apiCall("", "POST", { action: "updateOnTourSlotAssignments", adminPin: ADMIN_SECRET, tourId: item.tourId, slotAssignments: slotsArray });
+      }
+
+      await loadAdminData();
+    }
+
+    async function unassignDocentFromSlot(docentId) {
+      const item = currentSlotTarget.item;
+      let assigned = [...(item.toegewezenDocentIds || [])];
+      assigned = assigned.filter(id => id !== docentId);
+      item.toegewezenDocentIds = assigned;
+
+      renderSlotManagerSlots();
+      renderSlotManagerCandidates();
+
+      await apiCall("", "POST", { action: "adminUpdatePlanningAssignments", adminPin: ADMIN_SECRET, planningId: item.planningId, toegewezenDocentIds: assigned });
+      await loadAdminData();
+    }
+
+    async function unassignOnTourDaySlot(slotIndex, dayIso) {
+      const item = currentSlotTarget.item;
+      let slotsArray = item.slotAssignments || [];
+      let slotObj = slotsArray.find(x => x.slotIndex === slotIndex);
+      if (slotObj && slotObj.dayDocents) {
+        delete slotObj.dayDocents[dayIso];
+      }
+
+      item.slotAssignments = slotsArray;
+      renderSlotManagerSlots();
+      renderSlotManagerCandidates();
+
+      await apiCall("", "POST", { action: "updateOnTourSlotAssignments", adminPin: ADMIN_SECRET, tourId: item.tourId, slotAssignments: slotsArray });
+      await loadAdminData();
+    }
+
+    // ==========================================
+    // ON TOUR BEHEER (PLANNER)
     // ==========================================
     function renderPlannerOnToursList() {
       const container = document.getElementById('plannerOnToursList');
@@ -1702,29 +2313,26 @@
       }
 
       adminData.onTours.forEach(tour => {
-        const assignedDoc = adminData.docenten.find(d => d.id === tour.toegewezenDocentId);
+        const isComplete = tour.status === "BEZET";
+        const isPartial = tour.status === "DEELS";
+
         const card = document.createElement('div');
         card.className = "p-3 bg-slate-50 hover:bg-slate-100 rounded-2xl border border-slate-200 transition shadow-sm flex flex-col justify-between";
         card.innerHTML = `
           <div>
             <div class="flex items-center justify-between mb-1">
               <span class="text-xs font-extrabold text-slate-900">${tour.schoolNaam}</span>
-              ${tour.toegewezenDocentId 
-                ? '<span class="text-[10px] bg-emerald-100 text-emerald-800 font-bold px-2 py-0.5 rounded-full">Bemand</span>' 
-                : '<span class="text-[10px] bg-rose-100 text-rose-800 font-bold px-2 py-0.5 rounded-full animate-pulse">GAT</span>'}
+              <span class="text-[10px] font-bold px-2 py-0.5 rounded-full ${isComplete ? 'bg-emerald-100 text-emerald-800' : (isPartial ? 'bg-amber-100 text-amber-800' : 'bg-rose-100 text-rose-800 animate-pulse')}">${tour.aantalNodig} Lesgevers</span>
             </div>
             <div class="text-[11px] text-slate-500 mb-2">
               📅 ${tour.startDatum} t/m ${tour.eindDatum}
               ${tour.locatie ? `• 📍 ${tour.locatie}` : ''}
               ${tour.isBuitenland ? `<span class="text-sky-600 font-bold">• 🌍 ${tour.land}</span>` : ''}
             </div>
-            <p class="text-[11px] text-slate-600 mb-3">
-              Docent: <strong class="text-slate-800">${assignedDoc ? assignedDoc.naam : 'Geen docent gekoppeld'}</strong>
-            </p>
           </div>
           <div class="flex gap-1.5 pt-2 border-t border-slate-200">
-            <button onclick="openOnTourCandidatesModal('${tour.tourId}')" class="flex-1 text-xs py-1.5 bg-slate-800 hover:bg-slate-900 text-white font-bold rounded-xl transition">
-              ${tour.toegewezenDocentId ? 'Wijzigen' : 'Koppelen'}
+            <button onclick="openSlotManagerModal('ONTOUR', '${tour.tourId}')" class="flex-1 text-xs py-1.5 bg-slate-800 hover:bg-slate-900 text-white font-bold rounded-xl transition">
+              Slots &amp; Dekking
             </button>
             <button onclick="deleteOnTour('${tour.tourId}')" class="text-xs px-2.5 py-1.5 bg-rose-50 hover:bg-rose-100 text-rose-600 rounded-xl transition">
               <i class="fa-solid fa-trash"></i>
@@ -1755,6 +2363,7 @@
       select.appendChild(optManual);
 
       handleOtSchoolPresetSelect();
+      document.getElementById('inputOtAantalNodig').value = 1;
       document.getElementById('inputOtStart').value = '';
       document.getElementById('inputOtEind').value = '';
       document.getElementById('modalAddOnTour').classList.remove('hidden');
@@ -1780,14 +2389,12 @@
         inputLoc.value = '';
         inputLoc.readOnly = false;
         inputLoc.classList.remove('bg-slate-100', 'text-slate-500');
-        inputLoc.placeholder = "bijv. Schiermonnikoog (wordt onthouden)";
 
         checkBuiten.checked = false;
         checkBuiten.disabled = false;
         wrapLand.classList.add('hidden');
         inputLand.value = '';
         inputLand.readOnly = false;
-        inputLand.classList.remove('bg-slate-100', 'text-slate-500');
         return;
       }
 
@@ -1820,7 +2427,6 @@
           inputLoc.value = '';
           inputLoc.readOnly = false;
           inputLoc.classList.remove('bg-slate-100', 'text-slate-500');
-          inputLoc.placeholder = "Typ plaatsnaam/eiland (wordt direct onthouden)";
         }
       }
     }
@@ -1836,6 +2442,7 @@
       const locatie = document.getElementById('inputOtLocatie').value;
       const isBuitenland = document.getElementById('checkOtIsBuitenland').checked;
       const land = isBuitenland ? (document.getElementById('inputOtLand').value || 'België') : 'Nederland';
+      const aantalNodig = document.getElementById('inputOtAantalNodig').value;
       const startDatum = document.getElementById('inputOtStart').value;
       const eindDatum = document.getElementById('inputOtEind').value;
 
@@ -1846,7 +2453,7 @@
       await apiCall("", "POST", {
         action: "saveOnTour",
         adminPin: ADMIN_SECRET,
-        tourData: { schoolNaam, locatie, isBuitenland, land, startDatum, eindDatum }
+        tourData: { schoolNaam, locatie, isBuitenland, land, aantalNodig, startDatum, eindDatum }
       });
 
       btn.innerHTML = `On Tour Opslaan`;
@@ -1862,90 +2469,6 @@
       }
     }
 
-    function openOnTourCandidatesModal(tourId) {
-      selectedTourForCandidate = tourId;
-      const tour = (adminData.onTours || []).find(t => t.tourId === tourId);
-      if (!tour) return;
-
-      document.getElementById('otCandModalTitle').innerText = `Kandidaten: ${tour.schoolNaam}`;
-      document.getElementById('otCandModalSubtitle').innerText = `${tour.startDatum} t/m ${tour.eindDatum} ${tour.locatie ? `• ${tour.locatie}` : ''}`;
-
-      const inschrijvingen = (adminData.onTourInschrijvingen || []).filter(i => i.tourId === tourId);
-      const listJa = [];
-      const listDeels = [];
-
-      inschrijvingen.forEach(ins => {
-        const doc = adminData.docenten.find(d => d.id === ins.docentId);
-        if (doc && !doc.isPlanner) {
-          if (ins.status === "HELE_WEEK") listJa.push({ doc, ins });
-          else if (ins.status === "DEELS") listDeels.push({ doc, ins });
-        }
-      });
-
-      const rankMap = { N1: 1, N2: 2, N3: 3 };
-      const sortFn = (a, b) => {
-        if (a.doc.alleenOnTour && !b.doc.alleenOnTour) return -1;
-        if (!a.doc.alleenOnTour && b.doc.alleenOnTour) return 1;
-        return (rankMap[a.doc.skillLevel] || 3) - (rankMap[b.doc.skillLevel] || 3);
-      };
-
-      listJa.sort(sortFn);
-      listDeels.sort(sortFn);
-
-      document.getElementById('countOtJa').innerText = listJa.length;
-      document.getElementById('countOtDeels').innerText = listDeels.length;
-
-      renderOtCandidateSection('listOtCandidatesJa', listJa);
-      renderOtCandidateSection('listOtCandidatesDeels', listDeels);
-      document.getElementById('modalOnTourCandidates').classList.remove('hidden');
-    }
-
-    function renderOtCandidateSection(containerId, list) {
-      const container = document.getElementById(containerId);
-      container.innerHTML = "";
-
-      if (list.length === 0) {
-        container.innerHTML = `<div class="text-xs text-slate-400 p-2">Geen kandidaten in deze categorie.</div>`;
-        return;
-      }
-
-      list.forEach(item => {
-        const doc = item.doc;
-        const ins = item.ins;
-        const div = document.createElement('div');
-        div.className = "p-2.5 bg-slate-50 hover:bg-slate-100 rounded-xl border border-slate-200 flex items-center justify-between transition";
-        div.innerHTML = `
-          <div>
-            <div class="font-bold text-slate-800 text-xs flex items-center gap-1.5">
-              <span>${doc.naam}</span>
-              ${doc.alleenOnTour ? '<span class="text-[9px] bg-amber-100 text-amber-900 px-1.5 py-0.2 rounded font-extrabold">⭐ Tour Specialist</span>' : ''}
-            </div>
-            <div class="text-[11px] text-slate-500 flex gap-2 mt-0.5">
-              <span class="font-bold text-brand-700">Skill: ${doc.skillLevel}</span>
-              <span>Auto: ${doc.auto}</span>
-              ${ins.gekozenDagen ? `<span class="text-amber-700 font-semibold">(${ins.gekozenDagen})</span>` : ''}
-            </div>
-          </div>
-          <button onclick="assignOnTourCandidate(this, '${doc.id}')" class="text-xs bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-3 py-1.5 rounded-lg transition shadow-sm flex items-center gap-1">
-            <span>Koppelen</span>
-          </button>
-        `;
-        container.appendChild(div);
-      });
-    }
-
-    function closeOnTourCandidatesModal() {
-      document.getElementById('modalOnTourCandidates').classList.add('hidden');
-    }
-
-    async function assignOnTourCandidate(btn, docentId) {
-      btn.innerHTML = `<i class="fa-solid fa-circle-notch fa-spin"></i>`;
-      btn.disabled = true;
-      await apiCall("", "POST", { action: "assignOnTourCandidate", adminPin: ADMIN_SECRET, tourId: selectedTourForCandidate, docentId });
-      closeOnTourCandidatesModal();
-      await loadAdminData();
-    }
-
     // ==========================================
     // REGULIERE SCHOOL INPLANNEN
     // ==========================================
@@ -1953,6 +2476,7 @@
       if (!document.getElementById('inputPlanDate').value) {
         document.getElementById('inputPlanDate').value = new Date().toISOString().substring(0, 10);
       }
+      document.getElementById('inputPlanAantalNodig').value = 1;
       const select = document.getElementById('selectSchoolName');
       select.innerHTML = "";
       const filtered = (schoolsCache || []).filter(s => s.categorie === "Regulier");
@@ -1974,6 +2498,7 @@
       e.preventDefault();
       const datum = normalizeDateStr(document.getElementById('inputPlanDate').value);
       const schoolNaam = document.getElementById('selectSchoolName').value;
+      const aantalNodig = document.getElementById('inputPlanAantalNodig').value;
       const btn = document.getElementById('btnAddSchoolSubmit');
 
       btn.innerHTML = `<i class="fa-solid fa-circle-notch fa-spin mr-1"></i> Inplannen...`;
@@ -1982,7 +2507,7 @@
       await apiCall("", "POST", {
         action: "adminSavePlanning",
         adminPin: ADMIN_SECRET,
-        planningData: { datum, schoolNaam, categorie: "Regulier" }
+        planningData: { datum, schoolNaam, categorie: "Regulier", aantalNodig }
       });
 
       btn.innerHTML = `Inplannen`;
@@ -1992,7 +2517,7 @@
     }
 
     // ==========================================
-    // ADMIN DASHBOARD & VERVERSKNOPPEN
+    // ADMIN DASHBOARD & VASTE SCHOOL BEHEER
     // ==========================================
     function openAdminPinModal() {
       openPinModal("Admin Toegang", "Voer de master admincode in", (pin) => {
@@ -2027,6 +2552,7 @@
         if (currentDocent && currentDocent.isPlanner) {
           renderPlannerGrid();
           renderPlannerOnToursList();
+          renderPlannerGatenSidebar();
         }
       }
     }
@@ -2064,23 +2590,23 @@
       }
 
       adminData.planning.forEach(plan => {
-        const docent = adminData.docenten.find(d => d.id === plan.toegewezenDocentId);
+        const assigned = plan.toegewezenDocentIds || [];
+        const total = plan.aantalNodig || 1;
+        const isComplete = assigned.length >= total;
+
         const card = document.createElement('div');
         card.className = "bg-white p-4 rounded-2xl border border-slate-200 shadow-sm flex flex-col justify-between";
         card.innerHTML = `
           <div>
             <div class="flex items-center justify-between mb-2">
               <span class="text-xs font-bold text-slate-500 uppercase tracking-wider">${normalizeDateStr(plan.datum)}</span>
-              ${plan.toegewezenDocentId 
-                ? '<span class="text-[10px] bg-emerald-100 text-emerald-800 font-bold px-2 py-0.5 rounded-full">Bemand</span>' 
-                : '<span class="text-[10px] bg-rose-100 text-rose-800 font-bold px-2 py-0.5 rounded-full animate-pulse">GAT</span>'}
+              <span class="text-[10px] font-bold px-2 py-0.5 rounded-full ${isComplete ? 'bg-emerald-100 text-emerald-800' : 'bg-rose-100 text-rose-800 animate-pulse'}">${assigned.length}/${total} Slots</span>
             </div>
             <h4 class="font-bold text-slate-800 text-sm mb-1">🏫 ${plan.schoolNaam}</h4>
-            <p class="text-xs text-slate-500 mb-3">Docent: <strong class="text-slate-700">${docent ? docent.naam : 'Geen docent'}</strong></p>
           </div>
           <div class="flex gap-2 pt-2 border-t border-slate-100">
-            <button onclick="openCandidatePicker('${plan.planningId}', '${plan.datum}', '${plan.schoolNaam}')" class="flex-1 text-xs py-2 bg-slate-800 hover:bg-slate-900 text-white font-bold rounded-xl transition">
-              ${plan.toegewezenDocentId ? 'Wijzigen' : 'Koppelen'}
+            <button onclick="openSlotManagerModal('PLANNING', '${plan.planningId}')" class="flex-1 text-xs py-2 bg-slate-800 hover:bg-slate-900 text-white font-bold rounded-xl transition">
+              Slots Beheren
             </button>
             <button onclick="deletePlanning(this, '${plan.planningId}')" class="text-xs px-3 py-2 bg-rose-50 hover:bg-rose-100 text-rose-600 rounded-xl transition">
               <i class="fa-solid fa-trash"></i>
@@ -2091,7 +2617,6 @@
       });
     }
 
-    // Rijke Goedkeuringskaarten met Counter
     function renderAdminApprovals() {
       const container = document.getElementById('adminApprovalsList');
       container.innerHTML = "";
@@ -2117,19 +2642,13 @@
         const docName = docent ? docent.naam : item.docentId;
         const targetDateObj = new Date(item.datum + "T00:00:00");
         
-        // Bereken dagen van tevoren
         const diffDays = Math.round((targetDateObj - today) / (1000 * 60 * 60 * 24));
         let advanceBadge = "";
 
-        if (diffDays < 0) {
-          advanceBadge = `<span class="px-2 py-0.5 rounded-lg bg-slate-100 text-slate-600 font-bold text-[10px]">Verstreken datum (${Math.abs(diffDays)}d geleden)</span>`;
-        } else if (diffDays <= 2) {
-          advanceBadge = `<span class="px-2 py-0.5 rounded-lg bg-rose-100 text-rose-800 font-bold text-[10px] animate-pulse">🚨 ${diffDays === 0 ? 'Vandaag' : diffDays + ' dag(en) van tevoren'}</span>`;
-        } else if (diffDays <= 7) {
-          advanceBadge = `<span class="px-2 py-0.5 rounded-lg bg-amber-100 text-amber-800 font-bold text-[10px]">⚠️ ${diffDays} dagen van tevoren</span>`;
-        } else {
-          advanceBadge = `<span class="px-2 py-0.5 rounded-lg bg-emerald-100 text-emerald-800 font-bold text-[10px]">⏱️ ${diffDays} dagen van tevoren</span>`;
-        }
+        if (diffDays < 0) advanceBadge = `<span class="px-2 py-0.5 rounded-lg bg-slate-100 text-slate-600 font-bold text-[10px]">Verstreken datum (${Math.abs(diffDays)}d geleden)</span>`;
+        else if (diffDays <= 2) advanceBadge = `<span class="px-2 py-0.5 rounded-lg bg-rose-100 text-rose-800 font-bold text-[10px] animate-pulse">🚨 ${diffDays === 0 ? 'Vandaag' : diffDays + ' dag(en) van tevoren'}</span>`;
+        else if (diffDays <= 7) advanceBadge = `<span class="px-2 py-0.5 rounded-lg bg-amber-100 text-amber-800 font-bold text-[10px]">⚠️ ${diffDays} dagen van tevoren</span>`;
+        else advanceBadge = `<span class="px-2 py-0.5 rounded-lg bg-emerald-100 text-emerald-800 font-bold text-[10px]">⏱️ ${diffDays} dagen van tevoren</span>`;
 
         const friendlyDayName = targetDateObj.toLocaleDateString('nl-NL', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
         const trans = item.vorigeStatus ? `${item.vorigeStatus} ➔ ${item.status}` : item.status;
@@ -2170,6 +2689,9 @@
       const tbody = document.getElementById('adminDocentenTableBody');
       tbody.innerHTML = "";
 
+      const reguliereScholen = (schoolsCache || []).filter(s => s.categorie === 'Regulier');
+      reguliereScholen.sort((a, b) => getCleanSortName(a.naam).localeCompare(getCleanSortName(b.naam)));
+
       adminData.docenten.forEach(docent => {
         const tr = document.createElement('tr');
         
@@ -2184,9 +2706,21 @@
           vasteDagenStatus = `<span class="text-[10px] bg-emerald-100 text-emerald-800 font-bold px-2 py-0.5 rounded">Geldig tot ${docent.vasteDagenGeldtTot}</span>`;
         }
 
+        const schoolOptions = reguliereScholen.map(s => `
+          <option value="${s.naam}" ${docent.vasteSchool === s.naam ? 'selected' : ''}>${s.naam}</option>
+        `).join('');
+
         tr.innerHTML = `
           <td class="p-3 font-bold text-slate-800">${docent.naam}</td>
           <td class="p-3"><span class="text-[10px] px-2 py-0.5 rounded font-bold ${docent.isPlanner ? 'bg-amber-100 text-amber-800' : 'bg-slate-100 text-slate-600'}">${docent.isPlanner ? 'Planner' : 'Vakdocent'}</span></td>
+          <td class="p-3">
+            ${docent.isPlanner ? '-' : `
+              <select onchange="updateDocentVasteSchool('${docent.id}', this.value)" class="p-1 bg-slate-100 border border-slate-300 rounded-lg text-xs font-semibold max-w-[170px]">
+                <option value="">-- Geen vaste school --</option>
+                ${schoolOptions}
+              </select>
+            `}
+          </td>
           <td class="p-3">${vasteDagenStatus}</td>
           <td class="p-3">
             <select onchange="updateDocentSkill(this, '${docent.id}', this.value)" class="bg-slate-100 border border-slate-300 rounded-lg p-1 font-bold text-xs">
@@ -2204,74 +2738,8 @@
       });
     }
 
-    function openCandidatePicker(planningId, datum, schoolNaam) {
-      selectedPlanningForCandidate = planningId;
-      document.getElementById('candidateModalTitle').innerText = `Koppelen: ${schoolNaam}`;
-      document.getElementById('candidateModalDate').innerText = `Datum: ${normalizeDateStr(datum)}`;
-
-      const normTargetDate = normalizeDateStr(datum);
-      const dayAvail = (adminData.availability || []).filter(a => normalizeDateStr(a.datum) === normTargetDate && a.goedkeuring === "GOEDGEKEURD");
-      
-      const listJa = [];
-      const listMogelijk = [];
-
-      dayAvail.forEach(av => {
-        const doc = adminData.docenten.find(d => d.id === av.docentId);
-        if (doc && !doc.isPlanner) {
-          if (av.status === "JA") listJa.push(doc);
-          if (av.status === "MOGELIJK") listMogelijk.push(doc);
-        }
-      });
-
-      const rankMap = { N1: 1, N2: 2, N3: 3 };
-      listJa.sort((a, b) => (rankMap[a.skillLevel] || 3) - (rankMap[b.skillLevel] || 3));
-      listMogelijk.sort((a, b) => (rankMap[a.skillLevel] || 3) - (rankMap[b.skillLevel] || 3));
-
-      document.getElementById('countCandidatesJa').innerText = listJa.length;
-      document.getElementById('countCandidatesMogelijk').innerText = listMogelijk.length;
-
-      renderCandidateSection('listCandidatesJa', listJa);
-      renderCandidateSection('listCandidatesMogelijk', listMogelijk);
-      document.getElementById('modalCandidatePicker').classList.remove('hidden');
-    }
-
-    function renderCandidateSection(containerId, list) {
-      const container = document.getElementById(containerId);
-      container.innerHTML = "";
-
-      if (list.length === 0) {
-        container.innerHTML = `<div class="text-xs text-slate-400 p-2">Geen kandidaten.</div>`;
-        return;
-      }
-
-      list.forEach(doc => {
-        const item = document.createElement('div');
-        item.className = "p-2.5 bg-slate-50 hover:bg-slate-100 rounded-xl border border-slate-200 flex items-center justify-between transition";
-        item.innerHTML = `
-          <div>
-            <div class="font-bold text-slate-800 text-xs">${doc.naam}</div>
-            <div class="text-[11px] text-slate-500 flex gap-2">
-              <span class="font-bold text-brand-700">Skill: ${doc.skillLevel}</span>
-              <span>Auto: ${doc.auto}</span>
-            </div>
-          </div>
-          <button onclick="assignCandidate(this, '${doc.id}')" class="text-xs bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-3 py-1.5 rounded-lg transition shadow-sm flex items-center gap-1">
-            <span>Koppelen</span>
-          </button>
-        `;
-        container.appendChild(item);
-      });
-    }
-
-    function closeCandidatePicker() {
-      document.getElementById('modalCandidatePicker').classList.add('hidden');
-    }
-
-    async function assignCandidate(btn, docentId) {
-      btn.innerHTML = `<i class="fa-solid fa-circle-notch fa-spin"></i>`;
-      btn.disabled = true;
-      await apiCall("", "POST", { action: "adminSavePlanning", adminPin: ADMIN_SECRET, planningData: { planningId: selectedPlanningForCandidate, toegewezenDocentId: docentId } });
-      closeCandidatePicker();
+    async function updateDocentVasteSchool(docentId, vasteSchool) {
+      await apiCall("", "POST", { action: "adminUpdateDocent", adminPin: ADMIN_SECRET, docentId, vasteSchool });
       await loadAdminData();
     }
 
@@ -2284,10 +2752,8 @@
     }
 
     async function approveAvailability(btn, recordId, approved) {
-      const originalText = btn.innerHTML;
       btn.innerHTML = `<i class="fa-solid fa-circle-notch fa-spin"></i>`;
       btn.disabled = true;
-
       await apiCall("", "POST", { action: "adminApproveAvailability", adminPin: ADMIN_SECRET, recordId, approved });
       await loadAdminData();
     }
