@@ -121,7 +121,6 @@
       
       <div class="flex-1 w-full space-y-4">
         
-        <!-- Attentie Banner als er open dagen zijn in de komende 3 weken -->
         <div id="alertBannerUnfilledDays" class="hidden p-3 bg-amber-50 border border-amber-300 rounded-2xl text-amber-900 text-xs font-bold flex items-center gap-2 shadow-sm animate-pulse">
           <i class="fa-solid fa-triangle-exclamation text-amber-600 text-sm"></i>
           <span>Let op: Je hebt voor de komende 3 weken nog niet al je dagen doorgegeven! (Zie knipperende vakjes)</span>
@@ -148,7 +147,6 @@
             <span class="flex items-center gap-1 bg-emerald-50 text-emerald-700 border border-emerald-200 px-2 py-0.5 rounded-lg"><span class="w-2 h-2 rounded-full bg-emerald-500"></span> Ja</span>
             <span class="flex items-center gap-1 bg-amber-50 text-amber-700 border border-amber-200 px-2 py-0.5 rounded-lg"><span class="w-2 h-2 rounded-full bg-amber-500"></span> Mogelijk</span>
             <span class="flex items-center gap-1 bg-rose-50 text-rose-700 border border-rose-200 px-2 py-0.5 rounded-lg"><span class="w-2 h-2 rounded-full bg-rose-500"></span> Nee</span>
-            <span class="flex items-center gap-1 bg-sky-50 text-sky-700 border border-sky-200 px-2 py-0.5 rounded-lg">✈️ On Tour</span>
             <span class="flex items-center gap-1 bg-slate-100 text-slate-600 border border-slate-300 px-2 py-0.5 rounded-lg"><span class="w-2 h-2 rounded-full bg-slate-400"></span> In Behandeling</span>
           </div>
 
@@ -170,7 +168,10 @@
             <span class="w-2.5 h-2.5 rounded-full bg-sky-500"></span>
             <h3 class="font-extrabold text-slate-900 text-sm">On Tours</h3>
           </div>
-          <span class="text-[10px] bg-slate-100 text-slate-600 font-bold px-2 py-0.5 rounded-full" id="countOnToursDocent">0</span>
+          <div class="flex items-center gap-2">
+            <span class="text-[10px] bg-slate-100 text-slate-600 font-bold px-2 py-0.5 rounded-full" id="countOnToursDocent">0</span>
+            <button onclick="loadDocentOnTours()" class="text-slate-400 hover:text-slate-700 transition"><i class="fa-solid fa-arrows-rotate text-xs"></i></button>
+          </div>
         </div>
 
         <p class="text-[11px] text-slate-500 mb-3">
@@ -261,9 +262,12 @@
             <span class="w-2.5 h-2.5 rounded-full bg-sky-500"></span>
             <h3 class="font-extrabold text-slate-900 text-sm">On Tours Beheer</h3>
           </div>
-          <button onclick="openAddOnTourModal()" class="text-xs bg-slate-800 hover:bg-slate-900 text-white font-bold px-2.5 py-1.5 rounded-xl transition flex items-center gap-1">
-            <i class="fa-solid fa-pen-to-square text-[10px]"></i> Nieuwe Tour
-          </button>
+          <div class="flex items-center gap-2">
+            <button onclick="loadAdminData()" class="text-slate-400 hover:text-slate-700 transition" title="Vernieuwen"><i class="fa-solid fa-arrows-rotate text-xs"></i></button>
+            <button onclick="openAddOnTourModal()" class="text-xs bg-slate-800 hover:bg-slate-900 text-white font-bold px-2.5 py-1.5 rounded-xl transition flex items-center gap-1">
+              <i class="fa-solid fa-pen-to-square text-[10px]"></i> Nieuwe Tour
+            </button>
+          </div>
         </div>
 
         <div id="plannerOnToursList" class="space-y-2.5 max-h-[540px] overflow-y-auto custom-scrollbar pr-1"></div>
@@ -277,7 +281,7 @@
   <footer id="landingFooterBar" class="bg-white border-t border-slate-200 py-2.5 px-4 text-[11px] md:text-xs text-slate-500 sticky bottom-0 z-20">
     <div class="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-2 text-center sm:text-left">
       <div class="flex items-center gap-2 font-medium">
-        <span>Versie <strong class="text-slate-800">V1.5</strong></span>
+        <span>Versie <strong class="text-slate-800">V1.6</strong></span>
         <span class="text-slate-300">•</span>
         <button onclick="openPatchNotesModal()" class="text-emerald-600 hover:text-emerald-700 font-semibold underline transition">
           Patch notes
@@ -304,15 +308,15 @@
       <div class="max-h-80 overflow-y-auto custom-scrollbar space-y-3 pr-1 text-xs">
         <div class="p-3 bg-emerald-50/50 border border-emerald-200 rounded-2xl">
           <div class="flex items-center justify-between mb-1.5">
-            <span class="font-bold text-emerald-950">Versie V1.5</span>
+            <span class="font-bold text-emerald-950">Versie V1.6</span>
             <span class="text-[10px] bg-emerald-600 text-white px-2 py-0.5 rounded-full font-bold">Nieuw</span>
           </div>
           <ul class="list-disc list-inside space-y-1 text-emerald-900">
-            <li>On Tour flexibele weekduur + dag-niveau dekkingsmatrix per lesgever slot.</li>
-            <li>On Tour dagen overschrijven direct met 'On Tour' status in de kalender van de vakdocent.</li>
-            <li>Knipperende attentie (amber pulse) op alle niet-ingevulde dagen in de komende 3 weken.</li>
-            <li>Nieuw vraag 4 'Periodes waarin ik op een vaste dag kan werken' met ghost box bulkinvoer.</li>
-            <li>Vaste School toewijzing in admin met gepinde top-positie in de koppelmodal.</li>
+            <li>Voorkeuren 3 &amp; 4 samengevoegd naar 'Periodes waarin ik op een vaste dag kan werken' met Ghost Box bulkinvoer.</li>
+            <li>Meerdere vaste scholen per vakdocent toe te wijzen in admin met directe pinning bij het inplannen.</li>
+            <li>On Tour verversknop + kandidatenlijst toont nu duidelijk Rijbewijs en Auto.</li>
+            <li>On Tour deelse dekking koppelen vult direct de gaten van het betreffende lesgever-slot.</li>
+            <li>Interactieve agenda pop-up in Admin: wijzig direct statussen of koppel een docent vanuit zijn kalender.</li>
           </ul>
         </div>
       </div>
@@ -364,7 +368,7 @@
     </div>
   </div>
 
-  <!-- MODAL: ONBOARDING & PROFIEL (MET GHOST BOXES VOOR VRAAG 4) -->
+  <!-- MODAL: ONBOARDING & PROFIEL (SAMENGEVOEGDE VRAAG 3 MET GHOST BOXES) -->
   <div id="modalOnboarding" class="fixed inset-0 bg-slate-950/90 z-50 hidden overflow-y-auto p-4 flex items-center justify-center">
     <div class="w-full max-w-xl bg-white rounded-3xl p-6 md:p-8 shadow-2xl my-auto">
       <div class="text-center mb-6">
@@ -388,7 +392,6 @@
         </div>
 
         <div id="wrapperRegularQuestions" class="space-y-4">
-          <!-- VRAAG 2 -->
           <div>
             <label class="block font-bold text-slate-800 mb-1">2. Hoe vaak in de week wil je werken?</label>
             <select id="obWerkDagen" class="w-full p-3 bg-slate-50 border border-slate-300 rounded-xl font-medium">
@@ -400,45 +403,14 @@
             </select>
           </div>
 
-          <!-- VRAAG 3: AANKOMENDE TIJD ZEKER (OPTIONEEL) -->
-          <div class="bg-slate-50 p-4 rounded-2xl border border-slate-200 space-y-2.5">
-            <div class="flex items-center justify-between">
-              <label class="block font-bold text-slate-800 text-xs">
-                3. Welke dagen kan je de aankomende tijd zeker? <span class="text-[11px] font-normal text-slate-500">(Optioneel)</span>
-              </label>
-            </div>
-            
-            <div class="flex flex-wrap gap-2">
-              <label class="flex items-center gap-1.5 bg-white border px-3 py-1.5 rounded-xl cursor-pointer font-semibold text-xs"><input type="checkbox" name="vasteDagen" value="Ma" class="rounded text-emerald-600"> Ma</label>
-              <label class="flex items-center gap-1.5 bg-white border px-3 py-1.5 rounded-xl cursor-pointer font-semibold text-xs"><input type="checkbox" name="vasteDagen" value="Di" class="rounded text-emerald-600"> Di</label>
-              <label class="flex items-center gap-1.5 bg-white border px-3 py-1.5 rounded-xl cursor-pointer font-semibold text-xs"><input type="checkbox" name="vasteDagen" value="Wo" class="rounded text-emerald-600"> Wo</label>
-              <label class="flex items-center gap-1.5 bg-white border px-3 py-1.5 rounded-xl cursor-pointer font-semibold text-xs"><input type="checkbox" name="vasteDagen" value="Do" class="rounded text-emerald-600"> Do</label>
-              <label class="flex items-center gap-1.5 bg-white border px-3 py-1.5 rounded-xl cursor-pointer font-semibold text-xs"><input type="checkbox" name="vasteDagen" value="Vr" class="rounded text-emerald-600"> Vr</label>
-            </div>
-
-            <div class="pt-2 border-t border-slate-200">
-              <label class="block font-bold text-slate-700 text-xs mb-1">Geldt tot:</label>
-              <div class="flex flex-col sm:flex-row gap-2 items-center">
-                <input type="date" id="obVasteDagenGeldtTot" class="w-full sm:w-auto flex-1 p-2 bg-white border border-slate-300 rounded-xl text-xs font-medium" />
-                <div class="flex gap-1.5 w-full sm:w-auto">
-                  <button type="button" onclick="setVasteDagenPreset(1, 'obVasteDagenGeldtTot')" class="flex-1 sm:flex-none px-2.5 py-1.5 bg-slate-200 hover:bg-slate-300 text-slate-700 font-bold rounded-lg text-[11px]">1 mnd</button>
-                  <button type="button" onclick="setVasteDagenPreset(2, 'obVasteDagenGeldtTot')" class="flex-1 sm:flex-none px-2.5 py-1.5 bg-slate-200 hover:bg-slate-300 text-slate-700 font-bold rounded-lg text-[11px]">2 mnd</button>
-                  <button type="button" onclick="setVasteDagenPreset(3, 'obVasteDagenGeldtTot')" class="flex-1 sm:flex-none px-2.5 py-1.5 bg-slate-200 hover:bg-slate-300 text-slate-700 font-bold rounded-lg text-[11px]">3 mnd</button>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <!-- VRAAG 4: PERIODES MET GHOST BOXES -->
+          <!-- SAMENGEVOEGDE VRAAG: PERIODES MET GHOST BOXES -->
           <div class="bg-slate-50 p-4 rounded-2xl border border-slate-200">
             <label class="block font-bold text-slate-800 text-xs mb-1">
-              4. Periodes waarin ik op een vaste dag kan werken <span class="text-[11px] font-normal text-slate-500">(Optioneel)</span>
+              3. Periodes waarin ik op een vaste dag kan werken <span class="text-[11px] font-normal text-slate-500">(Optioneel)</span>
             </label>
-            <p class="text-[11px] text-slate-500 mb-3">Vink een periode aan om datums en dagen op te geven. Er verschijnt vanzelf een nieuw vakje eronder.</p>
+            <p class="text-[11px] text-slate-500 mb-3">Vink een periode aan om datums en vaste dagen op te geven. Dagen in deze periode worden automatisch op groen (Ja) gezet.</p>
 
-            <div id="periodesGhostContainer" class="space-y-2.5">
-              <!-- Dynamische Ghost Boxes -->
-            </div>
+            <div id="periodesGhostContainer" class="space-y-2.5"></div>
           </div>
         </div>
 
@@ -469,43 +441,6 @@
     </div>
   </div>
 
-  <!-- MODAL: VASTE DAGEN EXPIRED POPUP -->
-  <div id="modalVasteDagenExpiredPopup" class="fixed inset-0 bg-slate-950/90 z-50 hidden overflow-y-auto p-4 flex items-center justify-center">
-    <div class="w-full max-w-md bg-white rounded-3xl p-6 shadow-2xl my-auto text-left">
-      <div class="w-12 h-12 bg-amber-100 text-amber-600 rounded-2xl flex items-center justify-center mb-3 text-xl">
-        <i class="fa-solid fa-calendar-check"></i>
-      </div>
-      <h3 class="text-lg font-bold text-slate-900 mb-1">Vaste Dagen Verlengen</h3>
-      <p class="text-xs text-slate-500 mb-4">Je eerdere vaste dagen periode is verlopen. Welke dagen kan je de aankomende tijd zeker?</p>
-
-      <form onsubmit="handleExpiredPopupSubmit(event)" class="space-y-4 text-xs">
-        <div class="flex flex-wrap gap-2">
-          <label class="flex items-center gap-1.5 bg-slate-100 px-3 py-2 rounded-xl cursor-pointer font-semibold"><input type="checkbox" name="popVasteDagen" value="Ma" class="rounded text-emerald-600"> Ma</label>
-          <label class="flex items-center gap-1.5 bg-slate-100 px-3 py-2 rounded-xl cursor-pointer font-semibold"><input type="checkbox" name="popVasteDagen" value="Di" class="rounded text-emerald-600"> Di</label>
-          <label class="flex items-center gap-1.5 bg-slate-100 px-3 py-2 rounded-xl cursor-pointer font-semibold"><input type="checkbox" name="popVasteDagen" value="Wo" class="rounded text-emerald-600"> Wo</label>
-          <label class="flex items-center gap-1.5 bg-slate-100 px-3 py-2 rounded-xl cursor-pointer font-semibold"><input type="checkbox" name="popVasteDagen" value="Do" class="rounded text-emerald-600"> Do</label>
-          <label class="flex items-center gap-1.5 bg-slate-100 px-3 py-2 rounded-xl cursor-pointer font-semibold"><input type="checkbox" name="popVasteDagen" value="Vr" class="rounded text-emerald-600"> Vr</label>
-        </div>
-
-        <div>
-          <label class="block font-bold text-slate-700 mb-1">Geldt tot:</label>
-          <div class="flex flex-col sm:flex-row gap-2 items-center">
-            <input type="date" id="popVasteDagenGeldtTot" required class="w-full sm:w-auto flex-1 p-2 bg-slate-50 border border-slate-300 rounded-xl font-medium" />
-            <div class="flex gap-1.5 w-full sm:w-auto">
-              <button type="button" onclick="setVasteDagenPreset(1, 'popVasteDagenGeldtTot')" class="flex-1 sm:flex-none px-2.5 py-1.5 bg-slate-200 hover:bg-slate-300 text-slate-700 font-bold rounded-lg text-[11px]">1 mnd</button>
-              <button type="button" onclick="setVasteDagenPreset(2, 'popVasteDagenGeldtTot')" class="flex-1 sm:flex-none px-2.5 py-1.5 bg-slate-200 hover:bg-slate-300 text-slate-700 font-bold rounded-lg text-[11px]">2 mnd</button>
-              <button type="button" onclick="setVasteDagenPreset(3, 'popVasteDagenGeldtTot')" class="flex-1 sm:flex-none px-2.5 py-1.5 bg-slate-200 hover:bg-slate-300 text-slate-700 font-bold rounded-lg text-[11px]">3 mnd</button>
-            </div>
-          </div>
-        </div>
-
-        <button type="submit" id="btnSaveExpiredPop" class="w-full py-3 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-xl shadow-md transition">
-          Opslaan &amp; Naar Kalender
-        </button>
-      </form>
-    </div>
-  </div>
-
   <!-- MODAL: ON TOUR INSCHRIJVEN VOOR VAKDOCENT -->
   <div id="modalOnTourRegister" class="fixed inset-0 bg-slate-950/80 z-50 hidden flex items-center justify-center p-4">
     <div class="w-full max-w-md bg-white rounded-3xl p-6 shadow-2xl relative text-left">
@@ -528,9 +463,7 @@
       </div>
 
       <label class="block font-bold text-slate-700 text-xs mb-1.5">Geselecteerde dagen:</label>
-      <div class="grid grid-cols-5 gap-1.5 mb-5 text-center text-xs font-bold" id="otDaysContainer">
-        <!-- Dynamische dagblokjes op basis van tourstart/eind -->
-      </div>
+      <div class="grid grid-cols-5 gap-1.5 mb-5 text-center text-xs font-bold" id="otDaysContainer"></div>
 
       <div class="flex justify-end gap-2 pt-2 border-t border-slate-100">
         <button onclick="closeOnTourRegisterModal()" class="px-4 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold rounded-xl text-xs">Annuleren</button>
@@ -633,9 +566,7 @@
     </div>
   </div>
 
-  <!-- ==========================================
-       SLIMME SLOT-KOPPEL MODAL (MET PINNED VASTE DOCENT & ON TOUR MATRIX)
-       ========================================== -->
+  <!-- SLIMME SLOT-KOPPEL MODAL -->
   <div id="modalSlotManager" class="fixed inset-0 bg-slate-950/80 z-50 hidden flex items-center justify-center p-4">
     <div class="w-full max-w-2xl bg-white rounded-3xl p-6 shadow-2xl relative max-h-[90vh] flex flex-col">
       <button onclick="closeSlotManagerModal()" class="absolute top-4 right-4 text-slate-400 hover:text-slate-600 w-8 h-8 rounded-full flex items-center justify-center">
@@ -651,19 +582,19 @@
 
       <div class="flex-1 overflow-y-auto space-y-4 custom-scrollbar pr-1">
         
-        <!-- PINNED VASTE DOCENT SECTIE (ALLEEN BIJ REGULIERE SCHOOL) -->
-        <div id="pinnedVasteDocentContainer" class="hidden"></div>
+        <!-- PINNED VASTE DOCENTEN SECTIE -->
+        <div id="pinnedVasteDocentContainer" class="hidden space-y-2"></div>
 
-        <!-- SECTIE: SLOTS STATUS / MATRIX -->
+        <!-- SLOTS STATUS / MATRIX -->
         <div class="bg-slate-50 p-3.5 rounded-2xl border border-slate-200">
           <h4 class="text-xs font-extrabold text-slate-700 uppercase tracking-wider mb-2" id="slotSectionHeaderTitle">Toegewezen Docenten:</h4>
           <div id="slotRowsContainer" class="space-y-2"></div>
         </div>
 
-        <!-- SECTIE: KANDIDATEN SELECTIE -->
+        <!-- KANDIDATEN SELECTIE -->
         <div id="candidatesSectionWrapper">
           <h4 class="text-xs font-bold uppercase text-slate-600 mb-2 flex items-center justify-between">
-            <span id="candidateFilterHeaderTitle">Kies een beschikbare docent voor het open slot:</span>
+            <span id="candidateFilterHeaderTitle">Kies een beschikbare docent:</span>
           </h4>
 
           <div class="mb-3">
@@ -718,7 +649,75 @@
     </div>
   </div>
 
-  <!-- MODAL: ADMIN DASHBOARD (MET REFRESH OP ELK TABBLAD & VASTE SCHOOL SELECTIE) -->
+  <!-- MODAL: INTERACTIEVE DOCENTENAGENDA IN ADMIN -->
+  <div id="modalAdminDocentCalendar" class="fixed inset-0 bg-slate-950/90 z-50 hidden flex items-center justify-center p-2 md:p-6">
+    <div class="bg-white rounded-3xl w-full max-w-4xl max-h-[90vh] flex flex-col overflow-hidden shadow-2xl border border-slate-200">
+      <div class="p-4 border-b border-slate-200 flex items-center justify-between bg-slate-50">
+        <div class="flex items-center gap-2">
+          <span class="w-3 h-3 rounded-full bg-emerald-500"></span>
+          <h3 class="font-bold text-slate-900 text-sm md:text-base" id="adminDocentCalTitle">Agenda van ...</h3>
+        </div>
+        <button onclick="closeAdminDocentCalendar()" class="w-8 h-8 rounded-xl bg-slate-200 hover:bg-slate-300 text-slate-700 flex items-center justify-center transition">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+
+      <div class="p-3 px-4 border-b border-slate-100 flex flex-wrap items-center justify-between gap-2 bg-white">
+        <div class="flex items-center gap-2">
+          <button onclick="changeAdminDocentMonth(-1)" class="w-8 h-8 rounded-lg bg-slate-100 hover:bg-slate-200 flex items-center justify-center text-xs">
+            <i class="fa-solid fa-chevron-left"></i>
+          </button>
+          <span id="adminDocentCalMonthTitle" class="font-bold text-xs md:text-sm text-slate-800 capitalize min-w-[120px] text-center">Maand Jaar</span>
+          <button onclick="changeAdminDocentMonth(1)" class="w-8 h-8 rounded-lg bg-slate-100 hover:bg-slate-200 flex items-center justify-center text-xs">
+            <i class="fa-solid fa-chevron-right"></i>
+          </button>
+        </div>
+        <p class="text-[11px] text-slate-500 italic">
+          <i class="fa-solid fa-hand-pointer mr-1 text-emerald-600"></i> Klik op een dag om beschikbaarheid aan te passen of direct aan een school te koppelen.
+        </p>
+      </div>
+
+      <div class="flex-1 overflow-y-auto p-4 custom-scrollbar">
+        <div class="grid grid-cols-5 gap-2 mb-2 text-center text-[11px] font-bold text-slate-400 uppercase">
+          <div>Ma</div><div>Di</div><div>Wo</div><div>Do</div><div>Vr</div>
+        </div>
+        <div id="adminDocentCalDaysGrid" class="grid grid-cols-5 gap-2"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: ADMIN DAG ACTIES VOOR DOCENT (WIJZIG STATUS / KOPPEL SCHOOL) -->
+  <div id="modalAdminDayAction" class="fixed inset-0 bg-slate-950/80 z-50 hidden flex items-center justify-center p-4">
+    <div class="w-full max-w-sm bg-white rounded-3xl p-6 text-center shadow-2xl relative text-xs">
+      <button onclick="closeAdminDayActionModal()" class="absolute top-4 right-4 text-slate-400 hover:text-slate-600 w-8 h-8 rounded-full flex items-center justify-center">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+
+      <h3 class="text-base font-extrabold text-slate-900 mb-1" id="adminDayActionTitle">Dag Beheer</h3>
+      <p class="text-slate-500 mb-4" id="adminDayActionSubtitle"></p>
+
+      <!-- Deel 1: Status Wijzigen -->
+      <div class="space-y-2 mb-4 text-left">
+        <label class="block font-bold text-slate-700">1. Beschikbaarheid forceren:</label>
+        <div class="grid grid-cols-3 gap-1.5">
+          <button onclick="submitAdminDirectStatus('JA')" class="py-2 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-xl transition">🟢 Ja</button>
+          <button onclick="submitAdminDirectStatus('MOGELIJK')" class="py-2 bg-amber-500 hover:bg-amber-600 text-white font-bold rounded-xl transition">🟠 Mogelijk</button>
+          <button onclick="submitAdminDirectStatus('NEE')" class="py-2 bg-rose-600 hover:bg-rose-700 text-white font-bold rounded-xl transition">🔴 Nee</button>
+        </div>
+      </div>
+
+      <!-- Deel 2: Direct Koppelen aan School op deze dag -->
+      <div class="pt-3 border-t border-slate-200 text-left space-y-2">
+        <label class="block font-bold text-slate-700">2. Direct koppelen aan open school:</label>
+        <select id="selectAdminDayOpenSchools" class="w-full p-2.5 bg-slate-50 border border-slate-300 rounded-xl font-medium"></select>
+        <button onclick="submitAdminDirectSchoolAssign()" class="w-full py-2.5 bg-slate-800 hover:bg-slate-900 text-white font-bold rounded-xl transition">
+          Koppel aan geselecteerde school
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: ADMIN DASHBOARD -->
   <div id="modalAdmin" class="fixed inset-0 bg-slate-950/90 z-50 hidden flex flex-col p-2 md:p-6 overflow-hidden">
     <div class="bg-white rounded-3xl w-full max-w-6xl mx-auto flex-1 flex flex-col overflow-hidden shadow-2xl border border-slate-200">
       
@@ -741,8 +740,6 @@
       </div>
 
       <div class="flex-1 overflow-y-auto p-4 md:p-6 custom-scrollbar bg-slate-100/60">
-        
-        <!-- TAB 1: PLANNING -->
         <div id="adminTabPlanning" class="space-y-4">
           <div class="flex justify-between items-center bg-white p-4 rounded-2xl border border-slate-200">
             <h3 class="font-bold text-slate-800 text-sm md:text-base">Reguliere Opdrachten &amp; Gaten</h3>
@@ -758,7 +755,6 @@
           <div id="adminPlanningGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3"></div>
         </div>
 
-        <!-- TAB 2: GOEDKEURINGEN -->
         <div id="adminTabApprovals" class="hidden space-y-4">
           <div class="flex justify-between items-center bg-white p-4 rounded-2xl border border-slate-200">
             <h3 class="font-bold text-slate-800 text-sm md:text-base">Openstaande Wijzigingsverzoeken</h3>
@@ -769,10 +765,9 @@
           <div id="adminApprovalsList" class="space-y-2"></div>
         </div>
 
-        <!-- TAB 3: VAKDOCENTEN (MET VASTE SCHOOL TAG) -->
         <div id="adminTabDocenten" class="hidden space-y-4">
           <div class="flex justify-between items-center bg-white p-4 rounded-2xl border border-slate-200">
-            <h3 class="font-bold text-slate-800 text-sm md:text-base">Vakdocenten &amp; Vaste School Koppeling</h3>
+            <h3 class="font-bold text-slate-800 text-sm md:text-base">Vakdocenten &amp; Vaste Scholen</h3>
             <button onclick="adminManualRefresh(this)" class="text-xs bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold px-3 py-2 rounded-xl border border-slate-200 transition flex items-center gap-1.5">
               <i class="fa-solid fa-arrows-rotate text-slate-500"></i> <span>Vernieuwen</span>
             </button>
@@ -783,10 +778,10 @@
                 <tr>
                   <th class="p-3">Docent</th>
                   <th class="p-3">Rol</th>
-                  <th class="p-3">Vaste School</th>
-                  <th class="p-3">Vaste Dagen Periode</th>
+                  <th class="p-3">Vaste Scholen</th>
                   <th class="p-3">Skill</th>
                   <th class="p-3">PIN</th>
+                  <th class="p-3 text-center">Agenda</th>
                   <th class="p-3 text-right">Actie</th>
                 </tr>
               </thead>
@@ -794,7 +789,6 @@
             </table>
           </div>
         </div>
-
       </div>
 
     </div>
@@ -824,7 +818,13 @@
     let activeOtChoice = null;
     let selectedOtDays = {};
 
-    let currentSlotTarget = null; // { type, item, selectedDayFilter }
+    let currentSlotTarget = null;
+    let ghostPeriodesData = [];
+
+    // Admin Docent Agenda State
+    let viewingAdminDocent = null;
+    let adminDocentCalDate = new Date();
+    let selectedAdminDayAction = null; // { docentId, isoDate, dateObj }
 
     let clockClicks = 0;
     let clockTimer = null;
@@ -906,12 +906,6 @@
         }
       }
       return clean;
-    }
-
-    function setVasteDagenPreset(months, inputId) {
-      const d = new Date();
-      d.setMonth(d.getMonth() + months);
-      document.getElementById(inputId).value = normalizeDateStr(d);
     }
 
     async function apiCall(endpoint, method = "GET", payload = null) {
@@ -1034,8 +1028,6 @@
               initPlannerView();
             } else if (!currentDocent.onboardingKlaar) {
               openProfileModal(false);
-            } else if (currentDocent.alleenOnTour !== 'Ja' && currentDocent.isVasteDagenVerlopen) {
-              openVasteDagenExpiredPopup();
             } else {
               initCalendarView();
             }
@@ -1113,10 +1105,8 @@
     }
 
     // ==========================================
-    // ONBOARDING & PROFIEL (GHOST BOXES VRAAG 4)
+    // ONBOARDING & SAMENGEVOEGDE VRAAG 3 MET GHOST BOXES
     // ==========================================
-    let ghostPeriodesData = [];
-
     function toggleOnboardingRegularFields() {
       const isAlleenTour = document.querySelector('input[name="alleenOnTour"]:checked')?.value === 'Ja';
       document.getElementById('wrapperRegularQuestions').style.display = isAlleenTour ? 'none' : 'block';
@@ -1133,14 +1123,12 @@
 
       if (isEdit) {
         title.innerText = "Voorkeuren Aanpassen";
-        subtitle.innerText = "Pas je voorkeuren en periodes direct aan.";
+        subtitle.innerText = "Pas je periodes en instellingen aan.";
         btnCancel.classList.remove('hidden');
         
         if (currentDocent) {
           setRadioGroup('alleenOnTour', currentDocent.alleenOnTour || "Nee");
           document.getElementById('obWerkDagen').value = currentDocent.werkDagenPwk || "3 dagen";
-          setCheckboxGroup('vasteDagen', currentDocent.vasteDagen || []);
-          document.getElementById('obVasteDagenGeldtTot').value = currentDocent.vasteDagenGeldtTot || "";
           setRadioGroup('rijbewijs', currentDocent.rijbewijs || "Ja");
           setRadioGroup('auto', currentDocent.auto || "Ja");
           ghostPeriodesData = (currentDocent.vastePeriodes || []).map(p => ({ ...p, active: true }));
@@ -1150,7 +1138,6 @@
         subtitle.innerText = "Geef je voorkeuren door voor het schooljaar.";
         btnCancel.classList.add('hidden');
         setRadioGroup('alleenOnTour', "Nee");
-        setVasteDagenPreset(2, 'obVasteDagenGeldtTot');
         ghostPeriodesData = [];
       }
 
@@ -1167,7 +1154,6 @@
       const container = document.getElementById('periodesGhostContainer');
       container.innerHTML = "";
 
-      // Zorg dat er altijd minimaal 1 lege (ghost) rij onderaan staat
       const rows = [...ghostPeriodesData];
       if (rows.length === 0 || rows[rows.length - 1].active) {
         rows.push({ active: false, van: "", tot: "", dagen: [] });
@@ -1222,9 +1208,7 @@
     }
 
     function updateGhostRowData(idx, key, val) {
-      if (ghostPeriodesData[idx]) {
-        ghostPeriodesData[idx][key] = val;
-      }
+      if (ghostPeriodesData[idx]) ghostPeriodesData[idx][key] = val;
     }
 
     function toggleGhostDay(idx, day, checked) {
@@ -1242,6 +1226,37 @@
       renderGhostPeriodes();
     }
 
+    // Slimme Datum Generator vanuit Vaste Periodes
+    function generateDatesFromGhostPeriodes(periodes) {
+      const entries = [];
+      const dayNamesMap = ["Zo", "Ma", "Di", "Wo", "Do", "Vr", "Za"];
+      const seenDates = new Set();
+
+      periodes.forEach(p => {
+        if (!p.active || !p.van || !p.tot || !p.dagen || p.dagen.length === 0) return;
+
+        let curr = new Date(p.van);
+        const end = new Date(p.tot);
+
+        while (curr <= end) {
+          const dayOfWeek = curr.getDay();
+          if (dayOfWeek >= 1 && dayOfWeek <= 5) {
+            const dayShort = dayNamesMap[dayOfWeek];
+            if (p.dagen.includes(dayShort)) {
+              const iso = normalizeDateStr(curr);
+              if (!seenDates.has(iso)) {
+                seenDates.add(iso);
+                entries.push({ datum: iso, status: "JA", forceApproved: true });
+              }
+            }
+          }
+          curr.setDate(curr.getDate() + 1);
+        }
+      });
+
+      return entries;
+    }
+
     async function handleOnboardingSubmit(e) {
       e.preventDefault();
       const btn = document.getElementById('btnSaveOnboarding');
@@ -1254,8 +1269,6 @@
       const payloadData = {
         alleenOnTour: isAlleenTour ? 'Ja' : 'Nee',
         werkDagenPwk: isAlleenTour ? '' : document.getElementById('obWerkDagen').value,
-        vasteDagen: isAlleenTour ? [] : getCheckboxGroup('vasteDagen'),
-        vasteDagenGeldtTot: isAlleenTour ? '' : document.getElementById('obVasteDagenGeldtTot').value,
         vastePeriodes: isAlleenTour ? [] : activePeriodes,
         rijbewijs: getRadioGroup('rijbewijs'),
         auto: getRadioGroup('auto')
@@ -1268,11 +1281,24 @@
         formData: payloadData
       });
 
+      // Genereer direct 'JA' datums in de agenda en synchroniseer
+      if (!isAlleenTour && activePeriodes.length > 0) {
+        const dateEntries = generateDatesFromGhostPeriodes(activePeriodes);
+        if (dateEntries.length > 0) {
+          await apiCall("", "POST", {
+            action: "setAvailability",
+            docentId: currentDocent.id,
+            pin: currentPin,
+            entries: dateEntries
+          });
+        }
+      }
+
       btn.innerHTML = `Opslaan`;
       btn.disabled = false;
 
       if (res.success) {
-        currentDocent = { ...currentDocent, ...payloadData, onboardingKlaar: true, isVasteDagenVerlopen: false };
+        currentDocent = { ...currentDocent, ...payloadData, onboardingKlaar: true };
         closeOnboardingModal();
         initCalendarView();
       } else {
@@ -1280,43 +1306,6 @@
       }
     }
 
-    function openVasteDagenExpiredPopup() {
-      setCheckboxGroup('popVasteDagen', currentDocent.vasteDagen || []);
-      setVasteDagenPreset(2, 'popVasteDagenGeldtTot');
-      document.getElementById('modalVasteDagenExpiredPopup').classList.remove('hidden');
-    }
-
-    async function handleExpiredPopupSubmit(e) {
-      e.preventDefault();
-      const btn = document.getElementById('btnSaveExpiredPop');
-      btn.innerHTML = `<i class="fa-solid fa-circle-notch fa-spin"></i>`;
-      btn.disabled = true;
-
-      const gekozen = getCheckboxGroup('popVasteDagen');
-      const geldtTot = document.getElementById('popVasteDagenGeldtTot').value;
-
-      await apiCall("", "POST", {
-        action: "updateVasteDagenOnly",
-        docentId: currentDocent.id,
-        pin: currentPin,
-        vasteDagen: gekozen,
-        geldtTot: geldtTot
-      });
-
-      currentDocent.vasteDagen = gekozen;
-      currentDocent.vasteDagenGeldtTot = geldtTot;
-      currentDocent.isVasteDagenVerlopen = false;
-
-      document.getElementById('modalVasteDagenExpiredPopup').classList.add('hidden');
-      initCalendarView();
-    }
-
-    function getCheckboxGroup(name) {
-      return Array.from(document.querySelectorAll(`input[name="${name}"]:checked`)).map(el => el.value);
-    }
-    function setCheckboxGroup(name, values) {
-      document.querySelectorAll(`input[name="${name}"]`).forEach(el => el.checked = values.includes(el.value));
-    }
     function getRadioGroup(name) {
       const el = document.querySelector(`input[name="${name}"]:checked`);
       return el ? el.value : "";
@@ -1327,7 +1316,7 @@
     }
 
     // ==========================================
-    // VAKDOCENT 5-DAAGSE KALENDER (ATTENTIE OP 3 WEKEN)
+    // VAKDOCENT 5-DAAGSE KALENDER
     // ==========================================
     async function initCalendarView() {
       document.getElementById('viewLanding').classList.add('hidden');
@@ -1372,7 +1361,6 @@
       const now = new Date();
       const todayIso = normalizeDateStr(now);
       
-      // Bereken deadline 3 weken vanaf vandaag (21 dagen)
       const end3WeeksDate = new Date(now);
       end3WeeksDate.setDate(end3WeeksDate.getDate() + 21);
       const end3WeeksIso = normalizeDateStr(end3WeeksDate);
@@ -1411,10 +1399,7 @@
         let statusBadge = "";
 
         if (avail) {
-          if (avail.status === "ON_TOUR") {
-            statusBg = "bg-sky-100 border-sky-300 text-sky-900";
-            statusBadge = `<span class="text-[10px] bg-sky-600 text-white px-2 py-0.5 rounded-full font-extrabold shadow-sm">✈️ On Tour</span>`;
-          } else if (avail.goedkeuring === "IN_BEHANDELING") {
+          if (avail.goedkeuring === "IN_BEHANDELING") {
             statusBg = "bg-slate-100 border-slate-300 text-slate-800";
             const transText = avail.vorigeStatus ? `${avail.vorigeStatus} ➔ ${avail.status}` : avail.status;
             statusBadge = `<span class="text-[9px] bg-slate-600 text-white px-1.5 py-0.5 rounded font-bold">⏳ ${transText}</span>`;
@@ -1429,7 +1414,6 @@
             statusBadge = `<span class="text-[10px] bg-rose-600 text-white px-1.5 py-0.5 rounded font-bold">🔴 Nee</span>`;
           }
         } else if (isInNext3Weeks) {
-          // Knipperende alert voor niet ingevulde dagen in de komende 3 weken!
           hasUnfilledIn3Weeks = true;
           statusBg = "bg-amber-50/60 border-2 border-amber-400 ring-2 ring-amber-300 animate-pulse text-amber-900";
           statusBadge = `<span class="text-[9px] bg-amber-500 text-white px-1.5 py-0.5 rounded font-bold">⚠️ Invullen</span>`;
@@ -1708,7 +1692,7 @@
       btn.disabled = false;
 
       await apiCall("", "POST", { action: "submitOnTourRegistration", docentId: currentDocent.id, pin: currentPin, registration: payload });
-      await Promise.all([loadAvailabilityAndRender(), loadDocentOnTours()]);
+      await loadDocentOnTours();
     }
 
     // ==========================================
@@ -1918,7 +1902,7 @@
     }
 
     // ==========================================
-    // SLIMME SLOT-KOPPELING (MET PINNED VASTE DOCENT & DAG-NIVEAU MATRIX)
+    // SLIMME SLOT-KOPPELING
     // ==========================================
     function openSlotManagerModal(type, id, selectedDayFilter = null) {
       let item = null;
@@ -1961,48 +1945,52 @@
       }
 
       const item = currentSlotTarget.item;
-      const vasteDocent = (adminData.docenten || []).find(d => d.vasteSchool === item.schoolNaam);
+      // Zoek alle docenten die deze school in hun vaste scholen lijst hebben
+      const vasteDocenten = (adminData.docenten || []).filter(d => (d.vasteScholen || []).includes(item.schoolNaam));
 
-      if (!vasteDocent) {
+      if (vasteDocenten.length === 0) {
         container.classList.add('hidden');
         return;
       }
 
       container.classList.remove('hidden');
       const targetDate = normalizeDateStr(item.datum);
-      const avail = (adminData.availability || []).find(a => a.docentId === vasteDocent.id && normalizeDateStr(a.datum) === targetDate);
-      
-      let statusBadge = `<span class="px-2 py-0.5 rounded bg-slate-100 text-slate-600 font-bold text-[10px]">⚪ Niet ingevuld</span>`;
-      if (avail) {
-        if (avail.status === "JA") statusBadge = `<span class="px-2 py-0.5 rounded bg-emerald-100 text-emerald-800 font-bold text-[10px]">🟢 Ja ingevuld</span>`;
-        else if (avail.status === "MOGELIJK") statusBadge = `<span class="px-2 py-0.5 rounded bg-amber-100 text-amber-800 font-bold text-[10px]">🟠 Mogelijk ingevuld</span>`;
-        else if (avail.status === "NEE") statusBadge = `<span class="px-2 py-0.5 rounded bg-rose-100 text-rose-800 font-bold text-[10px]">🔴 Nee ingevuld</span>`;
-        else if (avail.status === "ON_TOUR") statusBadge = `<span class="px-2 py-0.5 rounded bg-sky-100 text-sky-800 font-bold text-[10px]">✈️ On Tour</span>`;
-      }
 
-      const isAlreadyIn = (item.toegewezenDocentIds || []).includes(vasteDocent.id);
+      vasteDocenten.forEach(doc => {
+        const avail = (adminData.availability || []).find(a => a.docentId === doc.id && normalizeDateStr(a.datum) === targetDate);
+        
+        let statusBadge = `<span class="px-2 py-0.5 rounded bg-slate-100 text-slate-600 font-bold text-[10px]">⚪ Niet ingevuld</span>`;
+        if (avail) {
+          if (avail.status === "JA") statusBadge = `<span class="px-2 py-0.5 rounded bg-emerald-100 text-emerald-800 font-bold text-[10px]">🟢 Ja</span>`;
+          else if (avail.status === "MOGELIJK") statusBadge = `<span class="px-2 py-0.5 rounded bg-amber-100 text-amber-800 font-bold text-[10px]">🟠 Mogelijk</span>`;
+          else if (avail.status === "NEE") statusBadge = `<span class="px-2 py-0.5 rounded bg-rose-100 text-rose-800 font-bold text-[10px]">🔴 Nee</span>`;
+        }
 
-      container.innerHTML = `
-        <div class="p-3 bg-indigo-50/80 border-2 border-indigo-200 rounded-2xl flex items-center justify-between gap-3">
+        const isAlreadyIn = (item.toegewezenDocentIds || []).includes(doc.id);
+
+        const card = document.createElement('div');
+        card.className = "p-3 bg-indigo-50/80 border-2 border-indigo-200 rounded-2xl flex items-center justify-between gap-3";
+        card.innerHTML = `
           <div>
-            <div class="flex items-center gap-1.5 mb-1">
-              <span class="text-[10px] bg-indigo-600 text-white font-extrabold px-2 py-0.5 rounded-full">⭐ Vaste Vakdocent</span>
-              <span class="font-extrabold text-sm text-slate-800">${vasteDocent.naam}</span>
-              <span class="text-[10px] text-slate-500">(Skill: ${vasteDocent.skillLevel})</span>
+            <div class="flex items-center gap-1.5 mb-0.5">
+              <span class="text-[10px] bg-indigo-600 text-white font-extrabold px-2 py-0.5 rounded-full">⭐ Vaste Docent</span>
+              <span class="font-extrabold text-xs text-slate-900">${doc.naam}</span>
+              <span class="text-[10px] text-slate-500">(Skill: ${doc.skillLevel})</span>
             </div>
-            <div class="text-xs text-slate-600 flex items-center gap-1">
-              <span>Status op deze dag:</span> ${statusBadge}
+            <div class="text-[11px] text-slate-600 flex items-center gap-1">
+              <span>Status op datum:</span> ${statusBadge}
             </div>
           </div>
           <button 
-            onclick="assignDocentToNextSlot('${vasteDocent.id}')" 
+            onclick="assignDocentToNextSlot('${doc.id}')" 
             ${isAlreadyIn ? 'disabled' : ''}
-            class="px-3.5 py-2 bg-indigo-600 hover:bg-indigo-700 disabled:opacity-40 disabled:cursor-not-allowed text-white font-bold rounded-xl text-xs transition shadow-sm"
+            class="px-3 py-1.5 bg-indigo-600 hover:bg-indigo-700 disabled:opacity-40 disabled:cursor-not-allowed text-white font-bold rounded-xl text-xs transition shadow-sm"
           >
-            ${isAlreadyIn ? 'Al Gekoppeld' : 'Direct Koppelen'}
+            ${isAlreadyIn ? 'Al Gekoppeld' : 'Koppelen'}
           </button>
-        </div>
-      `;
+        `;
+        container.appendChild(card);
+      });
     }
 
     function renderSlotManagerSlots() {
@@ -2027,7 +2015,6 @@
                 <span class="w-5 h-5 rounded-full bg-emerald-100 text-emerald-800 font-extrabold flex items-center justify-center text-[10px]">${s + 1}</span>
                 <span class="font-extrabold text-slate-800">${doc.naam}</span>
                 <span class="text-[10px] text-slate-500">(Skill: ${doc.skillLevel})</span>
-                ${doc.alleenOnTour ? '<span class="text-[9px] bg-amber-100 text-amber-900 px-1 rounded font-bold">⭐ Tour Specialist</span>' : ''}
               </div>
               <button onclick="unassignDocentFromSlot('${doc.id}')" class="text-xs bg-rose-50 hover:bg-rose-100 text-rose-600 font-bold px-2 py-1 rounded-lg border border-rose-200 transition">
                 <i class="fa-solid fa-xmark mr-1"></i> Ontkoppel
@@ -2045,7 +2032,7 @@
           container.appendChild(row);
         }
       } else {
-        // ON TOUR DAG-NIVEAU MATRIX PER LESGEVER SLOT
+        // ON TOUR SLOT MATRIX
         document.getElementById('slotSectionHeaderTitle').innerText = "Lesgever Slots & Dag-Dekking:";
 
         const dayNamesMap = ["Zo", "Ma", "Di", "Wo", "Do", "Vr", "Za"];
@@ -2142,25 +2129,24 @@
         renderSlotCandidateButtons(listJaEl, listJa);
         renderSlotCandidateButtons(listAltEl, listAlt);
       } else {
-        // ON TOUR KANDIDATEN FILTEREN OP GESELECTEERDE DAG
+        // ON TOUR KANDIDATEN (MET RIJBEWIJS & AUTO INFO)
         const filter = currentSlotTarget.selectedDayFilter;
         if (filter) {
-          document.getElementById('candidateFilterHeaderTitle').innerText = `Kandidaten beschikbaar voor Slot ${filter.slotIndex + 1} op ${filter.dayName}:`;
+          document.getElementById('candidateFilterHeaderTitle').innerText = `Kandidaten voor Slot ${filter.slotIndex + 1} op ${filter.dayName}:`;
         } else {
-          document.getElementById('candidateFilterHeaderTitle').innerText = "Klik hierboven op een GAT (bijv. Wo) om gerichte kandidaten te zien:";
+          document.getElementById('candidateFilterHeaderTitle').innerText = "Klik hierboven op een GAT (bijv. Wo) om gerichte kandidaten te koppelen:";
         }
 
         document.getElementById('labelSlotCandAlt').innerText = "🟠 Deels Beschikbaar";
-
         const tourIns = (adminData.onTourInschrijvingen || []).filter(i => i.tourId === item.tourId);
         
         tourIns.forEach(ins => {
           const doc = adminData.docenten.find(d => d.id === ins.docentId);
           if (doc && !doc.isPlanner) {
+            const daysArr = ins.gekozenDagen ? ins.gekozenDagen.split(", ") : [];
             if (ins.status === "HELE_WEEK") {
               listJa.push(doc);
             } else if (ins.status === "DEELS") {
-              const daysArr = ins.gekozenDagen ? ins.gekozenDagen.split(", ") : [];
               if (!filter || daysArr.includes(filter.dayName)) {
                 listAlt.push({ ...doc, matchedDays: daysArr.join(', ') });
               }
@@ -2200,7 +2186,7 @@
               ${doc.alleenOnTour ? '<span class="text-[9px] bg-amber-100 text-amber-900 px-1 rounded font-bold">⭐ Tour Specialist</span>' : ''}
             </div>
             <div class="text-[10px] text-slate-500">
-              Skill: <strong>${doc.skillLevel}</strong> | Auto: ${doc.auto}
+              Skill: <strong>${doc.skillLevel}</strong> | 🚗 Auto: ${doc.auto} | 🪪 Rijbewijs: ${doc.rijbewijs}
               ${doc.matchedDays ? `<span class="text-amber-700 font-bold ml-1">(${doc.matchedDays})</span>` : ''}
             </div>
           </div>
@@ -2234,28 +2220,33 @@
 
         await apiCall("", "POST", { action: "adminUpdatePlanningAssignments", adminPin: ADMIN_SECRET, planningId: item.planningId, toegewezenDocentIds: assigned });
       } else {
-        // ON TOUR DAG-ASSIGNMENT
+        // ON TOUR INTELLIGENT KOPPELEN (HELE WEEK OF DEELS DEKKING)
         const filter = currentSlotTarget.selectedDayFilter;
         let slotsArray = item.slotAssignments || [];
-
         const targetSlotIdx = filter ? filter.slotIndex : 0;
+
         let slotObj = slotsArray.find(x => x.slotIndex === targetSlotIdx);
         if (!slotObj) {
           slotObj = { slotIndex: targetSlotIdx, dayDocents: {} };
           slotsArray.push(slotObj);
         }
 
+        const tourIns = (adminData.onTourInschrijvingen || []).find(i => i.tourId === item.tourId && i.docentId === docentId);
+        const dayNamesMap = ["Zo", "Ma", "Di", "Wo", "Do", "Vr", "Za"];
+        let c = new Date(item.startDatum);
+        const eDate = new Date(item.eindDatum);
+
         if (filter) {
           slotObj.dayDocents[filter.dayIso] = docentId;
         } else {
-          // Vul alle nog open dagen in dit slot
-          const dayNamesMap = ["Zo", "Ma", "Di", "Wo", "Do", "Vr", "Za"];
-          let c = new Date(item.startDatum);
-          const eDate = new Date(item.eindDatum);
+          // Vul alle dagen die deze docent heeft opgegeven
           while (c <= eDate) {
             if (c.getDay() >= 1 && c.getDay() <= 5) {
+              const dName = dayNamesMap[c.getDay()];
               const iso = normalizeDateStr(c);
-              if (!slotObj.dayDocents[iso]) slotObj.dayDocents[iso] = docentId;
+              if (tourIns && (tourIns.status === "HELE_WEEK" || (tourIns.gekozenDagen || "").includes(dName))) {
+                if (!slotObj.dayDocents[iso]) slotObj.dayDocents[iso] = docentId;
+              }
             }
             c.setDate(c.getDate() + 1);
           }
@@ -2288,9 +2279,7 @@
       const item = currentSlotTarget.item;
       let slotsArray = item.slotAssignments || [];
       let slotObj = slotsArray.find(x => x.slotIndex === slotIndex);
-      if (slotObj && slotObj.dayDocents) {
-        delete slotObj.dayDocents[dayIso];
-      }
+      if (slotObj && slotObj.dayDocents) delete slotObj.dayDocents[dayIso];
 
       item.slotAssignments = slotsArray;
       renderSlotManagerSlots();
@@ -2384,12 +2373,8 @@
       if (!val || val === '__manual__') {
         inputNaam.value = '';
         inputNaam.readOnly = false;
-        inputNaam.classList.remove('bg-slate-100', 'text-slate-500');
-
         inputLoc.value = '';
         inputLoc.readOnly = false;
-        inputLoc.classList.remove('bg-slate-100', 'text-slate-500');
-
         checkBuiten.checked = false;
         checkBuiten.disabled = false;
         wrapLand.classList.add('hidden');
@@ -2402,7 +2387,6 @@
       if (school) {
         inputNaam.value = school.naam;
         inputNaam.readOnly = true;
-        inputNaam.classList.add('bg-slate-100', 'text-slate-500');
 
         const isBuitenland = school.categorie === 'Buitenland' || (school.land && school.land !== 'Nederland');
         checkBuiten.checked = isBuitenland;
@@ -2412,7 +2396,6 @@
           wrapLand.classList.remove('hidden');
           inputLand.value = school.land || 'België';
           inputLand.readOnly = true;
-          inputLand.classList.add('bg-slate-100', 'text-slate-500');
         } else {
           wrapLand.classList.add('hidden');
           inputLand.value = 'Nederland';
@@ -2422,11 +2405,9 @@
         if (school.locatie && String(school.locatie).trim() !== '') {
           inputLoc.value = school.locatie;
           inputLoc.readOnly = true;
-          inputLoc.classList.add('bg-slate-100', 'text-slate-500');
         } else {
           inputLoc.value = '';
           inputLoc.readOnly = false;
-          inputLoc.classList.remove('bg-slate-100', 'text-slate-500');
         }
       }
     }
@@ -2517,7 +2498,165 @@
     }
 
     // ==========================================
-    // ADMIN DASHBOARD & VASTE SCHOOL BEHEER
+    // INTERACTIEVE DOCENTENAGENDA IN ADMIN
+    // ==========================================
+    function openAdminDocentCalendar(docentId) {
+      viewingAdminDocent = (adminData.docenten || []).find(d => d.id === docentId);
+      if (!viewingAdminDocent) return;
+
+      adminDocentCalDate = new Date();
+      document.getElementById('adminDocentCalTitle').innerText = `Agenda van ${viewingAdminDocent.naam} (Skill: ${viewingAdminDocent.skillLevel})`;
+      renderAdminDocentCalendar();
+      document.getElementById('modalAdminDocentCalendar').classList.remove('hidden');
+    }
+
+    function closeAdminDocentCalendar() {
+      document.getElementById('modalAdminDocentCalendar').classList.add('hidden');
+      viewingAdminDocent = null;
+    }
+
+    function changeAdminDocentMonth(delta) {
+      adminDocentCalDate.setMonth(adminDocentCalDate.getMonth() + delta);
+      renderAdminDocentCalendar();
+    }
+
+    function renderAdminDocentCalendar() {
+      const year = adminDocentCalDate.getFullYear();
+      const month = adminDocentCalDate.getMonth();
+      document.getElementById('adminDocentCalMonthTitle').innerText = new Intl.DateTimeFormat('nl-NL', { month: 'long', year: 'numeric' }).format(adminDocentCalDate);
+
+      const firstDayOfMonth = new Date(year, month, 1);
+      const daysInMonth = new Date(year, month + 1, 0).getDate();
+      let startDayOfWeek = firstDayOfMonth.getDay() - 1;
+      if (startDayOfWeek === -1) startDayOfWeek = 6;
+
+      const grid = document.getElementById('adminDocentCalDaysGrid');
+      grid.innerHTML = "";
+
+      const leadingEmpty = startDayOfWeek <= 4 ? startDayOfWeek : 0;
+      for (let i = 0; i < leadingEmpty; i++) {
+        grid.innerHTML += `<div class="h-20 bg-slate-50/50 rounded-xl border border-transparent"></div>`;
+      }
+
+      const docAvailMap = {};
+      (adminData.availability || []).forEach(av => {
+        if (av.docentId === viewingAdminDocent.id) docAvailMap[normalizeDateStr(av.datum)] = av;
+      });
+
+      for (let day = 1; day <= daysInMonth; day++) {
+        const dObj = new Date(year, month, day);
+        if (dObj.getDay() === 0 || dObj.getDay() === 6) continue;
+
+        const isoDate = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+        const avail = docAvailMap[isoDate];
+
+        // Zoek of de docent op deze dag al ingeroosterd is op een school
+        const assignedPlan = (adminData.planning || []).find(p => normalizeDateStr(p.datum) === isoDate && (p.toegewezenDocentIds || []).includes(viewingAdminDocent.id));
+
+        let statusBg = "bg-slate-50 border-slate-200 text-slate-600 hover:border-slate-300";
+        let badgeHtml = "<span class='text-[10px] text-slate-400'>Geen opgave</span>";
+
+        if (avail) {
+          if (avail.goedkeuring === "IN_BEHANDELING") {
+            statusBg = "bg-amber-50 border-amber-300 text-amber-900";
+            badgeHtml = `<span class="text-[9px] bg-amber-500 text-white font-bold px-1 rounded truncate">⏳ ${avail.vorigeStatus}➔${avail.status}</span>`;
+          } else if (avail.status === "JA") {
+            statusBg = "bg-emerald-100 border-emerald-300 text-emerald-900";
+            badgeHtml = `<span class="text-[10px] bg-emerald-600 text-white px-1.5 py-0.5 rounded font-bold">🟢 Ja</span>`;
+          } else if (avail.status === "MOGELIJK") {
+            statusBg = "bg-amber-100 border-amber-300 text-amber-900";
+            badgeHtml = `<span class="text-[10px] bg-amber-600 text-white px-1.5 py-0.5 rounded font-bold">🟠 Mogelijk</span>`;
+          } else if (avail.status === "NEE") {
+            statusBg = "bg-rose-100 border-rose-300 text-rose-900";
+            badgeHtml = `<span class="text-[10px] bg-rose-600 text-white px-1.5 py-0.5 rounded font-bold">🔴 Nee</span>`;
+          }
+        }
+
+        let assignedBadge = "";
+        if (assignedPlan) {
+          assignedBadge = `<div class="text-[9px] font-extrabold bg-slate-800 text-white px-1.5 py-0.5 rounded truncate mt-1">🏫 ${assignedPlan.schoolNaam}</div>`;
+        }
+
+        const cell = document.createElement('div');
+        cell.className = `h-20 p-1.5 rounded-xl border flex flex-col justify-between ${statusBg} text-xs cursor-pointer active:scale-95 transition`;
+        cell.innerHTML = `
+          <div class="flex items-center justify-between">
+            <span class="font-bold">${day}</span>
+          </div>
+          <div class="truncate">${badgeHtml} ${assignedBadge}</div>
+        `;
+        cell.onclick = () => openAdminDayActionModal(isoDate, dObj);
+        grid.appendChild(cell);
+      }
+    }
+
+    function openAdminDayActionModal(isoDate, dateObj) {
+      selectedAdminDayAction = { docentId: viewingAdminDocent.id, isoDate, dateObj };
+      document.getElementById('adminDayActionTitle').innerText = `${viewingAdminDocent.naam} - ${dateObj.toLocaleDateString('nl-NL', { weekday: 'long', day: 'numeric', month: 'long' })}`;
+      document.getElementById('adminDayActionSubtitle').innerText = "Pas direct de status aan of koppel aan een open school.";
+
+      // Vul openstaande scholen op deze specifieke datum
+      const select = document.getElementById('selectAdminDayOpenSchools');
+      select.innerHTML = '<option value="">-- Kies een open school op deze datum --</option>';
+
+      const openPlans = (adminData.planning || []).filter(p => normalizeDateStr(p.datum) === isoDate && (p.toegewezenDocentIds || []).length < p.aantalNodig);
+      openPlans.forEach(p => {
+        const opt = document.createElement('option');
+        opt.value = p.planningId;
+        opt.innerText = `${p.schoolNaam} (${(p.toegewezenDocentIds || []).length}/${p.aantalNodig} slots)`;
+        select.appendChild(opt);
+      });
+
+      document.getElementById('modalAdminDayAction').classList.remove('hidden');
+    }
+
+    function closeAdminDayActionModal() {
+      document.getElementById('modalAdminDayAction').classList.add('hidden');
+      selectedAdminDayAction = null;
+    }
+
+    async function submitAdminDirectStatus(status) {
+      if (!selectedAdminDayAction) return;
+      await apiCall("", "POST", {
+        action: "adminDirectSetDocentAvailability",
+        adminPin: ADMIN_SECRET,
+        docentId: selectedAdminDayAction.docentId,
+        datum: selectedAdminDayAction.isoDate,
+        status: status
+      });
+      closeAdminDayActionModal();
+      await loadAdminData();
+      renderAdminDocentCalendar();
+    }
+
+    async function submitAdminDirectSchoolAssign() {
+      const planningId = document.getElementById('selectAdminDayOpenSchools').value;
+      if (!planningId) {
+        alert("Selecteer eerst een school.");
+        return;
+      }
+
+      const plan = (adminData.planning || []).find(p => p.planningId === planningId);
+      if (plan) {
+        const assigned = [...(plan.toegewezenDocentIds || [])];
+        if (!assigned.includes(selectedAdminDayAction.docentId)) {
+          assigned.push(selectedAdminDayAction.docentId);
+          await apiCall("", "POST", {
+            action: "adminUpdatePlanningAssignments",
+            adminPin: ADMIN_SECRET,
+            planningId: plan.planningId,
+            toegewezenDocentIds: assigned
+          });
+        }
+      }
+
+      closeAdminDayActionModal();
+      await loadAdminData();
+      renderAdminDocentCalendar();
+    }
+
+    // ==========================================
+    // ADMIN DASHBOARD & VASTE SCHOLEN MULTI-SELECT
     // ==========================================
     function openAdminPinModal() {
       openPinModal("Admin Toegang", "Voer de master admincode in", (pin) => {
@@ -2561,9 +2700,7 @@
       const icon = btn.querySelector('i');
       if (icon) icon.classList.add('fa-spin');
       btn.disabled = true;
-
       await loadAdminData();
-
       setTimeout(() => {
         if (icon) icon.classList.remove('fa-spin');
         btn.disabled = false;
@@ -2695,33 +2832,33 @@
       adminData.docenten.forEach(docent => {
         const tr = document.createElement('tr');
         
-        let vasteDagenStatus = '<span class="text-slate-400 text-[10px]">Geen vaste dagen</span>';
-        if (docent.alleenOnTour) {
-          vasteDagenStatus = '<span class="text-[10px] bg-sky-100 text-sky-800 font-bold px-2 py-0.5 rounded">Alleen On Tour</span>';
-        } else if (docent.isPlanner) {
-          vasteDagenStatus = '<span class="text-slate-400 text-[10px]">-</span>';
-        } else if (docent.isVasteDagenVerlopen) {
-          vasteDagenStatus = `<span class="text-[10px] bg-rose-100 text-rose-800 font-bold px-2 py-0.5 rounded animate-pulse">⚠️ Verlopen (${docent.vasteDagenGeldtTot || 'geen datum'})</span>`;
-        } else if (docent.vasteDagenGeldtTot) {
-          vasteDagenStatus = `<span class="text-[10px] bg-emerald-100 text-emerald-800 font-bold px-2 py-0.5 rounded">Geldig tot ${docent.vasteDagenGeldtTot}</span>`;
-        }
+        // Vaste Scholen Tags Selector
+        const vasteScholenArr = docent.vasteScholen || [];
+        let vasteScholenHtml = `
+          <div class="flex flex-wrap items-center gap-1 max-w-[200px]">
+            ${vasteScholenArr.map(s => `
+              <span class="px-1.5 py-0.5 rounded-md bg-indigo-100 text-indigo-900 font-bold text-[10px] flex items-center gap-1">
+                <span>${s}</span>
+                <button onclick="removeVasteSchoolFromDocent('${docent.id}', '${s}')" class="text-indigo-500 hover:text-rose-600">✕</button>
+              </span>
+            `).join('')}
+            <select onchange="addVasteSchoolToDocent('${docent.id}', this.value); this.value='';" class="p-1 bg-slate-100 border border-slate-300 rounded text-[10px] font-semibold">
+              <option value="">➕ School toevoegen</option>
+              ${reguliereScholen.filter(s => !vasteScholenArr.includes(s.naam)).map(s => `<option value="${s.naam}">${s.naam}</option>`).join('')}
+            </select>
+          </div>
+        `;
 
-        const schoolOptions = reguliereScholen.map(s => `
-          <option value="${s.naam}" ${docent.vasteSchool === s.naam ? 'selected' : ''}>${s.naam}</option>
-        `).join('');
+        let periodesInfo = '<span class="text-slate-400 text-[10px]">-</span>';
+        if (docent.vastePeriodes && docent.vastePeriodes.length > 0) {
+          periodesInfo = `<span class="text-[10px] bg-emerald-100 text-emerald-800 font-bold px-1.5 py-0.5 rounded">${docent.vastePeriodes.length} periode(s) actief</span>`;
+        }
 
         tr.innerHTML = `
           <td class="p-3 font-bold text-slate-800">${docent.naam}</td>
           <td class="p-3"><span class="text-[10px] px-2 py-0.5 rounded font-bold ${docent.isPlanner ? 'bg-amber-100 text-amber-800' : 'bg-slate-100 text-slate-600'}">${docent.isPlanner ? 'Planner' : 'Vakdocent'}</span></td>
-          <td class="p-3">
-            ${docent.isPlanner ? '-' : `
-              <select onchange="updateDocentVasteSchool('${docent.id}', this.value)" class="p-1 bg-slate-100 border border-slate-300 rounded-lg text-xs font-semibold max-w-[170px]">
-                <option value="">-- Geen vaste school --</option>
-                ${schoolOptions}
-              </select>
-            `}
-          </td>
-          <td class="p-3">${vasteDagenStatus}</td>
+          <td class="p-3">${docent.isPlanner ? '-' : vasteScholenHtml}</td>
+          <td class="p-3">${docent.isPlanner ? '-' : periodesInfo}</td>
           <td class="p-3">
             <select onchange="updateDocentSkill(this, '${docent.id}', this.value)" class="bg-slate-100 border border-slate-300 rounded-lg p-1 font-bold text-xs">
               <option value="N1" ${docent.skillLevel === 'N1' ? 'selected' : ''}>N1 (Hoogste)</option>
@@ -2730,6 +2867,11 @@
             </select>
           </td>
           <td class="p-3">${docent.hasPin ? '<span class="text-emerald-700 font-semibold">Ja</span>' : '<span class="text-amber-600 font-semibold">Nee</span>'}</td>
+          <td class="p-3 text-center">
+            <button onclick="openAdminDocentCalendar('${docent.id}')" class="text-xs bg-emerald-50 hover:bg-emerald-100 text-emerald-700 font-bold px-2.5 py-1.5 rounded-xl border border-emerald-200 transition flex items-center gap-1.5 mx-auto">
+              <i class="fa-regular fa-calendar-days"></i> Bekijk Agenda
+            </button>
+          </td>
           <td class="p-3 text-right">
             <button onclick="resetDocentPin(this, '${docent.id}')" class="text-xs bg-rose-50 hover:bg-rose-100 text-rose-600 font-semibold px-2 py-1 rounded-lg border border-rose-200">Reset PIN</button>
           </td>
@@ -2738,9 +2880,26 @@
       });
     }
 
-    async function updateDocentVasteSchool(docentId, vasteSchool) {
-      await apiCall("", "POST", { action: "adminUpdateDocent", adminPin: ADMIN_SECRET, docentId, vasteSchool });
-      await loadAdminData();
+    async function addVasteSchoolToDocent(docentId, schoolNaam) {
+      if (!schoolNaam) return;
+      const doc = (adminData.docenten || []).find(d => d.id === docentId);
+      if (doc) {
+        let arr = doc.vasteScholen || [];
+        if (!arr.includes(schoolNaam)) arr.push(schoolNaam);
+        doc.vasteScholen = arr;
+        renderAdminDocenten();
+        await apiCall("", "POST", { action: "adminUpdateDocent", adminPin: ADMIN_SECRET, docentId, vasteScholen: arr });
+      }
+    }
+
+    async function removeVasteSchoolFromDocent(docentId, schoolNaam) {
+      const doc = (adminData.docenten || []).find(d => d.id === docentId);
+      if (doc) {
+        let arr = (doc.vasteScholen || []).filter(s => s !== schoolNaam);
+        doc.vasteScholen = arr;
+        renderAdminDocenten();
+        await apiCall("", "POST", { action: "adminUpdateDocent", adminPin: ADMIN_SECRET, docentId, vasteScholen: arr });
+      }
     }
 
     async function deletePlanning(btn, id) {
