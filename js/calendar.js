@@ -1,5 +1,5 @@
 // ==========================================
-// KALENDER & BESCHIKBAARHEID (Met Optimistic UI)
+// KALENDER & BESCHIKBAARHEID (V2.1 - Met Goedkeuringscheck)
 // ==========================================
 
 async function initCalendarView() {
@@ -169,12 +169,12 @@ function closeDayPicker() {
   document.getElementById('modalDayPicker').classList.add('hidden');
 }
 
-// OPTIMISTIC UI: Direct weergave updaten, op achtergrond syncen
+// OPTIMISTIC UI MET WATERDICHTE GOEDKEURINGSCHECK
 async function submitDayStatus(status) {
   if (!selectedDayForPicker) return;
   const entries = [];
   const apply3Months = document.getElementById('checkApply3Months').checked;
-  const backupCache = JSON.parse(JSON.stringify(availabilityCache)); // Backup voor rollback
+  const backupCache = JSON.parse(JSON.stringify(availabilityCache));
 
   if (apply3Months) {
     const targetDayOfWeek = selectedDayForPicker.dateObj.getDay();
@@ -193,26 +193,32 @@ async function submitDayStatus(status) {
     entries.push({ datum: selectedDayForPicker.isoDate, status: status });
   }
 
-  // 1. Direct lokale cache updaten (Optimistic UI)
   entries.forEach(entry => {
     const iso = entry.datum;
-    const prev = availabilityCache[iso]?.status;
-    if (prev === "JA" && status === "NEE") {
-      availabilityCache[iso] = { status: status, goedkeuring: "IN_BEHANDELING", vorigeStatus: prev, datum: iso };
+    const prevObj = availabilityCache[iso];
+    const prevStatus = prevObj?.status;
+    const prevApproval = prevObj?.goedkeuring;
+    const prevOld = prevObj?.vorigeStatus;
+
+    // Detecteer of deze dag al eerder op goedgekeurde JA stond
+    const wasApprovedJa = (prevStatus === "JA" && prevApproval === "GOEDGEKEURD") ||
+                          (prevApproval === "IN_BEHANDELING" && prevOld === "JA");
+
+    // JA verlaten naar NEE of MOGELIJK vereist altijd goedkeuring van de planner
+    if (wasApprovedJa && (status === "NEE" || status === "MOGELIJK")) {
+      availabilityCache[iso] = { status: status, goedkeuring: "IN_BEHANDELING", vorigeStatus: "JA", datum: iso };
     } else {
       availabilityCache[iso] = { status: status, goedkeuring: "GOEDGEKEURD", datum: iso };
     }
   });
 
   closeDayPicker();
-  render5DayCalendar(); // 2. UI onmiddellijk hertekenen
+  render5DayCalendar();
 
-  // 3. Achtergrond Sync naar Google Apps Script
   const res = await apiCall("", "POST", { action: "setAvailability", docentId: currentDocent.id, pin: currentPin, entries });
-  
   if (!res || !res.success) {
     console.error("Fout bij opslaan:", res?.error);
-    availabilityCache = backupCache; // Rollback bij fout
+    availabilityCache = backupCache;
     render5DayCalendar();
   }
 }
