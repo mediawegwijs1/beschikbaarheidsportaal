@@ -1,5 +1,5 @@
 // ==========================================
-// ON TOURS & SLOT MANAGER
+// ON TOURS & SLOT MANAGER (V2.1 - Met NL Datumnotatie)
 // ==========================================
 
 async function loadDocentOnTours() {
@@ -65,7 +65,7 @@ function renderDocentOnToursSidebar() {
         </div>
         <div class="text-[11px] text-slate-500 flex items-center gap-1.5 mb-2">
           <i class="fa-regular fa-calendar text-[10px]"></i>
-          <span>${tour.startDatum} t/m ${tour.eindDatum}</span>
+          <span>${formatPeriodNl(tour.startDatum, tour.eindDatum)}</span>
           ${tour.locatie ? `<span class="text-slate-400">• 📍 ${tour.locatie}</span>` : ''}
           ${tour.isBuitenland ? `<span class="text-sky-600 font-bold">🌍 ${tour.land}</span>` : ''}
         </div>
@@ -86,7 +86,7 @@ function openOnTourRegisterModal(tour, dl) {
   }
   selectedTourForRegistration = tour;
   document.getElementById('otRegSchoolTitle').innerText = tour.schoolNaam;
-  document.getElementById('otRegDatesLoc').innerText = `${tour.startDatum} t/m ${tour.eindDatum} ${tour.locatie ? `• 📍 ${tour.locatie}` : ''} ${tour.isBuitenland ? `• 🌍 ${tour.land}` : ''}`;
+  document.getElementById('otRegDatesLoc').innerText = `${formatPeriodNl(tour.startDatum, tour.eindDatum)} ${tour.locatie ? `• 📍 ${tour.locatie}` : ''} ${tour.isBuitenland ? `• 🌍 ${tour.land}` : ''}`;
   document.getElementById('otRegDeadlinetxt').innerText = dl.label;
   document.getElementById('otRegDeadlinetxt').className = `text-xs font-bold px-2 py-0.5 rounded-md ${dl.colorClass}`;
 
@@ -186,7 +186,7 @@ async function submitOnTourRegistration() {
 }
 
 // ==========================================
-// SLOT MANAGER MET ROBUUSTE MATCHER
+// SLOT MANAGER MET ROBUUSTE MATCHER & DATUM NOTATIE
 // ==========================================
 
 function openSlotManagerModal(type, id, selectedDayFilter = null) {
@@ -198,7 +198,7 @@ function openSlotManagerModal(type, id, selectedDayFilter = null) {
   }
 
   if (!item) {
-    console.error("Item niet gevonden voor ID:", id);
+    console.error("Geen item gevonden voor ID:", id);
     return;
   }
   
@@ -218,8 +218,8 @@ function openSlotManagerModal(type, id, selectedDayFilter = null) {
 
   document.getElementById('slotModalTitle').innerText = item.schoolNaam;
   document.getElementById('slotModalSubtitle').innerText = type === 'PLANNING' 
-    ? `Datum: ${normalizeDateStr(item.datum)}` 
-    : `Periode: ${item.startDatum} t/m ${item.eindDatum} ${item.locatie ? `• 📍 ${item.locatie}` : ''}`;
+    ? `Datum: ${formatDateNl(item.datum, true)}` 
+    : `Periode: ${formatPeriodNl(item.startDatum, item.eindDatum)} ${item.locatie ? `• 📍 ${item.locatie}` : ''}`;
 
   const overrideBtn = document.getElementById('btnEmergencyOverride');
   if (type === 'ONTOUR') {
@@ -565,7 +565,7 @@ function renderPlannerOnToursList() {
         <span class="text-[10px] font-bold px-2 py-0.5 rounded-full ${tour.status === 'BEZET' ? 'bg-emerald-100 text-emerald-800' : 'bg-rose-100 text-rose-800 animate-pulse'}">${tour.status}</span>
       </div>
       <div class="text-slate-500 text-[11px]">
-        📅 ${tour.startDatum} t/m ${tour.eindDatum} ${tour.locatie ? `• 📍 ${tour.locatie}` : ''}
+        📅 ${formatPeriodNl(tour.startDatum, tour.eindDatum)} ${tour.locatie ? `• 📍 ${tour.locatie}` : ''}
       </div>
     `;
     container.appendChild(card);
