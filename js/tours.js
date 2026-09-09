@@ -1,5 +1,5 @@
 // ==========================================
-// ON TOURS & SLOT MANAGER (V2.1 - Met NL Datumnotatie)
+// ON TOURS & SLOT MANAGER (V2.1.1)
 // ==========================================
 
 async function loadDocentOnTours() {
@@ -186,7 +186,7 @@ async function submitOnTourRegistration() {
 }
 
 // ==========================================
-// SLOT MANAGER MET ROBUUSTE MATCHER & DATUM NOTATIE
+// SLOT MANAGER MET ROBUUSTE MATCHER & DATUMNOTATIE
 // ==========================================
 
 function openSlotManagerModal(type, id, selectedDayFilter = null) {
@@ -271,28 +271,53 @@ function renderPinnedVasteDocentSection() {
 
   container.classList.remove('hidden');
   const targetDate = normalizeDateStr(item.datum);
+  const assignedIds = item.toegewezenDocentIDs || [];
+  const totalSlots = item.aantalNodig || 1;
+  const isFull = assignedIds.length >= totalSlots;
 
   vasteDocenten.forEach(doc => {
     const avail = (adminData.availability || []).find(a => a.docentId === doc.id && normalizeDateStr(a.datum) === targetDate);
     let statusBadge = `<span class="px-2 py-0.5 rounded bg-slate-100 text-slate-600 font-bold text-[10px]">⚪ Niet ingevuld</span>`;
+    const isNee = avail && avail.status === "NEE";
+
     if (avail) {
       if (avail.status === "JA") statusBadge = `<span class="px-2 py-0.5 rounded bg-emerald-100 text-emerald-800 font-bold text-[10px]">🟢 Ja</span>`;
       else if (avail.status === "MOGELIJK") statusBadge = `<span class="px-2 py-0.5 rounded bg-amber-100 text-amber-800 font-bold text-[10px]">🟠 Mogelijk</span>`;
       else if (avail.status === "NEE") statusBadge = `<span class="px-2 py-0.5 rounded bg-rose-100 text-rose-800 font-bold text-[10px]">🔴 Nee</span>`;
     }
 
-    const isAlreadyIn = (item.toegewezenDocentIDs || []).includes(doc.id);
+    const isAlreadyIn = assignedIds.includes(doc.id);
+    const isDisabled = isAlreadyIn || isNee || isFull;
+
+    let btnText = "Koppelen";
+    let btnClass = "px-3 py-1.5 bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-xl text-xs transition shadow-sm";
+
+    if (isAlreadyIn) {
+      btnText = "Al Gekoppeld";
+      btnClass = "px-3 py-1.5 bg-slate-200 text-slate-500 font-bold rounded-xl text-xs cursor-not-allowed";
+    } else if (isNee) {
+      btnText = "Niet Beschikbaar";
+      btnClass = "px-3 py-1.5 bg-rose-100 text-rose-400 font-bold rounded-xl text-xs cursor-not-allowed border border-rose-200";
+    } else if (isFull) {
+      btnText = "Slots Vol";
+      btnClass = "px-3 py-1.5 bg-slate-200 text-slate-400 font-bold rounded-xl text-xs cursor-not-allowed";
+    }
+
+    const cardClass = isNee 
+      ? "p-3 bg-slate-100/90 border-2 border-slate-200 rounded-2xl flex items-center justify-between gap-3 opacity-60" 
+      : "p-3 bg-indigo-50/80 border-2 border-indigo-200 rounded-2xl flex items-center justify-between gap-3";
+
     const card = document.createElement('div');
-    card.className = "p-3 bg-indigo-50/80 border-2 border-indigo-200 rounded-2xl flex items-center justify-between gap-3";
+    card.className = cardClass;
     card.innerHTML = `
       <div>
         <div class="flex items-center gap-1.5 mb-0.5">
-          <span class="text-[10px] bg-indigo-600 text-white font-extrabold px-2 py-0.5 rounded-full">⭐ Vaste Docent</span>
-          <span class="font-extrabold text-xs text-slate-900">${doc.naam}</span>
+          <span class="text-[10px] ${isNee ? 'bg-slate-400' : 'bg-indigo-600'} text-white font-extrabold px-2 py-0.5 rounded-full">⭐ Vaste Docent</span>
+          <span class="font-extrabold text-xs ${isNee ? 'text-slate-500 line-through' : 'text-slate-900'}">${doc.naam}</span>
         </div>
         <div class="text-[11px] text-slate-600">Status: ${statusBadge}</div>
       </div>
-      <button onclick="assignDocentToNextSlot('${doc.id}')" ${isAlreadyIn ? 'disabled' : ''} class="px-3 py-1.5 bg-indigo-600 hover:bg-indigo-700 disabled:opacity-40 text-white font-bold rounded-xl text-xs transition shadow-sm">${isAlreadyIn ? 'Al Gekoppeld' : 'Koppelen'}</button>
+      <button onclick="assignDocentToNextSlot('${doc.id}')" ${isDisabled ? 'disabled' : ''} class="${btnClass}">${btnText}</button>
     `;
     container.appendChild(card);
   });
