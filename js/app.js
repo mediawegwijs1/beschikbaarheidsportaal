@@ -1,15 +1,36 @@
 // ==========================================
-// BOOTSTRAP, PROFIEL, PLANNER & ADMIN LOGICA (V2.1)
+// BOOTSTRAP, PROFIEL, PLANNER & ADMIN LOGICA (V2.1.1)
 // ==========================================
 
 window.addEventListener('DOMContentLoaded', () => {
   startClock();
+  detectAppVersion();
   loadDocentenList();
   loadSchoolsDatabase();
   setupGlobalKeydown();
   initAllDatepickers();
   registerServiceWorker();
 });
+
+// Leest de actieve Service Worker-cache uit en toont het versienummer linksonder
+async function detectAppVersion() {
+  const label = document.getElementById('appVersionLabel');
+  if (!label) return;
+
+  if ('caches' in window) {
+    try {
+      const keys = await caches.keys();
+      const activeCache = keys.find(k => k.startsWith('mediawegwijs-'));
+      if (activeCache) {
+        label.innerText = activeCache.replace('mediawegwijs-', '').toUpperCase();
+        return;
+      }
+    } catch (e) {
+      console.warn("Kon cache-versie niet uitlezen", e);
+    }
+  }
+  label.innerText = "V2.1.1";
+}
 
 // Automatische reload bij een nieuwe Service Worker cache-update
 function registerServiceWorker() {
