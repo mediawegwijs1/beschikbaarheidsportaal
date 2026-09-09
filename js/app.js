@@ -20,7 +20,7 @@ function registerServiceWorker() {
 }
 
 function initFlatpickrInstance(el, customOpts = {}) {
-  if (!el) return;
+  if (!el) return null;
   return flatpickr(el, {
     locale: "nl",
     dateFormat: "Y-m-d",
@@ -53,7 +53,8 @@ function startClock() {
     const monthName = months[now.getMonth()];
     const hours = String(now.getHours()).padStart(2, '0');
     const minutes = String(now.getMinutes()).padStart(2, '0');
-    document.getElementById('liveClock').innerText = `${dayName} ${dayNum} ${monthName}, ${hours}:${minutes}`;
+    const clockEl = document.getElementById('liveClock');
+    if (clockEl) clockEl.innerText = `${dayName} ${dayNum} ${monthName}, ${hours}:${minutes}`;
   };
   update();
   setInterval(update, 1000);
@@ -80,14 +81,14 @@ async function loadDocentenList() {
   const loadingBanner = document.getElementById('loadingStatusBanner');
   const gridContainer = document.getElementById('docentenGridContainer');
 
-  loadingBanner.classList.remove('hidden');
-  gridContainer.classList.add('hidden');
+  if (loadingBanner) loadingBanner.classList.remove('hidden');
+  if (gridContainer) gridContainer.classList.add('hidden');
 
   const res = await apiCall("", "GET", { action: "getDocentenList" });
   if (res.success) docentenCache = res.docenten;
 
-  loadingBanner.classList.add('hidden');
-  gridContainer.classList.remove('hidden');
+  if (loadingBanner) loadingBanner.classList.add('hidden');
+  if (gridContainer) gridContainer.classList.remove('hidden');
   renderDocentenButtons(docentenCache);
 }
 
@@ -107,6 +108,7 @@ function filterDocenten() {
 
 function renderDocentenButtons(list) {
   const container = document.getElementById('docentenButtonsGrid');
+  if (!container) return;
   container.innerHTML = "";
 
   if (list.length === 0) {
@@ -132,7 +134,7 @@ function renderDocentenButtons(list) {
 function setupGlobalKeydown() {
   document.addEventListener('keydown', (e) => {
     const modalPin = document.getElementById('modalPin');
-    if (!modalPin.classList.contains('hidden')) {
+    if (modalPin && !modalPin.classList.contains('hidden')) {
       if (e.key >= '0' && e.key <= '9') pressPinKey(e.key);
       else if (e.key === 'Backspace') deletePinKey();
       else if (e.key === 'Escape') closePinModal();
@@ -252,7 +254,7 @@ function showPinError(msg) {
 }
 
 // ==========================================
-// ONBOARDING & VOORKEUREN (BUGFIX: active: true)
+// ONBOARDING & VOORKEUREN
 // ==========================================
 
 function toggleOnboardingRegularFields() {
@@ -493,7 +495,6 @@ function generateDatesFromGhostPeriodes(periodes) {
   return entries;
 }
 
-// BATCHED ONBOARDING + DIRECTE STATUS OVERNAME (1 Network Call)
 async function handleOnboardingSubmit(e) {
   e.preventDefault();
   const btn = document.getElementById('btnSaveOnboarding');
@@ -502,7 +503,6 @@ async function handleOnboardingSubmit(e) {
 
   const isAlleenTour = getRadioGroup('alleenOnTour') === 'Ja';
   
-  // BUGFIX: active: true expliciet behouden
   const activePeriodes = ghostPeriodesData
     .filter(p => p.active && p.van && p.tot)
     .map(p => ({
@@ -524,7 +524,6 @@ async function handleOnboardingSubmit(e) {
 
   const dateEntries = !isAlleenTour ? generateDatesFromGhostPeriodes(activePeriodes) : [];
 
-  // 1 Single Trip: Onboarding én direct de beschikbaarheid versturen
   const res = await apiCall("", "POST", {
     action: "submitOnboarding",
     docentId: currentDocent.id,
@@ -539,7 +538,6 @@ async function handleOnboardingSubmit(e) {
   if (res.success) {
     currentDocent = { ...currentDocent, ...payloadData, onboardingKlaar: true };
     
-    // Lokale availabilityCache direct bijwerken voor instant weergave
     dateEntries.forEach(entry => {
       availabilityCache[entry.datum] = { datum: entry.datum, status: "JA", goedkeuring: "GOEDGEKEURD" };
     });
@@ -706,7 +704,7 @@ function renderPlannerDayCell(container, isoDate, label, isToday = false) {
     let badgeStyle = isComplete ? "bg-emerald-50 border-emerald-200 text-emerald-900" : (isPartial ? "bg-amber-50 border-amber-200 text-amber-900" : "bg-rose-50 border-rose-200 text-rose-900 animate-pulse");
 
     plansHtml += `
-      <div onclick="openSlotManagerModal('PLANNING', '${plan.planningId}')" class="p-1.5 rounded-lg border text-[10px] cursor-pointer transition flex items-center justify-between ${badgeStyle}">
+      <div onclick="event.stopPropagation(); openSlotManagerModal('PLANNING', '${plan.planningId}')" class="p-1.5 rounded-lg border text-[10px] cursor-pointer transition flex items-center justify-between ${badgeStyle}">
         <span class="font-extrabold truncate flex-1">🏫 ${plan.schoolNaam}</span>
         <span class="font-extrabold px-1.5 py-0.2 rounded text-[9px] ${isComplete ? 'bg-emerald-600 text-white' : (isPartial ? 'bg-amber-500 text-white' : 'bg-rose-600 text-white')}">${assignedCount}/${total}</span>
       </div>
@@ -729,12 +727,21 @@ function renderPlannerDayCell(container, isoDate, label, isToday = false) {
 }
 
 function quickAddSchoolToDate(isoDate) {
-  document.getElementById('inputPlanDate').value = normalizeDateStr(isoDate);
-  openAddSchoolPlanningModal();
+  const norm = normalizeDateStr(isoDate);
+  const input = document.getElementById('inputPlanDate');
+  
+  if (input && input._flatpickr) {
+    input._flatpickr.setDate(norm, true);
+  } else if (input) {
+    input.value = norm;
+  }
+  
+  openAddSchoolPlanningModal(true);
 }
 
 function renderPlannerGatenSidebar() {
   const container = document.getElementById('plannerGatenList');
+  if (!container) return;
   container.innerHTML = "";
 
   const schoolQuery = (document.getElementById('filterGatenSchool')?.value || '').toLowerCase().trim();
@@ -765,7 +772,8 @@ function renderPlannerGatenSidebar() {
     return true;
   });
 
-  document.getElementById('badgeGatenCount').innerText = gaten.length;
+  const badgeGaten = document.getElementById('badgeGatenCount');
+  if (badgeGaten) badgeGaten.innerText = gaten.length;
 
   if (gaten.length === 0) {
     container.innerHTML = `<div class="p-4 text-center text-xs text-slate-400 bg-slate-50 rounded-2xl border border-slate-200">Geen openstaande gaten gevonden.</div>`;
@@ -792,8 +800,15 @@ function renderPlannerGatenSidebar() {
   });
 }
 
-function openAddSchoolPlanningModal() {
+function openAddSchoolPlanningModal(isQuickAdd = false) {
   document.getElementById('inputPlanAantalNodig').value = 1;
+  const input = document.getElementById('inputPlanDate');
+  
+  if (!isQuickAdd && input) {
+    if (input._flatpickr) input._flatpickr.clear();
+    else input.value = '';
+  }
+
   const select = document.getElementById('selectSchoolName');
   select.innerHTML = "";
   const filtered = (schoolsCache || []).filter(s => s.categorie === "Regulier");
@@ -932,8 +947,10 @@ function renderAdminApprovals() {
   const badge = document.getElementById('badgeOpenApprovals');
 
   const totalCount = pendingDays.length + pendingPeriods.length;
-  badge.innerText = totalCount;
-  badge.classList.toggle('hidden', totalCount === 0);
+  if (badge) {
+    badge.innerText = totalCount;
+    badge.classList.toggle('hidden', totalCount === 0);
+  }
 
   if (totalCount === 0) {
     container.innerHTML = `<div class="p-8 text-center text-slate-400 bg-white rounded-2xl border text-xs">Geen openstaande wijzigingsverzoeken.</div>`;
@@ -1127,7 +1144,6 @@ async function resetDocentPin(btn, docentId) {
   }
 }
 
-// Planner Agenda & Acties
 function openAdminDocentCalendar(docentId) {
   viewingAdminDocent = (adminData.docenten || []).find(d => d.id === docentId);
   if (!viewingAdminDocent) return;
@@ -1136,8 +1152,16 @@ function openAdminDocentCalendar(docentId) {
   renderAdminDocentCalendar();
   document.getElementById('modalAdminDocentCalendar').classList.remove('hidden');
 }
-function closeAdminDocentCalendar() { document.getElementById('modalAdminDocentCalendar').classList.add('hidden'); viewingAdminDocent = null; }
-function changeAdminDocentMonth(delta) { adminDocentCalDate.setMonth(adminDocentCalDate.getMonth() + delta); renderAdminDocentCalendar(); }
+
+function closeAdminDocentCalendar() { 
+  document.getElementById('modalAdminDocentCalendar').classList.add('hidden'); 
+  viewingAdminDocent = null; 
+}
+
+function changeAdminDocentMonth(delta) { 
+  adminDocentCalDate.setMonth(adminDocentCalDate.getMonth() + delta); 
+  renderAdminDocentCalendar(); 
+}
 
 function renderAdminDocentCalendar() {
   const year = adminDocentCalDate.getFullYear();
@@ -1190,7 +1214,11 @@ function openAdminDayActionModal(isoDate, dateObj) {
   });
   document.getElementById('modalAdminDayAction').classList.remove('hidden');
 }
-function closeAdminDayActionModal() { document.getElementById('modalAdminDayAction').classList.add('hidden'); selectedAdminDayAction = null; }
+
+function closeAdminDayActionModal() { 
+  document.getElementById('modalAdminDayAction').classList.add('hidden'); 
+  selectedAdminDayAction = null; 
+}
 
 async function submitAdminDirectStatus(status) {
   if (!selectedAdminDayAction) return;
@@ -1240,7 +1268,10 @@ function openDocentPreferencesModal(docentId) {
   `;
   document.getElementById('modalDocentPreferences').classList.remove('hidden');
 }
-function closeDocentPreferencesModal() { document.getElementById('modalDocentPreferences').classList.add('hidden'); }
+
+function closeDocentPreferencesModal() { 
+  document.getElementById('modalDocentPreferences').classList.add('hidden'); 
+}
 
 function openSchoolHistoryModal(schoolNaam) {
   document.getElementById('schoolHistoryModalTitle').innerText = `Geschiedenis: ${schoolNaam}`;
@@ -1259,7 +1290,10 @@ function openSchoolHistoryModal(schoolNaam) {
   }
   document.getElementById('modalSchoolHistory').classList.remove('hidden');
 }
-function closeSchoolHistoryModal() { document.getElementById('modalSchoolHistory').classList.add('hidden'); }
+
+function closeSchoolHistoryModal() { 
+  document.getElementById('modalSchoolHistory').classList.add('hidden'); 
+}
 
 function logout() {
   currentDocent = null;
