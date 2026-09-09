@@ -1,5 +1,5 @@
 // ==========================================
-// BOOTSTRAP, PROFIEL, PLANNER & ADMIN LOGICA
+// BOOTSTRAP, PROFIEL, PLANNER & ADMIN LOGICA (V2.1)
 // ==========================================
 
 window.addEventListener('DOMContentLoaded', () => {
@@ -11,10 +11,29 @@ window.addEventListener('DOMContentLoaded', () => {
   registerServiceWorker();
 });
 
+// Automatische reload bij een nieuwe Service Worker cache-update
 function registerServiceWorker() {
   if ('serviceWorker' in navigator) {
-    navigator.serviceWorker.register('./sw.js').catch(err => {
-      console.warn('SW registratie overgeslagen:', err);
+    navigator.serviceWorker.register('./sw.js').then(reg => {
+      reg.update();
+      reg.addEventListener('updatefound', () => {
+        const newWorker = reg.installing;
+        if (newWorker) {
+          newWorker.addEventListener('statechange', () => {
+            if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+              window.location.reload();
+            }
+          });
+        }
+      });
+    }).catch(err => console.warn('SW registratie overgeslagen:', err));
+
+    let refreshing = false;
+    navigator.serviceWorker.addEventListener('controllerchange', () => {
+      if (!refreshing) {
+        refreshing = true;
+        window.location.reload();
+      }
     });
   }
 }
@@ -792,7 +811,7 @@ function renderPlannerGatenSidebar() {
     div.innerHTML = `
       <div class="truncate">
         <div class="font-extrabold text-slate-900 truncate">🏫 ${g.schoolNaam}</div>
-        <div class="text-[10px] text-slate-500">📅 ${g.datum}</div>
+        <div class="text-[10px] text-slate-500">📅 ${formatDateNl(g.datum, true)}</div>
       </div>
       <span class="px-2 py-0.5 rounded-md text-[10px] font-extrabold bg-rose-600 text-white">${assigned}/${total}</span>
     `;
@@ -843,7 +862,7 @@ async function handleAddSchoolPlanningSubmit(e) {
 }
 
 // ==========================================
-// ADMIN DASHBOARD & SUB-MODALS
+// ADMIN DASHBOARD & OVERZICHTEN
 // ==========================================
 
 function openAdminPinModal() {
@@ -872,6 +891,7 @@ async function loadAdminData() {
     
     renderAdminPlanning();
     renderAdminApprovals();
+    renderAdminUnfilledDocenten();
     renderAdminDocenten();
     renderAdminScholenTab();
     
@@ -897,11 +917,13 @@ async function adminManualRefresh(btn) {
 function switchAdminTab(tab) {
   document.getElementById('adminTabPlanning').classList.toggle('hidden', tab !== 'planning');
   document.getElementById('adminTabApprovals').classList.toggle('hidden', tab !== 'approvals');
+  document.getElementById('adminTabUnfilled').classList.toggle('hidden', tab !== 'unfilled');
   document.getElementById('adminTabDocenten').classList.toggle('hidden', tab !== 'docenten');
   document.getElementById('adminTabScholen').classList.toggle('hidden', tab !== 'scholen');
 
   document.getElementById('tabBtnPlanning').className = tab === 'planning' ? 'px-3 py-1.5 rounded-lg bg-white text-slate-900 shadow-sm transition' : 'px-3 py-1.5 rounded-lg text-slate-600 hover:text-slate-900 transition';
   document.getElementById('tabBtnApprovals').className = tab === 'approvals' ? 'px-3 py-1.5 rounded-lg bg-white text-slate-900 shadow-sm transition' : 'px-3 py-1.5 rounded-lg text-slate-600 hover:text-slate-900 transition';
+  document.getElementById('tabBtnUnfilled').className = tab === 'unfilled' ? 'px-3 py-1.5 rounded-lg bg-white text-slate-900 shadow-sm transition' : 'px-3 py-1.5 rounded-lg text-slate-600 hover:text-slate-900 transition';
   document.getElementById('tabBtnDocenten').className = tab === 'docenten' ? 'px-3 py-1.5 rounded-lg bg-white text-slate-900 shadow-sm transition' : 'px-3 py-1.5 rounded-lg text-slate-600 hover:text-slate-900 transition';
   document.getElementById('tabBtnScholen').className = tab === 'scholen' ? 'px-3 py-1.5 rounded-lg bg-white text-slate-900 shadow-sm transition' : 'px-3 py-1.5 rounded-lg text-slate-600 hover:text-slate-900 transition';
 }
@@ -924,7 +946,7 @@ function renderAdminPlanning() {
     card.innerHTML = `
       <div>
         <div class="flex items-center justify-between mb-2">
-          <span class="text-xs font-bold text-slate-500 uppercase tracking-wider">${normalizeDateStr(plan.datum)}</span>
+          <span class="text-xs font-bold text-slate-500 uppercase tracking-wider">${formatDateNl(plan.datum, true)}</span>
           <span class="text-[10px] font-bold px-2 py-0.5 rounded-full ${isComplete ? 'bg-emerald-100 text-emerald-800' : 'bg-rose-100 text-rose-800 animate-pulse'}">${assigned.length}/${total} Slots</span>
         </div>
         <h4 class="font-bold text-slate-800 text-sm mb-1">🏫 ${plan.schoolNaam}</h4>
@@ -969,7 +991,7 @@ function renderAdminApprovals() {
             <span class="font-extrabold text-slate-900 text-sm">${req.docentNaam}</span>
             <span class="font-bold px-2 py-0.5 rounded-md text-[10px] ${isDel ? 'bg-rose-100 text-rose-800' : 'bg-amber-100 text-amber-800'}">${isDel ? '🗑️ Verwijderingsverzoek' : '✏️ Wijzigingsverzoek'}</span>
           </div>
-          <div class="text-slate-700 font-medium">${isDel ? `Periode wissen: <strong>${req.periode.van} t/m ${req.periode.tot} (${(req.periode.dagen || []).join(', ')})</strong>` : `Gewijzigd naar: <strong>${req.periode.pendingVan} t/m ${req.periode.pendingTot}</strong>`}</div>
+          <div class="text-slate-700 font-medium">${isDel ? `Periode wissen: <strong>${formatPeriodNl(req.periode.van, req.periode.tot)} (${(req.periode.dagen || []).join(', ')})</strong>` : `Gewijzigd naar: <strong>${formatPeriodNl(req.periode.pendingVan, req.periode.pendingTot)}</strong>`}</div>
         </div>
         <div class="flex items-center gap-2">
           <button onclick="approvePeriodRequest('${req.docentId}', '${req.periodId}', true)" class="px-3.5 py-2 bg-emerald-600 text-white font-bold rounded-xl text-xs"><i class="fa-solid fa-check mr-1"></i> Akkoord</button>
@@ -992,7 +1014,7 @@ function renderAdminApprovals() {
       card.innerHTML = `
         <div>
           <div class="flex items-center gap-2 mb-1"><span class="font-extrabold text-slate-900">${docName}</span><span class="font-bold bg-amber-100 text-amber-900 px-2 py-0.5 rounded">${trans}</span></div>
-          <div class="text-slate-600">📅 Datum: <strong class="text-slate-800">${item.datum}</strong></div>
+          <div class="text-slate-600">📅 Datum: <strong class="text-slate-800">${formatDateNl(item.datum, true)}</strong></div>
         </div>
         <div class="flex items-center gap-2">
           <button onclick="approveAvailability(this, '${item.recordId}', true)" class="px-3.5 py-2 bg-emerald-600 text-white font-bold rounded-xl text-xs"><i class="fa-solid fa-check mr-1"></i> Akkoord</button>
@@ -1092,6 +1114,127 @@ function renderAdminScholenTab() {
   });
 }
 
+// ==========================================
+// TAB: NIET-INGEVULDE DOCENTEN (3 WEKEN)
+// ==========================================
+
+function getUpcoming3WeeksWorkdays() {
+  const workdays = [];
+  const now = new Date();
+  now.setHours(0, 0, 0, 0);
+
+  const dayOfWeek = now.getDay();
+  let daysToFriday = (5 - dayOfWeek);
+  if (dayOfWeek === 0) daysToFriday = 5;
+  else if (dayOfWeek === 6) daysToFriday = 6;
+
+  const targetFriday = new Date(now);
+  targetFriday.setDate(now.getDate() + daysToFriday + 14);
+
+  let curr = new Date(now);
+  while (curr <= targetFriday) {
+    if (curr.getDay() >= 1 && curr.getDay() <= 5) {
+      workdays.push(normalizeDateStr(curr));
+    }
+    curr.setDate(curr.getDate() + 1);
+  }
+  return workdays;
+}
+
+function renderAdminUnfilledDocenten() {
+  const container = document.getElementById('adminUnfilledDocentenList');
+  if (!container) return;
+  container.innerHTML = "";
+
+  const workdays = getUpcoming3WeeksWorkdays();
+  const unfilledTeachers = [];
+
+  const regularDocs = (adminData.docenten || []).filter(d => !d.isPlanner && d.alleenOnTour !== 'Ja');
+
+  regularDocs.forEach(doc => {
+    const docAvailMap = {};
+    (adminData.availability || []).forEach(a => {
+      if (a.docentId === doc.id) {
+        docAvailMap[normalizeDateStr(a.datum)] = a.status;
+      }
+    });
+
+    const missingDays = workdays.filter(dateIso => !docAvailMap[dateIso]);
+    if (missingDays.length > 0) {
+      unfilledTeachers.push({
+        docent: doc,
+        missingCount: missingDays.length,
+        missingDays: missingDays
+      });
+    }
+  });
+
+  const badge = document.getElementById('badgeUnfilledDocenten');
+  if (badge) {
+    badge.innerText = unfilledTeachers.length;
+    badge.classList.toggle('hidden', unfilledTeachers.length === 0);
+  }
+
+  if (unfilledTeachers.length === 0) {
+    container.innerHTML = `<div class="p-8 text-center text-slate-400 bg-white rounded-2xl border text-xs">Iedereen heeft de komende 3 weken volledig ingevuld! 🎉</div>`;
+    return;
+  }
+
+  unfilledTeachers.sort((a, b) => b.missingCount - a.missingCount);
+
+  unfilledTeachers.forEach(item => {
+    const card = document.createElement('div');
+    card.className = "p-4 bg-white rounded-2xl border border-slate-200 shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-3 text-xs";
+
+    const daysBadges = item.missingDays.slice(0, 5).map(d => `<span class="px-1.5 py-0.5 rounded bg-amber-50 text-amber-800 border border-amber-200 font-bold text-[10px]">${formatDateNl(d, true)}</span>`).join(' ');
+    const extraCount = item.missingDays.length > 5 ? `<span class="text-slate-400 font-bold text-[10px]">+${item.missingDays.length - 5} meer</span>` : '';
+
+    card.innerHTML = `
+      <div>
+        <div class="flex items-center gap-2 mb-1">
+          <span class="font-extrabold text-slate-900 text-sm">${item.docent.naam}</span>
+          <span class="px-2 py-0.5 rounded-full text-[10px] font-extrabold bg-rose-100 text-rose-800">${item.missingCount} dagen open</span>
+        </div>
+        <div class="flex flex-wrap items-center gap-1 mt-1.5">
+          <span class="text-slate-500 font-medium mr-1">Openstaand:</span>
+          ${daysBadges} ${extraCount}
+        </div>
+      </div>
+      <div class="flex items-center gap-2">
+        <button onclick="openAdminDocentCalendar('${item.docent.id}')" class="px-3.5 py-2 bg-slate-800 hover:bg-slate-900 text-white font-bold rounded-xl text-xs transition flex items-center gap-1.5">
+          <i class="fa-regular fa-calendar-check"></i> <span>Agenda openen</span>
+        </button>
+      </div>
+    `;
+    container.appendChild(card);
+  });
+}
+
+function copyUnfilledDocentenNames() {
+  const workdays = getUpcoming3WeeksWorkdays();
+  const regularDocs = (adminData.docenten || []).filter(d => !d.isPlanner && d.alleenOnTour !== 'Ja');
+  const names = [];
+
+  regularDocs.forEach(doc => {
+    const docAvailMap = {};
+    (adminData.availability || []).forEach(a => {
+      if (a.docentId === doc.id) docAvailMap[normalizeDateStr(a.datum)] = a.status;
+    });
+    if (workdays.some(dateIso => !docAvailMap[dateIso])) {
+      names.push(doc.naam);
+    }
+  });
+
+  if (names.length === 0) {
+    alert("Iedereen is compleet ingevuld!");
+    return;
+  }
+
+  navigator.clipboard.writeText(names.join(', ')).then(() => {
+    alert(`📋 ${names.length} namen gekopieerd naar klembord:\n\n${names.join(', ')}`);
+  });
+}
+
 async function addVasteSchoolToDocent(docentId, schoolNaam) {
   if (!schoolNaam) return;
   const doc = (adminData.docenten || []).find(d => d.id === docentId);
@@ -1144,6 +1287,7 @@ async function resetDocentPin(btn, docentId) {
   }
 }
 
+// Planner Agenda & Losse Dagen
 function openAdminDocentCalendar(docentId) {
   viewingAdminDocent = (adminData.docenten || []).find(d => d.id === docentId);
   if (!viewingAdminDocent) return;
@@ -1252,7 +1396,7 @@ function openDocentPreferencesModal(docentId) {
   const todayIso = normalizeDateStr(new Date());
   const periodesHtml = (doc.vastePeriodes || []).map((p, i) => `
     <div class="p-2.5 bg-slate-50 border border-slate-200 rounded-xl flex items-center justify-between text-xs">
-      <div><strong>Periode ${i + 1}: ${p.van} t/m ${p.tot}</strong><div>Dagen: ${(p.dagen || []).join(', ') || 'Geen'}</div></div>
+      <div><strong>Periode ${i + 1}: ${formatPeriodNl(p.van, p.tot)}</strong><div>Dagen: ${(p.dagen || []).join(', ') || 'Geen'}</div></div>
       <span class="px-2 py-0.5 rounded text-[10px] font-bold ${p.tot && p.tot < todayIso ? 'bg-slate-200 text-slate-600' : 'bg-emerald-100 text-emerald-800'}">${p.tot && p.tot < todayIso ? 'Verlopen' : 'Actief'}</span>
     </div>
   `).join('') || '<span class="text-slate-400 italic">Geen vaste periodes geregistreerd.</span>';
@@ -1285,7 +1429,7 @@ function openSchoolHistoryModal(schoolNaam) {
   } else {
     pastPlans.forEach(p => {
       const docNames = (p.toegewezenDocentIDs || []).map(id => (adminData.docenten.find(d => d.id === id)?.naam || id)).join(', ');
-      container.innerHTML += `<div class="p-2.5 bg-slate-50 border rounded-xl text-xs mb-1.5 flex justify-between"><div>📅 <strong>${p.datum}</strong><div class="text-slate-500">${docNames || 'Geen docent'}</div></div><span class="font-bold text-emerald-800">${p.status}</span></div>`;
+      container.innerHTML += `<div class="p-2.5 bg-slate-50 border rounded-xl text-xs mb-1.5 flex justify-between"><div>📅 <strong>${formatDateNl(p.datum, true)}</strong><div class="text-slate-500">${docNames || 'Geen docent'}</div></div><span class="font-bold text-emerald-800">${p.status}</span></div>`;
     });
   }
   document.getElementById('modalSchoolHistory').classList.remove('hidden');
