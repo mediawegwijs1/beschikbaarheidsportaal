@@ -60,7 +60,6 @@
           <i class="fa-solid fa-sliders text-slate-500"></i> <span class="hidden sm:inline">Voorkeuren</span>
         </button>
 
-        <!-- Admin knop: Uitsluitend zichtbaar voor Planners / Admins -->
         <button id="btnHeaderAdmin" onclick="openAdminDashboard()" class="hidden text-xs bg-amber-50 hover:bg-amber-100 text-amber-900 font-bold px-2.5 py-1.5 rounded-lg border border-amber-300 shadow-sm transition flex items-center gap-1.5">
           <i class="fa-solid fa-gear text-amber-600"></i> <span class="hidden sm:inline">Adminpaneel</span>
         </button>
@@ -309,7 +308,7 @@
   <footer id="landingFooterBar" class="bg-white border-t border-slate-200 py-2.5 px-4 text-[11px] md:text-xs text-slate-500 sticky bottom-0 z-20">
     <div class="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-2 text-center sm:text-left">
       <div class="flex items-center gap-2 font-medium">
-        <span>Versie <strong class="text-slate-800">V2.0 (Optimized)</strong></span>
+        <span>Versie <strong class="text-slate-800">V2.1 (Enhanced)</strong></span>
         <span class="text-slate-300">•</span>
         <button onclick="openPatchNotesModal()" class="text-emerald-600 hover:text-emerald-700 font-semibold underline transition">
           Patch notes
@@ -336,14 +335,25 @@
       <div class="max-h-80 overflow-y-auto custom-scrollbar space-y-3 pr-1 text-xs">
         <div class="p-3 bg-emerald-50/50 border border-emerald-200 rounded-2xl">
           <div class="flex items-center justify-between mb-1.5">
-            <span class="font-bold text-emerald-950">Versie V2.0</span>
-            <span class="text-[10px] bg-emerald-600 text-white px-2 py-0.5 rounded-full font-bold">Performance</span>
+            <span class="font-bold text-emerald-950">Versie V2.1</span>
+            <span class="text-[10px] bg-emerald-600 text-white px-2 py-0.5 rounded-full font-bold">Current</span>
           </div>
           <ul class="list-disc list-inside space-y-1 text-emerald-900">
-            <li><strong>Modulaire Architectuur:</strong> Scripts en styling opgesplitst voor snellere laadtijden en caching via GitHub Pages.</li>
-            <li><strong>Optimistic UI:</strong> Directe kleur-feedback bij het doorgeven van beschikbaarheid (geen wachttijd).</li>
-            <li><strong>Single-Trip Sync:</strong> Voorkeuren en periodes worden in 1 gecombineerd verzoek naar de server gestuurd.</li>
-            <li><strong>Service Worker:</strong> Volledige ondersteuning voor offline caching en instant app-start.</li>
+            <li><strong>Auto-Update SW:</strong> Automatische achtergrondsynchronisatie en stille herlading bij nieuwe releases.</li>
+            <li><strong>Goedkeuringsbeveiliging:</strong> Wijzigingen van Ja naar Mogelijk of Nee worden direct vergrendeld als In Behandeling.</li>
+            <li><strong>Nederlandse Datums:</strong> Overal consistente dag-maand-jaar notatie (bijv. 17 sep 2026).</li>
+            <li><strong>Niet Ingevuld Tabblad:</strong> Direct overzicht voor planners van docenten met openstaande dagen in de komende 3 weken met exportmogelijkheid.</li>
+          </ul>
+        </div>
+        <div class="p-3 bg-slate-50 border border-slate-200 rounded-2xl text-slate-600">
+          <div class="flex items-center justify-between mb-1.5">
+            <span class="font-bold text-slate-800">Versie V2.0</span>
+            <span class="text-[10px] bg-slate-200 text-slate-700 px-2 py-0.5 rounded-full font-bold">Archive</span>
+          </div>
+          <ul class="list-disc list-inside space-y-1 text-slate-600">
+            <li>Modulaire bestandsstructuur via GitHub Pages.</li>
+            <li>Optimistic UI voor instant kalenderresponstijd.</li>
+            <li>Request batching en server-side RAM caching via CacheService.</li>
           </ul>
         </div>
       </div>
@@ -590,8 +600,7 @@
     </div>
   </div>
 
-  <!-- SLIMME SLOT-KOPPEL MODAL (Z-INDEX 60) -->
-  <!-- SLIMME SLOT-KOPPEL MODAL (MET EXPLICIETE Z-INDEX 100 BOVEN ADMIN-MODAL) -->
+  <!-- SLIMME SLOT-KOPPEL MODAL (Z-INDEX 100 BOVEN ADMIN MODAL) -->
   <div id="modalSlotManager" style="z-index: 100;" class="fixed inset-0 bg-slate-950/80 hidden flex items-center justify-center p-4">
     <div class="w-full max-w-2xl bg-white rounded-3xl p-6 shadow-2xl relative max-h-[90vh] flex flex-col">
       <button onclick="closeSlotManagerModal()" class="absolute top-4 right-4 text-slate-400 hover:text-slate-600 w-8 h-8 rounded-full flex items-center justify-center">
@@ -788,9 +797,10 @@
         </div>
 
         <div class="flex items-center gap-2">
-          <div class="bg-slate-200 p-1 rounded-xl flex text-xs font-bold">
+          <div class="bg-slate-200 p-1 rounded-xl flex flex-wrap text-xs font-bold gap-1">
             <button onclick="switchAdminTab('planning')" id="tabBtnPlanning" class="px-3 py-1.5 rounded-lg bg-white text-slate-900 shadow-sm transition">Planning &amp; Gaten</button>
             <button onclick="switchAdminTab('approvals')" id="tabBtnApprovals" class="px-3 py-1.5 rounded-lg text-slate-600 hover:text-slate-900 transition">Goedkeuringen <span id="badgeOpenApprovals" class="hidden ml-1 px-1.5 py-0.5 bg-rose-500 text-white rounded-full text-[10px]">0</span></button>
+            <button onclick="switchAdminTab('unfilled')" id="tabBtnUnfilled" class="px-3 py-1.5 rounded-lg text-slate-600 hover:text-slate-900 transition">Niet Ingevuld (3 wkn) <span id="badgeUnfilledDocenten" class="hidden ml-1 px-1.5 py-0.5 bg-amber-500 text-white rounded-full text-[10px]">0</span></button>
             <button onclick="switchAdminTab('docenten')" id="tabBtnDocenten" class="px-3 py-1.5 rounded-lg text-slate-600 hover:text-slate-900 transition">Vakdocenten</button>
             <button onclick="switchAdminTab('scholen')" id="tabBtnScholen" class="px-3 py-1.5 rounded-lg text-slate-600 hover:text-slate-900 transition">Scholen &amp; Historie</button>
           </div>
@@ -829,7 +839,26 @@
           <div id="adminApprovalsList" class="space-y-3"></div>
         </div>
 
-        <!-- TAB 3: VAKDOCENTEN -->
+        <!-- TAB 3: NIET INGEVULD (3 WEKEN) -->
+        <div id="adminTabUnfilled" class="hidden space-y-4">
+          <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 bg-white p-4 rounded-2xl border border-slate-200">
+            <div>
+              <h3 class="font-bold text-slate-800 text-sm md:text-base">Niet-ingevulde Docenten (Komende 3 Weken)</h3>
+              <p class="text-xs text-slate-400">Docenten die nog niet alle werkdagen compleet hebben ingevuld</p>
+            </div>
+            <div class="flex items-center gap-2">
+              <button onclick="copyUnfilledDocentenNames()" class="text-xs bg-indigo-50 hover:bg-indigo-100 text-indigo-700 font-bold px-3 py-2 rounded-xl border border-indigo-200 transition flex items-center gap-1.5">
+                <i class="fa-regular fa-copy"></i> <span>Kopieer Namen</span>
+              </button>
+              <button onclick="adminManualRefresh(this)" class="text-xs bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold px-3 py-2 rounded-xl border border-slate-200 transition flex items-center gap-1.5">
+                <i class="fa-solid fa-arrows-rotate text-slate-500"></i> <span>Vernieuwen</span>
+              </button>
+            </div>
+          </div>
+          <div id="adminUnfilledDocentenList" class="space-y-3"></div>
+        </div>
+
+        <!-- TAB 4: VAKDOCENTEN -->
         <div id="adminTabDocenten" class="hidden space-y-4">
           <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-3 bg-white p-4 rounded-2xl border border-slate-200">
             <div>
@@ -867,7 +896,7 @@
           </div>
         </div>
 
-        <!-- TAB 4: SCHOLEN & HISTORIE -->
+        <!-- TAB 5: SCHOLEN & HISTORIE -->
         <div id="adminTabScholen" class="hidden space-y-4">
           <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-3 bg-white p-4 rounded-2xl border border-slate-200">
             <div>
