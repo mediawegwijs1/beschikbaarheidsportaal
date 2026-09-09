@@ -185,16 +185,37 @@ async function submitOnTourRegistration() {
   await loadDocentOnTours();
 }
 
-// -- SLOT MANAGER --
+// ==========================================
+// SLOT MANAGER MET ROBUUSTE MATCHER
+// ==========================================
+
 function openSlotManagerModal(type, id, selectedDayFilter = null) {
-  let item = type === 'PLANNING' ? (adminData.planning || []).find(p => p.planningId === id) : (adminData.onTours || []).find(t => t.tourId === id);
-  if (!item) return;
+  let item = null;
+  if (type === 'PLANNING') {
+    item = (adminData.planning || []).find(p => String(p.planningId).trim() === String(id).trim());
+  } else {
+    item = (adminData.onTours || []).find(t => String(t.tourId).trim() === String(id).trim());
+  }
+
+  if (!item) {
+    console.error("Item niet gevonden voor ID:", id);
+    return;
+  }
   
   currentSlotTarget = { type, item, selectedDayFilter };
   emergencyOverrideAllDocents = false;
 
   document.getElementById('slotModalTypeBadge').innerText = type === 'PLANNING' ? 'Reguliere School' : 'On Tour';
   document.getElementById('slotModalTypeBadge').className = type === 'PLANNING' ? 'text-xs bg-emerald-100 text-emerald-800 font-bold px-2.5 py-0.5 rounded-full' : 'text-xs bg-sky-100 text-sky-800 font-bold px-2.5 py-0.5 rounded-full';
+  
+  const assignedCount = type === 'PLANNING' ? (item.toegewezenDocentIDs || []).length : 0;
+  const totalSlots = item.aantalNodig || 1;
+  const progressBadge = document.getElementById('slotModalProgressBadge');
+  if (progressBadge) {
+    progressBadge.innerText = `${assignedCount}/${totalSlots} Bezet`;
+    progressBadge.className = `text-xs font-bold px-2 py-0.5 rounded-full ${assignedCount >= totalSlots ? 'bg-emerald-100 text-emerald-800' : 'bg-rose-100 text-rose-800'}`;
+  }
+
   document.getElementById('slotModalTitle').innerText = item.schoolNaam;
   document.getElementById('slotModalSubtitle').innerText = type === 'PLANNING' 
     ? `Datum: ${normalizeDateStr(item.datum)}` 
@@ -212,11 +233,16 @@ function openSlotManagerModal(type, id, selectedDayFilter = null) {
   renderPinnedVasteDocentSection();
   renderSlotManagerSlots();
   renderSlotManagerCandidates();
-  document.getElementById('modalSlotManager').classList.remove('hidden');
+
+  const modal = document.getElementById('modalSlotManager');
+  modal.classList.remove('hidden');
+  modal.classList.add('flex');
 }
 
 function closeSlotManagerModal() {
-  document.getElementById('modalSlotManager').classList.add('hidden');
+  const modal = document.getElementById('modalSlotManager');
+  modal.classList.add('hidden');
+  modal.classList.remove('flex');
   currentSlotTarget = null;
   emergencyOverrideAllDocents = false;
 }
@@ -355,7 +381,7 @@ function renderSlotManagerSlots() {
 
 function selectOnTourDayGapFilter(slotIndex, dayIso, dayName) {
   if (currentSlotTarget.selectedDayFilter && currentSlotTarget.selectedDayFilter.slotIndex === slotIndex && currentSlotTarget.selectedDayFilter.dayIso === dayIso) {
-    currentSlotTarget.selectedDayFilter = null; // Uncheck
+    currentSlotTarget.selectedDayFilter = null;
   } else {
     currentSlotTarget.selectedDayFilter = { slotIndex, dayIso, dayName };
   }
@@ -367,11 +393,13 @@ function renderSlotManagerCandidates() {
   const listJaEl = document.getElementById('listSlotCandJa');
   const listAltEl = document.getElementById('listSlotCandAlt');
   const wrapperAlt = document.getElementById('wrapperSlotCandAlt');
-  listJaEl.innerHTML = ""; listAltEl.innerHTML = "";
+  listJaEl.innerHTML = ""; 
+  listAltEl.innerHTML = "";
 
   const item = currentSlotTarget.item;
   const rankMap = { N1: 1, N2: 2, N3: 3 };
-  const listJa = []; const listAlt = [];
+  const listJa = []; 
+  const listAlt = [];
 
   if (currentSlotTarget.type === 'PLANNING') {
     document.getElementById('candidateFilterHeaderTitle').innerText = "Kies een beschikbare docent:";
@@ -403,6 +431,7 @@ function renderSlotManagerCandidates() {
       const allDocs = (adminData.docenten || []).filter(d => !d.isPlanner);
       allDocs.sort((a, b) => (rankMap[a.skillLevel] || 3) - (rankMap[b.skillLevel] || 3));
       renderSlotCandidateButtons(listJaEl, allDocs);
+      listJa.push(...allDocs);
     } else {
       wrapperAlt.classList.remove('hidden');
       document.getElementById('candidateFilterHeaderTitle').innerText = filter ? `Kandidaten voor Slot ${filter.slotIndex + 1} op ${filter.dayName}:` : "Klik op een GAT (bijv. Wo) om te filteren:";
@@ -422,15 +451,21 @@ function renderSlotManagerCandidates() {
         if (!a.alleenOnTour && b.alleenOnTour) return 1;
         return (rankMap[a.skillLevel] || 3) - (rankMap[b.skillLevel] || 3);
       };
-      listJa.sort(sortFn); listAlt.sort(sortFn);
+      listJa.sort(sortFn); 
+      listAlt.sort(sortFn);
       renderSlotCandidateButtons(listJaEl, listJa);
       renderSlotCandidateButtons(listAltEl, listAlt);
     }
   }
+
+  const cntJa = document.getElementById('countSlotCandJa');
+  const cntAlt = document.getElementById('countSlotCandAlt');
+  if (cntJa) cntJa.innerText = listJa.length;
+  if (cntAlt) cntAlt.innerText = listAlt.length;
 }
 
 function renderSlotCandidateButtons(container, list) {
-  if (list.length === 0) { container.innerHTML = `<div class="text-[11px] text-slate-400 p-2">Geen kandidaten.</div>`; return; }
+  if (list.length === 0) { container.innerHTML = `<div class="text-[11px] text-slate-400 p-2">Geen kandidaten gevonden.</div>`; return; }
   list.forEach(doc => {
     const div = document.createElement('div');
     div.className = "p-2 bg-slate-50 hover:bg-slate-100 rounded-xl border flex items-center justify-between text-xs";
@@ -439,7 +474,7 @@ function renderSlotCandidateButtons(container, list) {
         <div class="font-bold flex items-center gap-1"><span>${doc.naam}</span>${doc.alleenOnTour ? '<span class="text-[9px] bg-amber-100 text-amber-900 px-1 rounded">⭐ Tour Specialist</span>' : ''}</div>
         <div class="text-[10px] text-slate-500">Skill: ${doc.skillLevel} ${doc.matchedDays ? `<strong class="text-amber-700">(${doc.matchedDays})</strong>` : ''}</div>
       </div>
-      <button onclick="assignDocentToNextSlot('${doc.id}')" class="px-3 py-1.5 bg-emerald-600 text-white font-bold rounded-lg text-xs">Koppel</button>
+      <button onclick="assignDocentToNextSlot('${doc.id}')" class="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-lg text-xs transition">Koppel</button>
     `;
     container.appendChild(div);
   });
@@ -506,4 +541,33 @@ async function unassignOnTourDaySlot(slotIndex, dayIso) {
   renderSlotManagerCandidates();
   await apiCall("", "POST", { action: "updateOnTourSlotAssignments", adminPin: ADMIN_SECRET, tourId: item.tourId, slotAssignments: item.slotAssignments });
   await loadAdminData();
+}
+
+function renderPlannerOnToursList() {
+  const container = document.getElementById('plannerOnToursList');
+  if (!container) return;
+  container.innerHTML = "";
+
+  const tours = adminData.onTours || [];
+  if (tours.length === 0) {
+    container.innerHTML = `<div class="p-4 text-center text-xs text-slate-400 bg-slate-50 rounded-2xl border border-slate-200">Geen actieve On Tours ingepland.</div>`;
+    return;
+  }
+
+  tours.forEach(tour => {
+    const card = document.createElement('div');
+    card.className = "p-3 bg-white hover:bg-slate-50 rounded-2xl border border-slate-200 shadow-sm text-xs cursor-pointer transition flex flex-col justify-between space-y-2";
+    card.onclick = () => openSlotManagerModal('ONTOUR', tour.tourId);
+
+    card.innerHTML = `
+      <div class="flex items-center justify-between">
+        <span class="font-extrabold text-slate-900 truncate">${tour.schoolNaam}</span>
+        <span class="text-[10px] font-bold px-2 py-0.5 rounded-full ${tour.status === 'BEZET' ? 'bg-emerald-100 text-emerald-800' : 'bg-rose-100 text-rose-800 animate-pulse'}">${tour.status}</span>
+      </div>
+      <div class="text-slate-500 text-[11px]">
+        📅 ${tour.startDatum} t/m ${tour.eindDatum} ${tour.locatie ? `• 📍 ${tour.locatie}` : ''}
+      </div>
+    `;
+    container.appendChild(card);
+  });
 }
