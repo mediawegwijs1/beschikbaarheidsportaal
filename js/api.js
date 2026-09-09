@@ -1,4 +1,4 @@
-// API & NETWORK HELPERS
+// API & NETWORK HELPERS (Met Browser Keep-Alive)
 async function apiCall(endpoint, method = "GET", payload = null) {
   if (!API_URL || API_URL.trim() === "") return { success: false, error: "Geen API URL" };
   try {
@@ -8,10 +8,12 @@ async function apiCall(endpoint, method = "GET", payload = null) {
       for (const key in payload) url.searchParams.append(key, payload[key]);
       response = await fetch(url.toString(), { method: "GET" });
     } else {
+      // keepalive: true zorgt dat het verzoek doorgaat als de docent het venster sluit
       response = await fetch(API_URL, {
         method: "POST",
         body: JSON.stringify(payload),
-        headers: { "Content-Type": "text/plain;charset=utf-8" }
+        headers: { "Content-Type": "text/plain;charset=utf-8" },
+        keepalive: true
       });
     }
     return await response.json();
