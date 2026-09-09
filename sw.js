@@ -1,5 +1,5 @@
-// SERVICE WORKER (Cache-First voor assets, Network-First voor Google Script)
-const CACHE_NAME = 'mediawegwijs-v2.0.1';
+// SERVICE WORKER V2.1 (Instant Cache-First & Auto-Activation)
+const CACHE_NAME = 'mediawegwijs-v2.1';
 const STATIC_ASSETS = [
   './',
   './index.html',
@@ -16,10 +16,10 @@ const STATIC_ASSETS = [
 ];
 
 self.addEventListener('install', (e) => {
+  self.skipWaiting();
   e.waitUntil(
     caches.open(CACHE_NAME).then((cache) => cache.addAll(STATIC_ASSETS))
   );
-  self.skipWaiting();
 });
 
 self.addEventListener('activate', (e) => {
@@ -34,16 +34,11 @@ self.addEventListener('activate', (e) => {
 });
 
 self.addEventListener('fetch', (e) => {
-  // Verzoeken naar Google Apps Script altijd live over het netwerk sturen
   if (e.request.url.includes('script.google.com')) {
     e.respondWith(fetch(e.request));
     return;
   }
-
-  // Statische assets serveren via Cache-First
   e.respondWith(
-    caches.match(e.request).then((cachedResponse) => {
-      return cachedResponse || fetch(e.request);
-    })
+    caches.match(e.request).then((cachedResponse) => cachedResponse || fetch(e.request))
   );
 });
