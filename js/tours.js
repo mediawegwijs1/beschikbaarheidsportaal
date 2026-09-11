@@ -1,5 +1,5 @@
 // ==========================================
-// ON TOURS & SLOT MANAGER (V2.1.3)
+// ON TOURS & SLOT MANAGER (V2.1.4)
 // ==========================================
 
 async function loadDocentOnTours() {
@@ -287,7 +287,7 @@ async function handleSaveOnTourSubmit(e) {
 }
 
 // ==========================================
-// SLOT MANAGER (PLANNING & ON TOUR MET VERWIJDERKNOP)
+// SLOT MANAGER MET VEILIGE VERWIJDERKNOP MARGE
 // ==========================================
 
 function openSlotManagerModal(type, id, selectedDayFilter = null) {
@@ -317,7 +317,7 @@ function openSlotManagerModal(type, id, selectedDayFilter = null) {
     progressBadge.className = `text-xs font-bold px-2 py-0.5 rounded-full ${assignedCount >= totalSlots ? 'bg-emerald-100 text-emerald-800' : 'bg-rose-100 text-rose-800'}`;
   }
 
-  // Verwijderknop voor zowel PLANNING als ONTOUR
+  // Verwijderknop met 'mr-8' zodat hij nooit op het sluitkruisje zit
   const badgeContainer = progressBadge ? progressBadge.parentElement : null;
   let delBtn = document.getElementById('btnDeleteSlotPlanningModal');
   if (!delBtn && badgeContainer) {
@@ -328,7 +328,7 @@ function openSlotManagerModal(type, id, selectedDayFilter = null) {
   }
 
   if (delBtn) {
-    delBtn.className = "text-xs bg-rose-50 hover:bg-rose-100 text-rose-600 font-bold px-2.5 py-0.5 rounded-full border border-rose-200 transition ml-auto flex items-center gap-1 shadow-sm";
+    delBtn.className = "text-xs bg-rose-50 hover:bg-rose-100 text-rose-600 font-bold px-3 py-1 rounded-full border border-rose-200 transition ml-auto mr-8 flex items-center gap-1.5 shadow-sm";
     delBtn.innerHTML = type === 'PLANNING' 
       ? `<i class="fa-solid fa-trash-can text-[10px]"></i> <span>Verwijder Planning</span>` 
       : `<i class="fa-solid fa-trash-can text-[10px]"></i> <span>Verwijder On Tour</span>`;
@@ -368,7 +368,6 @@ async function deleteCurrentItemFromModal() {
       return;
     }
 
-    // Direct UI updaten: pop-up sluiten en grijs + spinner tonen op de kalender
     item._isDeleting = true;
     closeSlotManagerModal();
     if (typeof renderPlannerGrid === 'function') renderPlannerGrid();
@@ -391,7 +390,6 @@ async function deleteCurrentItemFromModal() {
       return;
     }
 
-    // Direct UI updaten: pop-up sluiten en grijs maken in On Tour lijst
     item._isDeleting = true;
     closeSlotManagerModal();
     renderPlannerOnToursList();
