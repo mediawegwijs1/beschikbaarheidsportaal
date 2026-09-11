@@ -335,25 +335,15 @@
       <div class="max-h-80 overflow-y-auto custom-scrollbar space-y-3 pr-1 text-xs">
         <div class="p-3 bg-emerald-50/50 border border-emerald-200 rounded-2xl">
           <div class="flex items-center justify-between mb-1.5">
-            <span class="font-bold text-emerald-950">Versie V2.1</span>
+            <span class="font-bold text-emerald-950">Versie V2.1.2</span>
             <span class="text-[10px] bg-emerald-600 text-white px-2 py-0.5 rounded-full font-bold">Current</span>
           </div>
           <ul class="list-disc list-inside space-y-1 text-emerald-900">
             <li><strong>Auto-Update SW:</strong> Automatische achtergrondsynchronisatie en stille herlading bij nieuwe releases.</li>
-            <li><strong>Goedkeuringsbeveiliging:</strong> Wijzigingen van Ja naar Mogelijk of Nee worden direct vergrendeld als In Behandeling.</li>
-            <li><strong>Nederlandse Datums:</strong> Overal consistente dag-maand-jaar notatie (bijv. 17 sep 2026).</li>
-            <li><strong>Niet Ingevuld Tabblad:</strong> Direct overzicht voor planners van docenten met openstaande dagen in de komende 3 weken met exportmogelijkheid.</li>
-          </ul>
-        </div>
-        <div class="p-3 bg-slate-50 border border-slate-200 rounded-2xl text-slate-600">
-          <div class="flex items-center justify-between mb-1.5">
-            <span class="font-bold text-slate-800">Versie V2.0</span>
-            <span class="text-[10px] bg-slate-200 text-slate-700 px-2 py-0.5 rounded-full font-bold">Archive</span>
-          </div>
-          <ul class="list-disc list-inside space-y-1 text-slate-600">
-            <li>Modulaire bestandsstructuur via GitHub Pages.</li>
-            <li>Optimistic UI voor instant kalenderresponstijd.</li>
-            <li>Request batching en server-side RAM caching via CacheService.</li>
+            <li><strong>Server Cache Beheer:</strong> Direct de RAM-cache in Google Apps Script wissen vanuit het adminpaneel.</li>
+            <li><strong>Planning Verwijderen:</strong> Lesplannings direct vanuit de Slot Manager pop-up kunnen wissen.</li>
+            <li><strong>Vaste Docenten Lock:</strong> Vaste docenten met de status Nee worden visueel vergrendeld in de Slot Manager.</li>
+            <li><strong>Niet Ingevuld Tabblad:</strong> Overzicht van docenten met ontbrekende dagen voor de komende 3 weken.</li>
           </ul>
         </div>
       </div>
@@ -803,6 +793,7 @@
             <button onclick="switchAdminTab('unfilled')" id="tabBtnUnfilled" class="px-3 py-1.5 rounded-lg text-slate-600 hover:text-slate-900 transition">Niet Ingevuld (3 wkn) <span id="badgeUnfilledDocenten" class="hidden ml-1 px-1.5 py-0.5 bg-amber-500 text-white rounded-full text-[10px]">0</span></button>
             <button onclick="switchAdminTab('docenten')" id="tabBtnDocenten" class="px-3 py-1.5 rounded-lg text-slate-600 hover:text-slate-900 transition">Vakdocenten</button>
             <button onclick="switchAdminTab('scholen')" id="tabBtnScholen" class="px-3 py-1.5 rounded-lg text-slate-600 hover:text-slate-900 transition">Scholen &amp; Historie</button>
+            <button onclick="switchAdminTab('system')" id="tabBtnSystem" class="px-3 py-1.5 rounded-lg text-slate-600 hover:text-slate-900 transition">Systeem &amp; Cache</button>
           </div>
           <button onclick="closeAdminModal()" class="w-8 h-8 rounded-xl bg-slate-200 hover:bg-slate-300 text-slate-700 flex items-center justify-center transition">
             <i class="fa-solid fa-xmark"></i>
@@ -924,6 +915,39 @@
               </thead>
               <tbody id="adminScholenTableBody" class="divide-y divide-slate-100"></tbody>
             </table>
+          </div>
+        </div>
+
+        <!-- TAB 6: SYSTEEM & CACHE -->
+        <div id="adminTabSystem" class="hidden space-y-4 text-xs">
+          <div class="bg-white p-6 rounded-3xl border border-slate-200 shadow-sm space-y-4">
+            <div class="flex items-center gap-3">
+              <div class="w-10 h-10 rounded-2xl bg-amber-100 text-amber-800 flex items-center justify-center text-base">
+                <i class="fa-solid fa-server"></i>
+              </div>
+              <div>
+                <h3 class="font-bold text-slate-900 text-sm md:text-base">Google Apps Script Server-Cache</h3>
+                <p class="text-slate-500">Beheer het RAM-geheugen van de backend database</p>
+              </div>
+            </div>
+
+            <p class="text-slate-600 leading-relaxed">
+              Om de website snel te laten laden, bewaart de server docenten en scholen tijdelijk in een snelle RAM-cache. 
+              Als je handmatig gegevens, cellen of pincodes in de Google Sheet hebt gewijzigd of leeggemaakt, kan de server nog tot 6 uur de oude gegevens vasthouden.
+            </p>
+
+            <div class="p-4 bg-amber-50/70 border border-amber-200 rounded-2xl flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+              <div>
+                <span class="font-extrabold text-amber-950 block">Server-Cache Geforceerd Legen</span>
+                <span class="text-[11px] text-amber-800">Wist de RAM-cache en dwingt Google Apps Script om direct de Google Sheets opnieuw uit te lezen.</span>
+              </div>
+              <button 
+                onclick="adminFlushServerCache(this)" 
+                class="px-4 py-2.5 bg-rose-600 hover:bg-rose-700 text-white font-bold rounded-xl transition flex items-center gap-2 shadow-sm shrink-0"
+              >
+                <i class="fa-solid fa-trash-can"></i> <span>Server Cache Legen &amp; Herladen</span>
+              </button>
+            </div>
           </div>
         </div>
 
