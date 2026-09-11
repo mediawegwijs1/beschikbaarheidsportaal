@@ -1,5 +1,5 @@
 // ==========================================
-// BOOTSTRAP, PROFIEL, PLANNER & ADMIN LOGICA (V2.1.4)
+// BOOTSTRAP, PROFIEL, PLANNER & ADMIN LOGICA (V2.1.5)
 // ==========================================
 
 window.addEventListener('DOMContentLoaded', () => {
@@ -29,7 +29,7 @@ async function detectAppVersion() {
       console.warn("Kon cache-versie niet uitlezen", e);
     }
   }
-  label.innerText = "V2.1.4";
+  label.innerText = "V2.1.5";
 }
 
 // Automatische reload bij een nieuwe Service Worker cache-update
@@ -371,8 +371,6 @@ function renderGhostPeriodes() {
     const monthBadgeText = getMonthLabelForRange(p.van, p.tot);
     const isPendingDelete = p.status === "PENDING_DELETE";
     const isPendingEdit = p.status === "PENDING_EDIT";
-
-    // Bewerkbaar als het een nieuwe rij is OF als inline editing actief is
     const isFieldsEditable = (p.isNew && isAct) || isEditingInline;
 
     const div = document.createElement('div');
@@ -506,7 +504,6 @@ async function submitInlineEditPeriod(idx) {
     p.status = "PENDING_EDIT";
     p._isEditingInline = false;
     
-    // Werk actieve docentstatus lokaal bij
     const activeDocP = (currentDocent.vastePeriodes || []).find(x => x.id === p.id);
     if (activeDocP) {
       activeDocP.status = "PENDING_EDIT";
@@ -658,6 +655,43 @@ function getRadioGroup(name) {
 function setRadioGroup(name, value) {
   const el = document.querySelector(`input[name="${name}"][value="${value}"]`);
   if (el) el.checked = true;
+}
+
+// ==========================================
+// TELEFOONNUMMERS & WHATSAPP DESKTOP
+// ==========================================
+
+function sanitizePhoneNumber(raw) {
+  if (!raw) return "";
+  let cleaned = String(raw).replace(/[^0-9+]/g, '');
+  if (cleaned.startsWith('+')) cleaned = cleaned.substring(1);
+  if (cleaned.startsWith('00')) cleaned = cleaned.substring(2);
+  if (cleaned.startsWith('0')) cleaned = '31' + cleaned.substring(1);
+  return cleaned;
+}
+
+function openWhatsAppDesktop(phone) {
+  const sanitized = sanitizePhoneNumber(phone);
+  if (!sanitized) return;
+  window.location.href = `whatsapp://send?phone=${sanitized}`;
+}
+
+async function promptEditDocentPhone(docentId, currentVal) {
+  const input = prompt("Voer mobiel nummer in voor WhatsApp (bijv. 0612345678):", currentVal || "");
+  if (input === null) return;
+
+  const sanitized = sanitizePhoneNumber(input.trim());
+  const doc = (adminData.docenten || []).find(d => d.id === docentId);
+  if (doc) doc.telefoonnummer = sanitized;
+
+  renderAdminDocenten();
+
+  await apiCall("", "POST", {
+    action: "adminUpdateDocent",
+    adminPin: ADMIN_SECRET,
+    docentId: docentId,
+    telefoonnummer: sanitized
+  });
 }
 
 // ==========================================
@@ -1173,7 +1207,6 @@ function renderAdminApprovals() {
           </div>
         `;
       } else {
-        // Wijzigingsverzoek met OUD vs NIEUW vergelijking
         detailContent = `
           <div class="space-y-2 mt-1">
             <div class="flex items-center gap-2 flex-wrap">
@@ -1305,10 +1338,34 @@ function renderAdminDocenten() {
       </div>
     `;
 
+    // WhatsApp kolom layout
+    const phone = docent.telefoonnummer || "";
+    let waHtml = "";
+    if (phone) {
+      waHtml = `
+        <div class="flex items-center gap-2">
+          <button onclick="openWhatsAppDesktop('${phone}')" class="px-2.5 py-1 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-[11px] transition shadow-sm flex items-center gap-1.5" title="Open chat in WhatsApp Desktop App">
+            <i class="fa-brands fa-whatsapp text-sm"></i>
+            <span>+${phone}</span>
+          </button>
+          <button onclick="promptEditDocentPhone('${docent.id}', '${phone}')" class="text-slate-400 hover:text-amber-600 p-1 transition" title="Telefoonnummer bewerken">
+            <i class="fa-solid fa-pencil text-[11px]"></i>
+          </button>
+        </div>
+      `;
+    } else {
+      waHtml = `
+        <button onclick="promptEditDocentPhone('${docent.id}', '')" class="text-[11px] font-bold text-slate-500 hover:text-emerald-700 bg-slate-100 hover:bg-emerald-50 px-2 py-1 rounded-lg border border-slate-200 transition flex items-center gap-1">
+          <i class="fa-solid fa-plus text-[10px]"></i> <span>Nummer</span>
+        </button>
+      `;
+    }
+
     tr.innerHTML = `
       <td class="p-3 font-bold text-slate-800">${docent.naam}</td>
       <td class="p-3"><span class="text-[10px] px-2 py-0.5 rounded font-bold ${docent.isPlanner ? 'bg-amber-100 text-amber-800' : 'bg-slate-100 text-slate-600'}">${docent.isPlanner ? 'Planner' : 'Vakdocent'}</span></td>
       <td class="p-3">${docent.isPlanner ? '-' : vasteScholenHtml}</td>
+      <td class="p-3">${docent.isPlanner ? '-' : waHtml}</td>
       <td class="p-3 text-[10px]"><span class="${docent.alleenOnTour ? 'text-sky-600 font-bold' : 'text-slate-500'}">✈️ ${docent.alleenOnTour ? 'Alleen Tour' : 'Regulier'}</span></td>
       <td class="p-3">
         <select onchange="updateDocentSkill(this, '${docent.id}', this.value)" class="bg-slate-100 border border-slate-300 rounded-lg p-1 font-bold text-xs">
