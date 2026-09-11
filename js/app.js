@@ -1478,6 +1478,66 @@ function renderAdminUnfilledDocenten() {
     const daysBadges = item.missingDays.slice(0, 5).map(d => `<span class="px-1.5 py-0.5 rounded bg-amber-50 text-amber-800 border border-amber-200 font-bold text-[10px]">${formatDateNl(d, true)}</span>`).join(' ');
     const extraCount = item.missingDays.length > 5 ? `<span class="text-slate-400 font-bold text-[10px]">+${item.missingDays.length - 5} meer</span>` : '';
 
+    // WhatsApp snelkoppeling logica voor Niet Ingevuld
+    const phone = item.docent.telefoonnummer || "";
+    let waShortcutHtml = "";
+    if (phone) {
+      waShortcutHtml = `
+        <button onclick="openWhatsAppDesktop('${phone}')" class="px-3 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs transition shadow-sm flex items-center gap-1.5" title="Open WhatsApp Desktop">
+          <i class="fa-brands fa-whatsapp text-sm"></i>
+          <span>+${phone}</span>
+        </button>
+      `;
+    } else {
+      waShortcutHtml = `
+        <button onclick="promptEditDocentPhone('${item.docent.id}', '')" class="px-3 py-2 rounded-xl bg-slate-100 hover:bg-emerald-50 text-slate-600 hover:text-emerald-700 font-bold text-xs transition border border-slate-200 flex items-center gap-1.5" title="Voeg WhatsApp nummer toe">
+          <i class="fa-solid fa-plus text-[10px]"></i> <span>WhatsApp</span>
+        </button>
+      `;
+    }
+
+    card.innerHTML = `
+      <div>
+        <div class="flex items-center gap-2 mb-1">
+          <span class="font-extrabold text-slate-900 text-sm">${item.docent.naam}</span>
+          <span class="px-2 py-0.5 rounded-full text-[10px] font-extrabold bg-rose-100 text-rose-800">${item.missingCount} dagen open</span>
+        </div>
+        <div class="flex flex-wrap items-center gap-1 mt-1.5">
+          <span class="text-slate-500 font-medium mr-1">Openstaand:</span>
+          ${daysBadges} ${extraCount}
+        </div>
+      </div>
+      <div class="flex items-center gap-2">
+        ${waShortcutHtml}
+        <button onclick="openAdminDocentCalendar('${item.docent.id}')" class="px-3.5 py-2 bg-slate-800 hover:bg-slate-900 text-white font-bold rounded-xl text-xs transition flex items-center gap-1.5 shadow-sm">
+          <i class="fa-regular fa-calendar-check"></i> <span>Agenda openen</span>
+        </button>
+      </div>
+    `;
+    container.appendChild(card);
+  });
+}
+
+  const badge = document.getElementById('badgeUnfilledDocenten');
+  if (badge) {
+    badge.innerText = unfilledTeachers.length;
+    badge.classList.toggle('hidden', unfilledTeachers.length === 0);
+  }
+
+  if (unfilledTeachers.length === 0) {
+    container.innerHTML = `<div class="p-8 text-center text-slate-400 bg-white rounded-2xl border text-xs">Iedereen heeft de komende 3 weken volledig ingevuld! 🎉</div>`;
+    return;
+  }
+
+  unfilledTeachers.sort((a, b) => b.missingCount - a.missingCount);
+
+  unfilledTeachers.forEach(item => {
+    const card = document.createElement('div');
+    card.className = "p-4 bg-white rounded-2xl border border-slate-200 shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-3 text-xs";
+
+    const daysBadges = item.missingDays.slice(0, 5).map(d => `<span class="px-1.5 py-0.5 rounded bg-amber-50 text-amber-800 border border-amber-200 font-bold text-[10px]">${formatDateNl(d, true)}</span>`).join(' ');
+    const extraCount = item.missingDays.length > 5 ? `<span class="text-slate-400 font-bold text-[10px]">+${item.missingDays.length - 5} meer</span>` : '';
+
     card.innerHTML = `
       <div>
         <div class="flex items-center gap-2 mb-1">
