@@ -1,5 +1,5 @@
 // ==========================================
-// BOOTSTRAP, PROFIEL, PLANNER & ADMIN LOGICA (V2.1.1)
+// BOOTSTRAP, PROFIEL, PLANNER & ADMIN LOGICA (V2.1.2)
 // ==========================================
 
 window.addEventListener('DOMContentLoaded', () => {
@@ -29,7 +29,7 @@ async function detectAppVersion() {
       console.warn("Kon cache-versie niet uitlezen", e);
     }
   }
-  label.innerText = "V2.1.1";
+  label.innerText = "V2.1.2";
 }
 
 // Automatische reload bij een nieuwe Service Worker cache-update
@@ -941,12 +941,35 @@ function switchAdminTab(tab) {
   document.getElementById('adminTabUnfilled').classList.toggle('hidden', tab !== 'unfilled');
   document.getElementById('adminTabDocenten').classList.toggle('hidden', tab !== 'docenten');
   document.getElementById('adminTabScholen').classList.toggle('hidden', tab !== 'scholen');
+  document.getElementById('adminTabSystem').classList.toggle('hidden', tab !== 'system');
 
   document.getElementById('tabBtnPlanning').className = tab === 'planning' ? 'px-3 py-1.5 rounded-lg bg-white text-slate-900 shadow-sm transition' : 'px-3 py-1.5 rounded-lg text-slate-600 hover:text-slate-900 transition';
   document.getElementById('tabBtnApprovals').className = tab === 'approvals' ? 'px-3 py-1.5 rounded-lg bg-white text-slate-900 shadow-sm transition' : 'px-3 py-1.5 rounded-lg text-slate-600 hover:text-slate-900 transition';
   document.getElementById('tabBtnUnfilled').className = tab === 'unfilled' ? 'px-3 py-1.5 rounded-lg bg-white text-slate-900 shadow-sm transition' : 'px-3 py-1.5 rounded-lg text-slate-600 hover:text-slate-900 transition';
   document.getElementById('tabBtnDocenten').className = tab === 'docenten' ? 'px-3 py-1.5 rounded-lg bg-white text-slate-900 shadow-sm transition' : 'px-3 py-1.5 rounded-lg text-slate-600 hover:text-slate-900 transition';
   document.getElementById('tabBtnScholen').className = tab === 'scholen' ? 'px-3 py-1.5 rounded-lg bg-white text-slate-900 shadow-sm transition' : 'px-3 py-1.5 rounded-lg text-slate-600 hover:text-slate-900 transition';
+  document.getElementById('tabBtnSystem').className = tab === 'system' ? 'px-3 py-1.5 rounded-lg bg-white text-slate-900 shadow-sm transition' : 'px-3 py-1.5 rounded-lg text-slate-600 hover:text-slate-900 transition';
+}
+
+async function adminFlushServerCache(btn) {
+  if (btn) {
+    btn.disabled = true;
+    btn.innerHTML = `<i class="fa-solid fa-circle-notch fa-spin mr-1.5"></i> Cache legen op Google Apps Script...`;
+  }
+
+  const res = await apiCall("", "POST", { action: "adminFlushServerCache", adminPin: ADMIN_SECRET });
+
+  if (res && res.success) {
+    alert("✅ Server-cache succesvol gewist!\n\nDe server leest nu alle docenten en scholen weer vers uit de Google Sheet.");
+    await Promise.all([loadAdminData(), loadDocentenList(), loadSchoolsDatabase()]);
+  } else {
+    alert("Fout bij legen server-cache: " + (res?.error || "Onbekend"));
+  }
+
+  if (btn) {
+    btn.disabled = false;
+    btn.innerHTML = `<i class="fa-solid fa-trash-can mr-1.5"></i> Server Cache Legen &amp; Herladen`;
+  }
 }
 
 function renderAdminPlanning() {
