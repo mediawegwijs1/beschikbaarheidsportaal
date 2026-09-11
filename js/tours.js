@@ -1,5 +1,5 @@
 // ==========================================
-// ON TOURS & SLOT MANAGER (V2.1.1)
+// ON TOURS & SLOT MANAGER (V2.1.2)
 // ==========================================
 
 async function loadDocentOnTours() {
@@ -186,7 +186,106 @@ async function submitOnTourRegistration() {
 }
 
 // ==========================================
-// SLOT MANAGER MET ROBUUSTE MATCHER & DATUMNOTATIE
+// ON TOUR INPLANNEN (PLANNER)
+// ==========================================
+
+function openAddOnTourModal() {
+  const modal = document.getElementById('modalAddOnTour');
+  if (!modal) return;
+
+  document.getElementById('inputOtSchoolNaam').value = '';
+  document.getElementById('inputOtLocatie').value = '';
+  document.getElementById('inputOtAantalNodig').value = 1;
+  document.getElementById('checkOtIsBuitenland').checked = false;
+  document.getElementById('inputOtLand').value = '';
+  document.getElementById('wrapperOtLand').classList.add('hidden');
+
+  const startInput = document.getElementById('inputOtStart');
+  const eindInput = document.getElementById('inputOtEind');
+  if (startInput && startInput._flatpickr) startInput._flatpickr.clear();
+  else if (startInput) startInput.value = '';
+  if (eindInput && eindInput._flatpickr) eindInput._flatpickr.clear();
+  else if (eindInput) eindInput.value = '';
+
+  const select = document.getElementById('selectOtPresetSchool');
+  if (select) {
+    select.innerHTML = '<option value="">-- Kies uit database (optioneel) --</option>';
+    const tourSchools = (schoolsCache || []).filter(s => s.categorie === 'On tour' || s.categorie === 'On Tour');
+    tourSchools.sort((a, b) => getCleanSortName(a.naam).localeCompare(getCleanSortName(b.naam)));
+    tourSchools.forEach(s => {
+      const opt = document.createElement('option');
+      opt.value = JSON.stringify(s);
+      opt.innerText = `${s.naam} (${s.locatie || s.land || 'On Tour'})`;
+      select.appendChild(opt);
+    });
+  }
+
+  modal.classList.remove('hidden');
+}
+
+function closeAddOnTourModal() {
+  const modal = document.getElementById('modalAddOnTour');
+  if (modal) modal.classList.add('hidden');
+}
+
+function handleOtSchoolPresetSelect() {
+  const select = document.getElementById('selectOtPresetSchool');
+  if (!select || !select.value) return;
+  try {
+    const school = JSON.parse(select.value);
+    document.getElementById('inputOtSchoolNaam').value = school.naam || '';
+    document.getElementById('inputOtLocatie').value = school.locatie || '';
+    if (school.land && school.land !== 'Nederland') {
+      document.getElementById('checkOtIsBuitenland').checked = true;
+      document.getElementById('wrapperOtLand').classList.remove('hidden');
+      document.getElementById('inputOtLand').value = school.land;
+    } else {
+      document.getElementById('checkOtIsBuitenland').checked = false;
+      document.getElementById('wrapperOtLand').classList.add('hidden');
+      document.getElementById('inputOtLand').value = '';
+    }
+  } catch (e) {
+    console.error("Fout bij selecteren school preset:", e);
+  }
+}
+
+function toggleOtCountryField() {
+  const isChecked = document.getElementById('checkOtIsBuitenland').checked;
+  const wrapper = document.getElementById('wrapperOtLand');
+  if (wrapper) wrapper.classList.toggle('hidden', !isChecked);
+}
+
+async function handleSaveOnTourSubmit(e) {
+  e.preventDefault();
+  const btn = document.getElementById('btnSaveOnTourSubmit');
+  btn.innerHTML = `<i class="fa-solid fa-circle-notch fa-spin mr-1"></i> Opslaan...`;
+  btn.disabled = true;
+
+  const isBuitenland = document.getElementById('checkOtIsBuitenland').checked;
+  const payload = {
+    schoolNaam: document.getElementById('inputOtSchoolNaam').value.trim(),
+    locatie: document.getElementById('inputOtLocatie').value.trim(),
+    aantalNodig: parseInt(document.getElementById('inputOtAantalNodig').value, 10) || 1,
+    isBuitenland: isBuitenland,
+    land: isBuitenland ? (document.getElementById('inputOtLand').value.trim() || 'Buitenland') : 'Nederland',
+    startDatum: normalizeDateStr(document.getElementById('inputOtStart').value),
+    eindDatum: normalizeDateStr(document.getElementById('inputOtEind').value)
+  };
+
+  const res = await apiCall("", "POST", { action: "saveOnTour", adminPin: ADMIN_SECRET, tourData: payload });
+  btn.innerHTML = `On Tour Opslaan`;
+  btn.disabled = false;
+
+  if (res && res.success) {
+    closeAddOnTourModal();
+    await loadAdminData();
+  } else {
+    alert("Fout bij opslaan On Tour: " + (res?.error || "Onbekend"));
+  }
+}
+
+// ==========================================
+// SLOT MANAGER MET VERWIJDERKNOP & DATUMNOTATIE
 // ==========================================
 
 function openSlotManagerModal(type, id, selectedDayFilter = null) {
@@ -216,6 +315,26 @@ function openSlotManagerModal(type, id, selectedDayFilter = null) {
     progressBadge.className = `text-xs font-bold px-2 py-0.5 rounded-full ${assignedCount >= totalSlots ? 'bg-emerald-100 text-emerald-800' : 'bg-rose-100 text-rose-800'}`;
   }
 
+  // Verwijderknop dynamisch tonen voor reguliere planning
+  const badgeContainer = progressBadge ? progressBadge.parentElement : null;
+  let delBtn = document.getElementById('btnDeleteSlotPlanningModal');
+  if (!delBtn && badgeContainer) {
+    delBtn = document.createElement('button');
+    delBtn.id = 'btnDeleteSlotPlanningModal';
+    delBtn.onclick = deleteCurrentPlanningFromModal;
+    badgeContainer.appendChild(delBtn);
+  }
+
+  if (delBtn) {
+    if (type === 'PLANNING') {
+      delBtn.className = "text-xs bg-rose-50 hover:bg-rose-100 text-rose-600 font-bold px-2.5 py-0.5 rounded-full border border-rose-200 transition ml-auto flex items-center gap-1 shadow-sm";
+      delBtn.innerHTML = `<i class="fa-solid fa-trash-can text-[10px]"></i> <span>Verwijder Planning</span>`;
+      delBtn.classList.remove('hidden');
+    } else {
+      delBtn.classList.add('hidden');
+    }
+  }
+
   document.getElementById('slotModalTitle').innerText = item.schoolNaam;
   document.getElementById('slotModalSubtitle').innerText = type === 'PLANNING' 
     ? `Datum: ${formatDateNl(item.datum, true)}` 
@@ -237,6 +356,25 @@ function openSlotManagerModal(type, id, selectedDayFilter = null) {
   const modal = document.getElementById('modalSlotManager');
   modal.classList.remove('hidden');
   modal.classList.add('flex');
+}
+
+async function deleteCurrentPlanningFromModal() {
+  if (!currentSlotTarget || currentSlotTarget.type !== 'PLANNING') return;
+  const item = currentSlotTarget.item;
+  if (!confirm(`Weet je zeker dat je de ingeplande les voor "${item.schoolNaam}" op ${formatDateNl(item.datum, true)} wilt verwijderen?`)) {
+    return;
+  }
+  const btn = document.getElementById('btnDeleteSlotPlanningModal');
+  if (btn) btn.innerHTML = `<i class="fa-solid fa-circle-notch fa-spin text-[10px]"></i> Verwijderen...`;
+
+  const res = await apiCall("", "POST", { action: "adminDeletePlanning", adminPin: ADMIN_SECRET, planningId: item.planningId });
+  if (res && res.success) {
+    closeSlotManagerModal();
+    await loadAdminData();
+  } else {
+    alert("Fout bij verwijderen: " + (res?.error || "Onbekende fout"));
+    if (btn) btn.innerHTML = `<i class="fa-solid fa-trash-can text-[10px]"></i> <span>Verwijder Planning</span>`;
+  }
 }
 
 function closeSlotManagerModal() {
