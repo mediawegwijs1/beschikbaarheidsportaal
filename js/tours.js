@@ -1,5 +1,5 @@
 // ==========================================
-// ON TOURS & SLOT MANAGER (V2.1.2)
+// ON TOURS & SLOT MANAGER (V2.1.3)
 // ==========================================
 
 async function loadDocentOnTours() {
@@ -124,7 +124,9 @@ function renderOtRegistrationDayBlocks(tour) {
   }
 }
 
-function closeOnTourRegisterModal() { document.getElementById('modalOnTourRegister').classList.add('hidden'); }
+function closeOnTourRegisterModal() { 
+  document.getElementById('modalOnTourRegister').classList.add('hidden'); 
+}
 
 function setOnTourChoice(choice, customDays = null) {
   activeOtChoice = choice;
@@ -285,7 +287,7 @@ async function handleSaveOnTourSubmit(e) {
 }
 
 // ==========================================
-// SLOT MANAGER MET VERWIJDERKNOP & DATUMNOTATIE
+// SLOT MANAGER (PLANNING & ON TOUR MET VERWIJDERKNOP)
 // ==========================================
 
 function openSlotManagerModal(type, id, selectedDayFilter = null) {
@@ -315,24 +317,22 @@ function openSlotManagerModal(type, id, selectedDayFilter = null) {
     progressBadge.className = `text-xs font-bold px-2 py-0.5 rounded-full ${assignedCount >= totalSlots ? 'bg-emerald-100 text-emerald-800' : 'bg-rose-100 text-rose-800'}`;
   }
 
-  // Verwijderknop dynamisch tonen voor reguliere planning
+  // Verwijderknop voor zowel PLANNING als ONTOUR
   const badgeContainer = progressBadge ? progressBadge.parentElement : null;
   let delBtn = document.getElementById('btnDeleteSlotPlanningModal');
   if (!delBtn && badgeContainer) {
     delBtn = document.createElement('button');
     delBtn.id = 'btnDeleteSlotPlanningModal';
-    delBtn.onclick = deleteCurrentPlanningFromModal;
+    delBtn.onclick = deleteCurrentItemFromModal;
     badgeContainer.appendChild(delBtn);
   }
 
   if (delBtn) {
-    if (type === 'PLANNING') {
-      delBtn.className = "text-xs bg-rose-50 hover:bg-rose-100 text-rose-600 font-bold px-2.5 py-0.5 rounded-full border border-rose-200 transition ml-auto flex items-center gap-1 shadow-sm";
-      delBtn.innerHTML = `<i class="fa-solid fa-trash-can text-[10px]"></i> <span>Verwijder Planning</span>`;
-      delBtn.classList.remove('hidden');
-    } else {
-      delBtn.classList.add('hidden');
-    }
+    delBtn.className = "text-xs bg-rose-50 hover:bg-rose-100 text-rose-600 font-bold px-2.5 py-0.5 rounded-full border border-rose-200 transition ml-auto flex items-center gap-1 shadow-sm";
+    delBtn.innerHTML = type === 'PLANNING' 
+      ? `<i class="fa-solid fa-trash-can text-[10px]"></i> <span>Verwijder Planning</span>` 
+      : `<i class="fa-solid fa-trash-can text-[10px]"></i> <span>Verwijder On Tour</span>`;
+    delBtn.classList.remove('hidden');
   }
 
   document.getElementById('slotModalTitle').innerText = item.schoolNaam;
@@ -358,22 +358,53 @@ function openSlotManagerModal(type, id, selectedDayFilter = null) {
   modal.classList.add('flex');
 }
 
-async function deleteCurrentPlanningFromModal() {
-  if (!currentSlotTarget || currentSlotTarget.type !== 'PLANNING') return;
-  const item = currentSlotTarget.item;
-  if (!confirm(`Weet je zeker dat je de ingeplande les voor "${item.schoolNaam}" op ${formatDateNl(item.datum, true)} wilt verwijderen?`)) {
-    return;
-  }
-  const btn = document.getElementById('btnDeleteSlotPlanningModal');
-  if (btn) btn.innerHTML = `<i class="fa-solid fa-circle-notch fa-spin text-[10px]"></i> Verwijderen...`;
+// Instant feedback (Optimistic UI) bij verwijderen van planning of On Tour
+async function deleteCurrentItemFromModal() {
+  if (!currentSlotTarget) return;
+  const { type, item } = currentSlotTarget;
 
-  const res = await apiCall("", "POST", { action: "adminDeletePlanning", adminPin: ADMIN_SECRET, planningId: item.planningId });
-  if (res && res.success) {
+  if (type === 'PLANNING') {
+    if (!confirm(`Weet je zeker dat je de ingeplande les voor "${item.schoolNaam}" op ${formatDateNl(item.datum, true)} wilt verwijderen?`)) {
+      return;
+    }
+
+    // Direct UI updaten: pop-up sluiten en grijs + spinner tonen op de kalender
+    item._isDeleting = true;
     closeSlotManagerModal();
-    await loadAdminData();
-  } else {
-    alert("Fout bij verwijderen: " + (res?.error || "Onbekende fout"));
-    if (btn) btn.innerHTML = `<i class="fa-solid fa-trash-can text-[10px]"></i> <span>Verwijder Planning</span>`;
+    if (typeof renderPlannerGrid === 'function') renderPlannerGrid();
+    if (typeof renderPlannerGatenSidebar === 'function') renderPlannerGatenSidebar();
+
+    const res = await apiCall("", "POST", { action: "adminDeletePlanning", adminPin: ADMIN_SECRET, planningId: item.planningId });
+    if (res && res.success) {
+      adminData.planning = (adminData.planning || []).filter(p => p.planningId !== item.planningId);
+      if (typeof renderPlannerGrid === 'function') renderPlannerGrid();
+      if (typeof renderPlannerGatenSidebar === 'function') renderPlannerGatenSidebar();
+      if (typeof renderAdminPlanning === 'function') renderAdminPlanning();
+    } else {
+      delete item._isDeleting;
+      if (typeof renderPlannerGrid === 'function') renderPlannerGrid();
+      alert("Fout bij verwijderen: " + (res?.error || "Onbekend"));
+    }
+
+  } else if (type === 'ONTOUR') {
+    if (!confirm(`Weet je zeker dat je de On Tour voor "${item.schoolNaam}" (${formatPeriodNl(item.startDatum, item.eindDatum)}) definitief wilt verwijderen?`)) {
+      return;
+    }
+
+    // Direct UI updaten: pop-up sluiten en grijs maken in On Tour lijst
+    item._isDeleting = true;
+    closeSlotManagerModal();
+    renderPlannerOnToursList();
+
+    const res = await apiCall("", "POST", { action: "deleteOnTour", adminPin: ADMIN_SECRET, tourId: item.tourId });
+    if (res && res.success) {
+      adminData.onTours = (adminData.onTours || []).filter(t => t.tourId !== item.tourId);
+      renderPlannerOnToursList();
+    } else {
+      delete item._isDeleting;
+      renderPlannerOnToursList();
+      alert("Fout bij verwijderen On Tour: " + (res?.error || "Onbekend"));
+    }
   }
 }
 
@@ -718,6 +749,20 @@ function renderPlannerOnToursList() {
   }
 
   tours.forEach(tour => {
+    if (tour._isDeleting) {
+      const card = document.createElement('div');
+      card.className = "p-3 bg-slate-100 rounded-2xl border border-slate-300 opacity-60 text-xs flex items-center justify-between";
+      card.innerHTML = `
+        <span class="font-bold text-slate-500 flex items-center gap-1.5">
+          <i class="fa-solid fa-hourglass-half fa-spin text-amber-600"></i>
+          <span class="line-through">${tour.schoolNaam}</span>
+        </span>
+        <span class="text-[10px] text-slate-400 font-bold">Verwijderen...</span>
+      `;
+      container.appendChild(card);
+      return;
+    }
+
     const card = document.createElement('div');
     card.className = "p-3 bg-white hover:bg-slate-50 rounded-2xl border border-slate-200 shadow-sm text-xs cursor-pointer transition flex flex-col justify-between space-y-2";
     card.onclick = () => openSlotManagerModal('ONTOUR', tour.tourId);
