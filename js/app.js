@@ -1,5 +1,5 @@
 // ==========================================
-// BOOTSTRAP, PROFIEL, PLANNER & ADMIN LOGICA (V2.1.2)
+// BOOTSTRAP, PROFIEL, PLANNER & ADMIN LOGICA (V2.1.3)
 // ==========================================
 
 window.addEventListener('DOMContentLoaded', () => {
@@ -29,7 +29,7 @@ async function detectAppVersion() {
       console.warn("Kon cache-versie niet uitlezen", e);
     }
   }
-  label.innerText = "V2.1.2";
+  label.innerText = "V2.1.3";
 }
 
 // Automatische reload bij een nieuwe Service Worker cache-update
@@ -722,6 +722,7 @@ function renderPlannerGrid() {
   }
 }
 
+// Grijze tegel met draaiende zandloper bij verwijderen van een school
 function renderPlannerDayCell(container, isoDate, label, isToday = false) {
   const normalizedIso = normalizeDateStr(isoDate);
   let plans = (adminData.planning || []).filter(p => normalizeDateStr(p.datum) === normalizedIso);
@@ -736,6 +737,20 @@ function renderPlannerDayCell(container, isoDate, label, isToday = false) {
 
   let plansHtml = "";
   plans.forEach(plan => {
+    // Als de les momenteel wordt verwijderd op de backend:
+    if (plan._isDeleting) {
+      plansHtml += `
+        <div class="p-1.5 rounded-lg border border-slate-300 bg-slate-200/80 text-slate-500 text-[10px] flex items-center justify-between opacity-70 pointer-events-none select-none">
+          <span class="font-bold truncate flex items-center gap-1">
+            <i class="fa-solid fa-hourglass-half fa-spin text-amber-600 text-[9px]"></i>
+            <span class="line-through">${plan.schoolNaam}</span>
+          </span>
+          <span class="text-[9px] font-bold text-slate-400">Wissen...</span>
+        </div>
+      `;
+      return;
+    }
+
     const assignedCount = (plan.toegewezenDocentIDs || []).length;
     const total = plan.aantalNodig;
     const isComplete = assignedCount >= total;
@@ -935,13 +950,56 @@ async function adminManualRefresh(btn) {
   }, 400);
 }
 
+// Dynamische opbouw van het Systeem & Cache tabblad (altijd zichtbaar, nooit leeg)
+function renderAdminSystemTab() {
+  const container = document.getElementById('adminTabSystem');
+  if (!container) return;
+
+  container.innerHTML = `
+    <div class="bg-white p-6 rounded-3xl border border-slate-200 shadow-sm space-y-4">
+      <div class="flex items-center gap-3">
+        <div class="w-10 h-10 rounded-2xl bg-amber-100 text-amber-800 flex items-center justify-center text-base">
+          <i class="fa-solid fa-server"></i>
+        </div>
+        <div>
+          <h3 class="font-bold text-slate-900 text-sm md:text-base">Google Apps Script Server-Cache</h3>
+          <p class="text-slate-500 text-xs">Beheer het RAM-geheugen van de backend database</p>
+        </div>
+      </div>
+
+      <p class="text-slate-600 text-xs leading-relaxed">
+        Om de website snel te laten laden, bewaart de server docenten en scholen tijdelijk in een snelle RAM-cache. 
+        Als je handmatig gegevens, cellen of pincodes in de Google Sheet hebt gewijzigd of leeggemaakt, kan de server nog tot 6 uur de oude gegevens vasthouden.
+      </p>
+
+      <div class="p-4 bg-amber-50/70 border border-amber-200 rounded-2xl flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+        <div>
+          <span class="font-extrabold text-amber-950 text-xs block">Server-Cache Geforceerd Legen</span>
+          <span class="text-[11px] text-amber-800">Wist de RAM-cache en dwingt Google Apps Script om direct de Google Sheets opnieuw uit te lezen.</span>
+        </div>
+        <button 
+          onclick="adminFlushServerCache(this)" 
+          class="px-4 py-2.5 bg-rose-600 hover:bg-rose-700 text-white font-bold rounded-xl transition flex items-center gap-2 shadow-sm shrink-0 text-xs"
+        >
+          <i class="fa-solid fa-trash-can"></i> <span>Server Cache Legen &amp; Herladen</span>
+        </button>
+      </div>
+    </div>
+  `;
+}
+
 function switchAdminTab(tab) {
   document.getElementById('adminTabPlanning').classList.toggle('hidden', tab !== 'planning');
   document.getElementById('adminTabApprovals').classList.toggle('hidden', tab !== 'approvals');
   document.getElementById('adminTabUnfilled').classList.toggle('hidden', tab !== 'unfilled');
   document.getElementById('adminTabDocenten').classList.toggle('hidden', tab !== 'docenten');
   document.getElementById('adminTabScholen').classList.toggle('hidden', tab !== 'scholen');
-  document.getElementById('adminTabSystem').classList.toggle('hidden', tab !== 'system');
+  
+  const systemTab = document.getElementById('adminTabSystem');
+  if (systemTab) {
+    systemTab.classList.toggle('hidden', tab !== 'system');
+    if (tab === 'system') renderAdminSystemTab();
+  }
 
   document.getElementById('tabBtnPlanning').className = tab === 'planning' ? 'px-3 py-1.5 rounded-lg bg-white text-slate-900 shadow-sm transition' : 'px-3 py-1.5 rounded-lg text-slate-600 hover:text-slate-900 transition';
   document.getElementById('tabBtnApprovals').className = tab === 'approvals' ? 'px-3 py-1.5 rounded-lg bg-white text-slate-900 shadow-sm transition' : 'px-3 py-1.5 rounded-lg text-slate-600 hover:text-slate-900 transition';
