@@ -1,5 +1,5 @@
 // ==========================================
-// BOOTSTRAP, PROFIEL, PLANNER & ADMIN LOGICA (V2.1.3)
+// BOOTSTRAP, PROFIEL, PLANNER & ADMIN LOGICA (V2.1.4)
 // ==========================================
 
 window.addEventListener('DOMContentLoaded', () => {
@@ -29,7 +29,7 @@ async function detectAppVersion() {
       console.warn("Kon cache-versie niet uitlezen", e);
     }
   }
-  label.innerText = "V2.1.3";
+  label.innerText = "V2.1.4";
 }
 
 // Automatische reload bij een nieuwe Service Worker cache-update
@@ -294,7 +294,7 @@ function showPinError(msg) {
 }
 
 // ==========================================
-// ONBOARDING & VOORKEUREN
+// ONBOARDING & VOORKEUREN (INLINE BEWERKEN)
 // ==========================================
 
 function toggleOnboardingRegularFields() {
@@ -337,7 +337,7 @@ function openProfileModal(isEdit = false) {
       
       ghostPeriodesData = (currentDocent.vastePeriodes || [])
         .filter(p => !p.tot || p.tot >= todayIso)
-        .map(p => ({ ...p, active: true }));
+        .map(p => ({ ...p, active: true, _isEditingInline: false }));
     }
   } else {
     title.innerText = "Welkom! Even kennismaken 👋";
@@ -367,12 +367,16 @@ function renderGhostPeriodes() {
 
   rows.forEach((p, idx) => {
     const isAct = p.active;
+    const isEditingInline = p._isEditingInline === true;
     const monthBadgeText = getMonthLabelForRange(p.van, p.tot);
     const isPendingDelete = p.status === "PENDING_DELETE";
     const isPendingEdit = p.status === "PENDING_EDIT";
 
+    // Bewerkbaar als het een nieuwe rij is OF als inline editing actief is
+    const isFieldsEditable = (p.isNew && isAct) || isEditingInline;
+
     const div = document.createElement('div');
-    div.className = `p-3.5 rounded-2xl border transition ${isAct ? 'bg-white border-slate-300 shadow-sm' : 'bg-slate-100/70 border-slate-200 opacity-60'} space-y-2.5`;
+    div.className = `p-3.5 rounded-2xl border transition ${isEditingInline ? 'bg-amber-50/50 border-amber-300 ring-2 ring-amber-200' : (isAct ? 'bg-white border-slate-300 shadow-sm' : 'bg-slate-100/70 border-slate-200 opacity-60')} space-y-2.5`;
 
     let statusBadge = "";
     if (isPendingDelete) {
@@ -383,7 +387,7 @@ function renderGhostPeriodes() {
 
     div.innerHTML = `
       <div class="flex items-center justify-between gap-2 border-b border-slate-100 pb-2">
-        <div class="flex items-center gap-2">
+        <div class="flex items-center gap-2 flex-wrap">
           <input type="checkbox" onchange="toggleGhostRow(${idx}, this.checked)" ${isAct ? 'checked' : ''} ${p.id && !p.isNew ? 'disabled' : ''} class="w-4 h-4 rounded text-emerald-600 focus:ring-emerald-500 cursor-pointer" />
           <span class="font-extrabold text-xs text-slate-800">Periode ${idx + 1}</span>
           ${monthBadgeText ? `<span class="px-2 py-0.5 rounded-md bg-indigo-50 text-indigo-700 font-bold text-[10px]">${monthBadgeText}</span>` : ''}
@@ -392,8 +396,8 @@ function renderGhostPeriodes() {
 
         ${isAct && p.id && !p.isNew ? `
           <div class="flex items-center gap-1">
-            ${(!isPendingDelete && !isPendingEdit) ? `
-              <button type="button" onclick="requestEditPeriod('${p.id}')" class="text-slate-500 hover:text-amber-600 p-1 rounded-lg hover:bg-slate-100 transition" title="Wijziging aanvragen"><i class="fa-solid fa-pencil text-xs"></i></button>
+            ${(!isPendingDelete && !isPendingEdit && !isEditingInline) ? `
+              <button type="button" onclick="startInlineEditPeriod(${idx})" class="text-slate-500 hover:text-amber-600 p-1 rounded-lg hover:bg-slate-100 transition" title="Inline bewerken"><i class="fa-solid fa-pencil text-xs"></i></button>
               <button type="button" onclick="requestDeletePeriod('${p.id}')" class="text-slate-500 hover:text-rose-600 p-1 rounded-lg hover:bg-slate-100 transition" title="Verwijdering aanvragen"><i class="fa-solid fa-trash-can text-xs"></i></button>
             ` : ''}
           </div>
@@ -402,44 +406,122 @@ function renderGhostPeriodes() {
         ` : '')}
       </div>
 
-      <div class="grid grid-cols-2 gap-2 ${isAct && !isPendingDelete ? '' : 'pointer-events-none opacity-50'}">
+      <div class="grid grid-cols-2 gap-2 ${isFieldsEditable ? '' : 'pointer-events-none opacity-60'}">
         <div>
           <span class="text-[10px] font-bold text-slate-500 block mb-1">Van datum:</span>
-          <input type="text" id="ghostVan_${idx}" value="${p.van || ''}" placeholder="Kies datum" class="w-full p-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-medium cursor-pointer" />
+          <input type="text" id="ghostVan_${idx}" value="${p.van || ''}" placeholder="Kies datum" class="w-full p-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-medium cursor-pointer" ${isFieldsEditable ? '' : 'disabled'} />
         </div>
         <div>
           <span class="text-[10px] font-bold text-slate-500 block mb-1">Tot en met:</span>
-          <input type="text" id="ghostTot_${idx}" value="${p.tot || ''}" placeholder="Kies datum" class="w-full p-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-medium cursor-pointer" />
+          <input type="text" id="ghostTot_${idx}" value="${p.tot || ''}" placeholder="Kies datum" class="w-full p-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-medium cursor-pointer" ${isFieldsEditable ? '' : 'disabled'} />
         </div>
       </div>
 
-      <div class="pt-1 flex flex-wrap items-center justify-between gap-1.5 ${isAct && !isPendingDelete ? '' : 'pointer-events-none opacity-50'}">
+      <div class="pt-1 flex flex-wrap items-center justify-between gap-1.5 ${isFieldsEditable ? '' : 'pointer-events-none opacity-60'}">
         <span class="text-[11px] font-bold text-slate-500">Vaste dagen:</span>
         <div class="flex items-center gap-1">
           ${['Ma', 'Di', 'Wo', 'Do', 'Vr'].map(d => `
-            <label class="text-xs font-bold px-2.5 py-1 rounded-lg border transition ${isAct ? 'cursor-pointer' : ''} ${(p.dagen || []).includes(d) ? 'bg-emerald-600 text-white border-emerald-600 shadow-sm' : 'bg-slate-50 hover:bg-slate-200 text-slate-700 border-slate-200'}">
-              <input type="checkbox" onchange="toggleGhostDay(${idx}, '${d}', this.checked)" ${(p.dagen || []).includes(d) ? 'checked' : ''} ${isAct ? '' : 'disabled'} class="hidden" /> ${d}
+            <label class="text-xs font-bold px-2.5 py-1 rounded-lg border transition ${isFieldsEditable ? 'cursor-pointer' : ''} ${(p.dagen || []).includes(d) ? 'bg-emerald-600 text-white border-emerald-600 shadow-sm' : 'bg-slate-50 hover:bg-slate-200 text-slate-700 border-slate-200'}">
+              <input type="checkbox" onchange="toggleGhostDay(${idx}, '${d}', this.checked)" ${(p.dagen || []).includes(d) ? 'checked' : ''} ${isFieldsEditable ? '' : 'disabled'} class="hidden" /> ${d}
             </label>
           `).join('')}
         </div>
       </div>
+
+      ${isEditingInline ? `
+        <div class="pt-2 border-t border-amber-200 flex items-center justify-end gap-2">
+          <button type="button" onclick="cancelInlineEditPeriod(${idx})" class="px-3 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-600 font-bold rounded-xl text-xs transition">Annuleren</button>
+          <button type="button" onclick="submitInlineEditPeriod(${idx})" id="btnSaveInline_${idx}" class="px-3.5 py-1.5 bg-amber-500 hover:bg-amber-600 text-white font-bold rounded-xl text-xs transition shadow-sm flex items-center gap-1.5">
+            <i class="fa-solid fa-paper-plane"></i> <span>Aanvraag Wijziging Indienen</span>
+          </button>
+        </div>
+      ` : ''}
     `;
     container.appendChild(div);
 
-    initFlatpickrInstance(document.getElementById(`ghostVan_${idx}`), {
-      defaultDate: p.van || null,
-      onChange: (selectedDates, dateStr) => {
-        updateGhostRowData(idx, 'van', dateStr);
-      }
-    });
+    if (isFieldsEditable) {
+      initFlatpickrInstance(document.getElementById(`ghostVan_${idx}`), {
+        defaultDate: p.van || null,
+        onChange: (selectedDates, dateStr) => {
+          updateGhostRowData(idx, 'van', dateStr);
+        }
+      });
 
-    initFlatpickrInstance(document.getElementById(`ghostTot_${idx}`), {
-      defaultDate: p.tot || null,
-      onChange: (selectedDates, dateStr) => {
-        updateGhostRowData(idx, 'tot', dateStr);
-      }
-    });
+      initFlatpickrInstance(document.getElementById(`ghostTot_${idx}`), {
+        defaultDate: p.tot || null,
+        onChange: (selectedDates, dateStr) => {
+          updateGhostRowData(idx, 'tot', dateStr);
+        }
+      });
+    }
   });
+}
+
+function startInlineEditPeriod(idx) {
+  const p = ghostPeriodesData[idx];
+  if (!p) return;
+  p._origVan = p.van;
+  p._origTot = p.tot;
+  p._origDagen = [...(p.dagen || [])];
+  p._isEditingInline = true;
+  renderGhostPeriodes();
+}
+
+function cancelInlineEditPeriod(idx) {
+  const p = ghostPeriodesData[idx];
+  if (!p) return;
+  p.van = p._origVan || p.van;
+  p.tot = p._origTot || p.tot;
+  p.dagen = p._origDagen || p.dagen;
+  p._isEditingInline = false;
+  renderGhostPeriodes();
+}
+
+async function submitInlineEditPeriod(idx) {
+  const p = ghostPeriodesData[idx];
+  if (!p) return;
+
+  if (!p.van || !p.tot || !p.dagen || p.dagen.length === 0) {
+    alert("Vul een geldige start- en einddatum in en kies minimaal 1 vaste werkdag.");
+    return;
+  }
+
+  const btn = document.getElementById(`btnSaveInline_${idx}`);
+  if (btn) {
+    btn.disabled = true;
+    btn.innerHTML = `<i class="fa-solid fa-circle-notch fa-spin"></i> Verzenden...`;
+  }
+
+  const res = await apiCall("", "POST", {
+    action: "requestPeriodAction",
+    docentId: currentDocent.id,
+    pin: currentPin,
+    actionType: "REQUEST_EDIT",
+    periodId: p.id,
+    periodData: { van: p.van, tot: p.tot, dagen: p.dagen }
+  });
+
+  if (res.success) {
+    alert("✅ Wijzigingsaanvraag succesvol verzonden naar de planner!");
+    p.status = "PENDING_EDIT";
+    p._isEditingInline = false;
+    
+    // Werk actieve docentstatus lokaal bij
+    const activeDocP = (currentDocent.vastePeriodes || []).find(x => x.id === p.id);
+    if (activeDocP) {
+      activeDocP.status = "PENDING_EDIT";
+      activeDocP.pendingVan = p.van;
+      activeDocP.pendingTot = p.tot;
+      activeDocP.pendingDagen = p.dagen;
+    }
+    renderGhostPeriodes();
+  } else {
+    alert("Fout bij indienen: " + (res.error || "Onbekende fout"));
+    if (btn) {
+      btn.disabled = false;
+      btn.innerHTML = `<i class="fa-solid fa-paper-plane"></i> <span>Aanvraag Wijziging Indienen</span>`;
+    }
+  }
 }
 
 function toggleGhostRow(idx, checked) {
@@ -454,7 +536,6 @@ function toggleGhostRow(idx, checked) {
 function updateGhostRowData(idx, key, val) {
   if (ghostPeriodesData[idx]) {
     ghostPeriodesData[idx][key] = val;
-    renderGhostPeriodes();
   }
 }
 
@@ -480,25 +561,6 @@ async function requestDeletePeriod(periodId) {
     alert("Aanvraag verstuurd ter goedkeuring van de planner.");
     const p = (currentDocent.vastePeriodes || []).find(x => x.id === periodId);
     if (p) p.status = "PENDING_DELETE";
-    renderGhostPeriodes();
-  } else {
-    alert("Fout: " + res.error);
-  }
-}
-
-async function requestEditPeriod(periodId) {
-  const p = (currentDocent.vastePeriodes || []).find(x => x.id === periodId);
-  if (!p) return;
-
-  const newVan = prompt("Nieuwe startdatum (YYYY-MM-DD):", p.van);
-  if (!newVan) return;
-  const newTot = prompt("Nieuwe einddatum (YYYY-MM-DD):", p.tot);
-  if (!newTot) return;
-
-  const res = await apiCall("", "POST", { action: "requestPeriodAction", docentId: currentDocent.id, pin: currentPin, actionType: "REQUEST_EDIT", periodId: periodId, periodData: { van: newVan, tot: newTot, dagen: p.dagen } });
-  if (res.success) {
-    alert("Wijzigingsaanvraag verstuurd naar de planner.");
-    p.status = "PENDING_EDIT";
     renderGhostPeriodes();
   } else {
     alert("Fout: " + res.error);
@@ -722,7 +784,6 @@ function renderPlannerGrid() {
   }
 }
 
-// Grijze tegel met draaiende zandloper bij verwijderen van een school
 function renderPlannerDayCell(container, isoDate, label, isToday = false) {
   const normalizedIso = normalizeDateStr(isoDate);
   let plans = (adminData.planning || []).filter(p => normalizeDateStr(p.datum) === normalizedIso);
@@ -737,7 +798,6 @@ function renderPlannerDayCell(container, isoDate, label, isToday = false) {
 
   let plansHtml = "";
   plans.forEach(plan => {
-    // Als de les momenteel wordt verwijderd op de backend:
     if (plan._isDeleting) {
       plansHtml += `
         <div class="p-1.5 rounded-lg border border-slate-300 bg-slate-200/80 text-slate-500 text-[10px] flex items-center justify-between opacity-70 pointer-events-none select-none">
@@ -950,7 +1010,6 @@ async function adminManualRefresh(btn) {
   }, 400);
 }
 
-// Dynamische opbouw van het Systeem & Cache tabblad (altijd zichtbaar, nooit leeg)
 function renderAdminSystemTab() {
   const container = document.getElementById('adminTabSystem');
   if (!container) return;
@@ -1062,6 +1121,18 @@ function renderAdminPlanning() {
   });
 }
 
+// Render badges voor de Ma t/m Vr werkdagen
+function renderDaysBadgeGroup(daysArray, isGreen = true) {
+  const weekDays = ['Ma', 'Di', 'Wo', 'Do', 'Vr'];
+  return weekDays.map(d => {
+    const active = (daysArray || []).includes(d);
+    if (active) {
+      return `<span class="px-1.5 py-0.5 rounded text-[10px] font-extrabold ${isGreen ? 'bg-emerald-600 text-white' : 'bg-rose-600 text-white'}">${d}</span>`;
+    }
+    return `<span class="px-1.5 py-0.5 rounded text-[10px] font-bold bg-slate-100 text-slate-400">${d}</span>`;
+  }).join(' ');
+}
+
 function renderAdminApprovals() {
   const container = document.getElementById('adminApprovalsList');
   container.innerHTML = "";
@@ -1081,32 +1152,72 @@ function renderAdminApprovals() {
     return;
   }
 
+  // VASTE PERIODE VERZOEKEN (MET VERGELIJKING OUD VS NIEUW)
   if (pendingPeriods.length > 0) {
     container.innerHTML += `<h4 class="font-extrabold text-slate-700 uppercase tracking-wider text-[11px] mb-2">Vaste Periode Verzoeken:</h4>`;
-    pendingPeriods.forEach(req => {
+    pendingPeriods.forEach((req, idx) => {
       const isDel = req.status === "PENDING_DELETE";
+      const p = req.periode || {};
       const card = document.createElement('div');
-      card.className = `p-4 bg-white rounded-2xl border-2 ${isDel ? 'border-rose-200' : 'border-amber-200'} shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-3 text-xs`;
+      card.className = `p-4 bg-white rounded-2xl border-2 ${isDel ? 'border-rose-200' : 'border-amber-300'} shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-3 text-xs`;
+
+      let detailContent = "";
+      if (isDel) {
+        detailContent = `
+          <div class="text-slate-700 font-medium">
+            Periode volledig wissen: <strong class="text-rose-700">${formatPeriodNl(p.van, p.tot)}</strong>
+            <div class="mt-1 flex items-center gap-1.5">
+              <span class="text-slate-500 font-bold text-[10px]">Dagen:</span>
+              ${renderDaysBadgeGroup(p.dagen, false)}
+            </div>
+          </div>
+        `;
+      } else {
+        // Wijzigingsverzoek met OUD vs NIEUW vergelijking
+        detailContent = `
+          <div class="space-y-2 mt-1">
+            <div class="flex items-center gap-2 flex-wrap">
+              <span class="text-[10px] font-bold text-slate-500 uppercase tracking-wide">Datums:</span>
+              <span class="line-through text-rose-600 font-bold bg-rose-50 px-2 py-0.5 rounded-md border border-rose-200">${formatPeriodNl(p.van, p.tot)}</span>
+              <i class="fa-solid fa-arrow-right text-slate-400 text-[10px]"></i>
+              <span class="text-emerald-700 font-extrabold bg-emerald-50 px-2 py-0.5 rounded-md border border-emerald-200">${formatPeriodNl(p.pendingVan || p.van, p.pendingTot || p.tot)}</span>
+            </div>
+
+            <div class="flex items-center gap-2 flex-wrap">
+              <span class="text-[10px] font-bold text-slate-500 uppercase tracking-wide">Dagen:</span>
+              <div class="flex items-center gap-1">${renderDaysBadgeGroup(p.dagen, false)}</div>
+              <i class="fa-solid fa-arrow-right text-slate-400 text-[10px]"></i>
+              <div class="flex items-center gap-1">${renderDaysBadgeGroup(p.pendingDagen || p.dagen, true)}</div>
+            </div>
+          </div>
+        `;
+      }
+
       card.innerHTML = `
-        <div>
+        <div class="flex-1">
           <div class="flex items-center gap-2 mb-1">
             <span class="font-extrabold text-slate-900 text-sm">${req.docentNaam}</span>
             <span class="font-bold px-2 py-0.5 rounded-md text-[10px] ${isDel ? 'bg-rose-100 text-rose-800' : 'bg-amber-100 text-amber-800'}">${isDel ? '🗑️ Verwijderingsverzoek' : '✏️ Wijzigingsverzoek'}</span>
           </div>
-          <div class="text-slate-700 font-medium">${isDel ? `Periode wissen: <strong>${formatPeriodNl(req.periode.van, req.periode.tot)} (${(req.periode.dagen || []).join(', ')})</strong>` : `Gewijzigd naar: <strong>${formatPeriodNl(req.periode.pendingVan, req.periode.pendingTot)}</strong>`}</div>
+          ${detailContent}
         </div>
-        <div class="flex items-center gap-2">
-          <button onclick="approvePeriodRequest('${req.docentId}', '${req.periodId}', true)" class="px-3.5 py-2 bg-emerald-600 text-white font-bold rounded-xl text-xs"><i class="fa-solid fa-check mr-1"></i> Akkoord</button>
-          <button onclick="approvePeriodRequest('${req.docentId}', '${req.periodId}', false)" class="px-3.5 py-2 bg-rose-600 text-white font-bold rounded-xl text-xs"><i class="fa-solid fa-xmark mr-1"></i> Afwijzen</button>
+        <div class="flex items-center gap-2 shrink-0">
+          <button id="btnApprovePer_${idx}" onclick="approvePeriodRequest(this, '${req.docentId}', '${req.periodId}', true, ${idx})" class="px-3.5 py-2 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-xl text-xs transition flex items-center gap-1.5 shadow-sm">
+            <i class="fa-solid fa-check"></i> <span>Akkoord</span>
+          </button>
+          <button id="btnRejectPer_${idx}" onclick="approvePeriodRequest(this, '${req.docentId}', '${req.periodId}', false, ${idx})" class="px-3.5 py-2 bg-rose-600 hover:bg-rose-700 text-white font-bold rounded-xl text-xs transition flex items-center gap-1.5 shadow-sm">
+            <i class="fa-solid fa-xmark"></i> <span>Afwijzen</span>
+          </button>
         </div>
       `;
       container.appendChild(card);
     });
   }
 
+  // LOSSE DAGWIJZIGINGEN
   if (pendingDays.length > 0) {
     container.innerHTML += `<h4 class="font-extrabold text-slate-700 uppercase tracking-wider text-[11px] mt-4 mb-2">Losse Dagwijzigingen:</h4>`;
-    pendingDays.forEach(item => {
+    pendingDays.forEach((item, dIdx) => {
       const docent = adminData.docenten.find(d => d.id === item.docentId);
       const docName = docent ? docent.naam : item.docentId;
       const trans = item.vorigeStatus ? `${item.vorigeStatus} ➔ ${item.status}` : item.status;
@@ -1119,8 +1230,12 @@ function renderAdminApprovals() {
           <div class="text-slate-600">📅 Datum: <strong class="text-slate-800">${formatDateNl(item.datum, true)}</strong></div>
         </div>
         <div class="flex items-center gap-2">
-          <button onclick="approveAvailability(this, '${item.recordId}', true)" class="px-3.5 py-2 bg-emerald-600 text-white font-bold rounded-xl text-xs"><i class="fa-solid fa-check mr-1"></i> Akkoord</button>
-          <button onclick="approveAvailability(this, '${item.recordId}', false)" class="px-3.5 py-2 bg-rose-600 text-white font-bold rounded-xl text-xs"><i class="fa-solid fa-xmark mr-1"></i> Afwijzen</button>
+          <button id="btnApproveDay_${dIdx}" onclick="approveAvailability(this, '${item.recordId}', true, ${dIdx})" class="px-3.5 py-2 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-xl text-xs transition flex items-center gap-1.5 shadow-sm">
+            <i class="fa-solid fa-check"></i> <span>Akkoord</span>
+          </button>
+          <button id="btnRejectDay_${dIdx}" onclick="approveAvailability(this, '${item.recordId}', false, ${dIdx})" class="px-3.5 py-2 bg-rose-600 hover:bg-rose-700 text-white font-bold rounded-xl text-xs transition flex items-center gap-1.5 shadow-sm">
+            <i class="fa-solid fa-xmark"></i> <span>Afwijzen</span>
+          </button>
         </div>
       `;
       container.appendChild(card);
@@ -1128,8 +1243,23 @@ function renderAdminApprovals() {
   }
 }
 
-async function approvePeriodRequest(docentId, periodId, approved) {
+async function approvePeriodRequest(btn, docentId, periodId, approved, idx) {
+  const otherBtn = document.getElementById(approved ? `btnRejectPer_${idx}` : `btnApprovePer_${idx}`);
+  if (otherBtn) otherBtn.disabled = true;
+  btn.disabled = true;
+  btn.innerHTML = `<i class="fa-solid fa-circle-notch fa-spin mr-1"></i> Verwerken...`;
+
   await apiCall("", "POST", { action: "adminApprovePeriodRequest", adminPin: ADMIN_SECRET, docentId, periodId, approved });
+  await loadAdminData();
+}
+
+async function approveAvailability(btn, recordId, approved, idx) {
+  const otherBtn = document.getElementById(approved ? `btnRejectDay_${idx}` : `btnApproveDay_${idx}`);
+  if (otherBtn) otherBtn.disabled = true;
+  btn.disabled = true;
+  btn.innerHTML = `<i class="fa-solid fa-circle-notch fa-spin mr-1"></i> Verwerken...`;
+
+  await apiCall("", "POST", { action: "adminApproveAvailability", adminPin: ADMIN_SECRET, recordId, approved });
   await loadAdminData();
 }
 
@@ -1365,13 +1495,6 @@ async function deletePlanning(btn, id) {
     await apiCall("", "POST", { action: "adminDeletePlanning", adminPin: ADMIN_SECRET, planningId: id });
     await loadAdminData();
   }
-}
-
-async function approveAvailability(btn, recordId, approved) {
-  btn.innerHTML = `<i class="fa-solid fa-circle-notch fa-spin"></i>`;
-  btn.disabled = true;
-  await apiCall("", "POST", { action: "adminApproveAvailability", adminPin: ADMIN_SECRET, recordId, approved });
-  await loadAdminData();
 }
 
 async function updateDocentSkill(selectEl, docentId, skillLevel) {
