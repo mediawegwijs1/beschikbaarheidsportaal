@@ -854,6 +854,7 @@ function renderPlannerGrid() {
 }
 
 function renderPlannerDayCell(container, isoDate, label, isToday = false) {
+  const isWeek = plannerViewMode === 'week';
   const normalizedIso = normalizeDateStr(isoDate);
   let plans = (adminData.planning || []).filter(p => normalizeDateStr(p.datum) === normalizedIso);
 
@@ -862,14 +863,15 @@ function renderPlannerDayCell(container, isoDate, label, isToday = false) {
   }
 
   const cell = document.createElement('div');
+  const heightClass = isWeek ? 'min-h-[520px] md:min-h-[580px] p-3' : 'h-32 md:h-36 p-2';
   const todayStyle = isToday ? 'ring-2 ring-sky-400 ring-offset-1 border-sky-400 bg-sky-50/40' : '';
-  cell.className = `h-32 md:h-36 p-2 bg-slate-50 hover:bg-slate-100/80 rounded-2xl border border-slate-200 ${todayStyle} transition flex flex-col justify-between overflow-hidden`;
+  cell.className = `${heightClass} bg-slate-50 hover:bg-slate-100/80 rounded-2xl border border-slate-200 ${todayStyle} transition flex flex-col justify-between overflow-hidden`;
 
   let plansHtml = "";
   plans.forEach(plan => {
     if (plan._isDeleting) {
       plansHtml += `
-        <div class="p-1.5 rounded-lg border border-slate-300 bg-slate-200/80 text-slate-500 text-[10px] flex items-center justify-between opacity-70 pointer-events-none select-none">
+        <div class="p-2 rounded-xl border border-slate-300 bg-slate-200/80 text-slate-500 text-[10px] flex items-center justify-between opacity-70 pointer-events-none select-none">
           <span class="font-bold truncate flex items-center gap-1">
             <i class="fa-solid fa-hourglass-half fa-spin text-amber-600 text-[9px]"></i>
             <span class="line-through">${plan.schoolNaam}</span>
@@ -887,24 +889,39 @@ function renderPlannerDayCell(container, isoDate, label, isToday = false) {
 
     let badgeStyle = isComplete ? "bg-emerald-50 border-emerald-200 text-emerald-900" : (isPartial ? "bg-amber-50 border-amber-200 text-amber-900" : "bg-rose-50 border-rose-200 text-rose-900 animate-pulse");
 
+    // In weekoverzicht tonen we eventuele ingedeelde docenten netjes erbij
+    let assignedDocentsHtml = "";
+    if (isWeek && assignedCount > 0) {
+      const docNames = (plan.toegewezenDocentIDs || []).map(id => {
+        const d = (adminData.docenten || []).find(doc => doc.id === id);
+        return d ? d.naam : id;
+      }).join(", ");
+      assignedDocentsHtml = `<div class="text-[9px] text-slate-500 font-medium truncate mt-0.5"><i class="fa-solid fa-user-check text-[8px] mr-1 text-emerald-600"></i>${docNames}</div>`;
+    }
+
     plansHtml += `
-      <div onclick="event.stopPropagation(); openSlotManagerModal('PLANNING', '${plan.planningId}')" class="p-1.5 rounded-lg border text-[10px] cursor-pointer transition flex items-center justify-between ${badgeStyle}">
-        <span class="font-extrabold truncate flex-1">🏫 ${plan.schoolNaam}</span>
-        <span class="font-extrabold px-1.5 py-0.2 rounded text-[9px] ${isComplete ? 'bg-emerald-600 text-white' : (isPartial ? 'bg-amber-500 text-white' : 'bg-rose-600 text-white')}">${assignedCount}/${total}</span>
+      <div onclick="event.stopPropagation(); openSlotManagerModal('PLANNING', '${plan.planningId}')" class="${isWeek ? 'p-2.5' : 'p-1.5'} rounded-xl border text-[10px] cursor-pointer transition flex flex-col justify-between ${badgeStyle} shadow-xs hover:shadow-sm">
+        <div class="flex items-center justify-between gap-1">
+          <span class="font-extrabold truncate flex-1 leading-tight">🏫 ${plan.schoolNaam}</span>
+          <span class="font-extrabold px-1.5 py-0.2 rounded text-[9px] shrink-0 ${isComplete ? 'bg-emerald-600 text-white' : (isPartial ? 'bg-amber-500 text-white' : 'bg-rose-600 text-white')}">${assignedCount}/${total}</span>
+        </div>
+        ${assignedDocentsHtml}
       </div>
     `;
   });
 
+  const scrollStyle = isWeek ? 'overflow-y-auto max-h-[480px] custom-scrollbar space-y-2' : 'overflow-y-auto custom-scrollbar space-y-1';
+
   cell.innerHTML = `
-    <div class="flex items-center justify-between">
+    <div class="flex items-center justify-between pb-1">
       <span class="font-extrabold text-xs text-slate-700 flex items-center gap-1">
         <span>${label}</span>
-        ${isToday ? '<span class="text-[8px] bg-sky-500 text-white px-1 py-0.2 rounded-full font-bold">Vandaag</span>' : ''}
+        ${isToday ? '<span class="text-[8px] bg-sky-500 text-white px-1.5 py-0.2 rounded-full font-bold">Vandaag</span>' : ''}
       </span>
-      <button onclick="quickAddSchoolToDate('${normalizedIso}')" title="School inplannen" class="w-5 h-5 rounded-md bg-white border border-slate-200 hover:bg-emerald-50 hover:text-emerald-700 flex items-center justify-center text-[10px] text-slate-500"><i class="fa-solid fa-plus"></i></button>
+      <button onclick="quickAddSchoolToDate('${normalizedIso}')" title="School inplannen" class="w-6 h-6 rounded-lg bg-white border border-slate-200 hover:bg-emerald-50 hover:text-emerald-700 flex items-center justify-center text-[11px] text-slate-500 shadow-xs"><i class="fa-solid fa-plus"></i></button>
     </div>
-    <div class="flex-1 overflow-y-auto custom-scrollbar space-y-1 my-1">
-      ${plansHtml || (filterOnlyGaten ? '<span class="text-[10px] text-slate-300 block text-center pt-3">-</span>' : '<span class="text-[10px] text-slate-300 block text-center pt-3">Geen lessen</span>')}
+    <div class="flex-1 ${scrollStyle} my-1">
+      ${plansHtml || (filterOnlyGaten ? '<span class="text-[10px] text-slate-300 block text-center pt-8">-</span>' : '<span class="text-[10px] text-slate-300 block text-center pt-8">Geen lessen</span>')}
     </div>
   `;
   container.appendChild(cell);
