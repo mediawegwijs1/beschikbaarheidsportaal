@@ -1,6 +1,31 @@
 // ==========================================
-// BOOTSTRAP, PROFIEL, PLANNER & ADMIN LOGICA (V2.1.5)
+// BOOTSTRAP, PROFIEL, PLANNER & ADMIN LOGICA (V2.1.6)
 // ==========================================
+
+let clockClicks = 0;
+let clockTimer = null;
+let docentenCache = [];
+let schoolsCache = [];
+let enteredPin = "";
+let pinCallback = null;
+let currentDocent = null;
+let currentPin = "";
+let ghostPeriodesData = [];
+let plannerCurrentDate = new Date();
+let plannerViewMode = '3weeks';
+let filterOnlyGaten = false;
+let adminData = {};
+let docFilterTour = false;
+let docFilterRijbewijs = false;
+let docFilterAuto = false;
+let viewingAdminDocent = null;
+let adminDocentCalDate = new Date();
+let selectedAdminDayAction = null;
+
+function getCleanSortName(name) {
+  if (!name) return "";
+  return String(name).toLowerCase().replace(/^(de|het|een|obs|cbs|rkbs|pcbs|sbo)\s+/i, '').trim();
+}
 
 window.addEventListener('DOMContentLoaded', () => {
   startClock();
@@ -29,7 +54,7 @@ async function detectAppVersion() {
       console.warn("Kon cache-versie niet uitlezen", e);
     }
   }
-  label.innerText = "V2.1.5";
+  label.innerText = "V2.1.6";
 }
 
 // Automatische reload bij een nieuwe Service Worker cache-update
@@ -125,7 +150,7 @@ async function loadDocentenList() {
   if (gridContainer) gridContainer.classList.add('hidden');
 
   const res = await apiCall("", "GET", { action: "getDocentenList" });
-  if (res.success) docentenCache = res.docenten;
+  if (res && res.success) docentenCache = res.docenten;
 
   if (loadingBanner) loadingBanner.classList.add('hidden');
   if (gridContainer) gridContainer.classList.remove('hidden');
@@ -134,7 +159,7 @@ async function loadDocentenList() {
 
 async function loadSchoolsDatabase() {
   const res = await apiCall("", "GET", { action: "getSchoolsList" });
-  if (res.success && res.schools) schoolsCache = res.schools;
+  if (res && res.success && res.schools) schoolsCache = res.schools;
 }
 
 function filterDocenten() {
@@ -192,14 +217,14 @@ function selectDocent(docent) {
       const res = await apiCall("", "POST", { action: "setInitialPin", docentId: docent.id, newPin: pin });
       showPinLoading(false);
 
-      if (res.success) {
+      if (res && res.success) {
         currentPin = pin;
         currentDocent.needsPinSetup = false;
         closePinModal();
         if (currentDocent.isPlanner) initPlannerView();
         else openProfileModal(false);
       } else {
-        showPinError(res.error || "Fout bij instellen.");
+        showPinError(res?.error || "Fout bij instellen.");
       }
     });
   } else {
@@ -208,7 +233,7 @@ function selectDocent(docent) {
       const res = await apiCall("", "GET", { action: "getDocentData", docentId: docent.id, pin: pin });
       showPinLoading(false);
 
-      if (res.success) {
+      if (res && res.success) {
         currentPin = pin;
         currentDocent = { ...currentDocent, ...res.docent };
         closePinModal();
@@ -499,7 +524,7 @@ async function submitInlineEditPeriod(idx) {
     periodData: { van: p.van, tot: p.tot, dagen: p.dagen }
   });
 
-  if (res.success) {
+  if (res && res.success) {
     alert("✅ Wijzigingsaanvraag succesvol verzonden naar de planner!");
     p.status = "PENDING_EDIT";
     p._isEditingInline = false;
@@ -513,7 +538,7 @@ async function submitInlineEditPeriod(idx) {
     }
     renderGhostPeriodes();
   } else {
-    alert("Fout bij indienen: " + (res.error || "Onbekende fout"));
+    alert("Fout bij indienen: " + (res?.error || "Onbekende fout"));
     if (btn) {
       btn.disabled = false;
       btn.innerHTML = `<i class="fa-solid fa-paper-plane"></i> <span>Aanvraag Wijziging Indienen</span>`;
@@ -554,13 +579,13 @@ function deleteLocalGhostRow(idx) {
 async function requestDeletePeriod(periodId) {
   if (!confirm("Weet je zeker dat je een aanvraag wilt indienen om deze hele vaste periode te verwijderen?")) return;
   const res = await apiCall("", "POST", { action: "requestPeriodAction", docentId: currentDocent.id, pin: currentPin, actionType: "REQUEST_DELETE", periodId: periodId });
-  if (res.success) {
+  if (res && res.success) {
     alert("Aanvraag verstuurd ter goedkeuring van de planner.");
     const p = (currentDocent.vastePeriodes || []).find(x => x.id === periodId);
     if (p) p.status = "PENDING_DELETE";
     renderGhostPeriodes();
   } else {
-    alert("Fout: " + res.error);
+    alert("Fout: " + (res?.error || "Onbekend"));
   }
 }
 
@@ -634,7 +659,7 @@ async function handleOnboardingSubmit(e) {
   btn.innerHTML = `Opslaan`;
   btn.disabled = false;
 
-  if (res.success) {
+  if (res && res.success) {
     currentDocent = { ...currentDocent, ...payloadData, onboardingKlaar: true };
     
     dateEntries.forEach(entry => {
@@ -644,7 +669,7 @@ async function handleOnboardingSubmit(e) {
     closeOnboardingModal();
     initCalendarView();
   } else {
-    alert("Fout bij opslaan: " + res.error);
+    alert("Fout bij opslaan: " + (res?.error || "Onbekend"));
   }
 }
 
@@ -685,6 +710,7 @@ async function promptEditDocentPhone(docentId, currentVal) {
   if (doc) doc.telefoonnummer = sanitized;
 
   renderAdminDocenten();
+  renderAdminUnfilledDocenten();
 
   await apiCall("", "POST", {
     action: "adminUpdateDocent",
@@ -1013,7 +1039,7 @@ function closeAdminModal() { document.getElementById('modalAdmin').classList.add
 
 async function loadAdminData() {
   const res = await apiCall("", "GET", { action: "getAdminOverview", adminPin: ADMIN_SECRET });
-  if (res.success) {
+  if (res && res.success) {
     adminData = res;
     if (adminData.planning) adminData.planning.forEach(p => p.datum = normalizeDateStr(p.datum));
     if (adminData.availability) adminData.availability.forEach(a => a.datum = normalizeDateStr(a.datum));
@@ -1338,7 +1364,7 @@ function renderAdminDocenten() {
       </div>
     `;
 
-    // WhatsApp kolom layout
+    // WhatsApp kolom layout (met nummer en potloodje om te bewerken)
     const phone = docent.telefoonnummer || "";
     let waHtml = "";
     if (phone) {
@@ -1478,21 +1504,20 @@ function renderAdminUnfilledDocenten() {
     const daysBadges = item.missingDays.slice(0, 5).map(d => `<span class="px-1.5 py-0.5 rounded bg-amber-50 text-amber-800 border border-amber-200 font-bold text-[10px]">${formatDateNl(d, true)}</span>`).join(' ');
     const extraCount = item.missingDays.length > 5 ? `<span class="text-slate-400 font-bold text-[10px]">+${item.missingDays.length - 5} meer</span>` : '';
 
-    // WhatsApp snelkoppeling logica voor Niet Ingevuld
+    // WhatsApp snelkoppeling logica voor Niet Ingevuld: ALLEEN het icoontje
     const phone = item.docent.telefoonnummer || "";
     let waShortcutHtml = "";
     if (phone) {
       waShortcutHtml = `
-        <button onclick="openWhatsAppDesktop('${phone}')" class="px-3 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs transition shadow-sm flex items-center gap-1.5" title="Open WhatsApp Desktop">
-          <i class="fa-brands fa-whatsapp text-sm"></i>
-          <span>+${phone}</span>
+        <button onclick="openWhatsAppDesktop('${phone}')" class="w-9 h-9 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold transition shadow-sm flex items-center justify-center shrink-0" title="Open chat in WhatsApp Desktop (+${phone})">
+          <i class="fa-brands fa-whatsapp text-base"></i>
         </button>
       `;
     } else {
       waShortcutHtml = `
-        <button onclick="promptEditDocentPhone('${item.docent.id}', '')" class="px-3 py-2 rounded-xl bg-slate-100 hover:bg-emerald-50 text-slate-600 hover:text-emerald-700 font-bold text-xs transition border border-slate-200 flex items-center gap-1.5" title="Voeg WhatsApp nummer toe">
-          <i class="fa-solid fa-plus text-[10px]"></i> <span>WhatsApp</span>
-        </button>
+        <span class="w-9 h-9 rounded-xl bg-slate-100 text-slate-300 flex items-center justify-center shrink-0 cursor-not-allowed" title="Geen telefoonnummer bekend (stel in bij Vakdocenten)">
+          <i class="fa-brands fa-whatsapp text-base"></i>
+        </span>
       `;
     }
 
@@ -1510,47 +1535,6 @@ function renderAdminUnfilledDocenten() {
       <div class="flex items-center gap-2">
         ${waShortcutHtml}
         <button onclick="openAdminDocentCalendar('${item.docent.id}')" class="px-3.5 py-2 bg-slate-800 hover:bg-slate-900 text-white font-bold rounded-xl text-xs transition flex items-center gap-1.5 shadow-sm">
-          <i class="fa-regular fa-calendar-check"></i> <span>Agenda openen</span>
-        </button>
-      </div>
-    `;
-    container.appendChild(card);
-  });
-}
-
-  const badge = document.getElementById('badgeUnfilledDocenten');
-  if (badge) {
-    badge.innerText = unfilledTeachers.length;
-    badge.classList.toggle('hidden', unfilledTeachers.length === 0);
-  }
-
-  if (unfilledTeachers.length === 0) {
-    container.innerHTML = `<div class="p-8 text-center text-slate-400 bg-white rounded-2xl border text-xs">Iedereen heeft de komende 3 weken volledig ingevuld! 🎉</div>`;
-    return;
-  }
-
-  unfilledTeachers.sort((a, b) => b.missingCount - a.missingCount);
-
-  unfilledTeachers.forEach(item => {
-    const card = document.createElement('div');
-    card.className = "p-4 bg-white rounded-2xl border border-slate-200 shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-3 text-xs";
-
-    const daysBadges = item.missingDays.slice(0, 5).map(d => `<span class="px-1.5 py-0.5 rounded bg-amber-50 text-amber-800 border border-amber-200 font-bold text-[10px]">${formatDateNl(d, true)}</span>`).join(' ');
-    const extraCount = item.missingDays.length > 5 ? `<span class="text-slate-400 font-bold text-[10px]">+${item.missingDays.length - 5} meer</span>` : '';
-
-    card.innerHTML = `
-      <div>
-        <div class="flex items-center gap-2 mb-1">
-          <span class="font-extrabold text-slate-900 text-sm">${item.docent.naam}</span>
-          <span class="px-2 py-0.5 rounded-full text-[10px] font-extrabold bg-rose-100 text-rose-800">${item.missingCount} dagen open</span>
-        </div>
-        <div class="flex flex-wrap items-center gap-1 mt-1.5">
-          <span class="text-slate-500 font-medium mr-1">Openstaand:</span>
-          ${daysBadges} ${extraCount}
-        </div>
-      </div>
-      <div class="flex items-center gap-2">
-        <button onclick="openAdminDocentCalendar('${item.docent.id}')" class="px-3.5 py-2 bg-slate-800 hover:bg-slate-900 text-white font-bold rounded-xl text-xs transition flex items-center gap-1.5">
           <i class="fa-regular fa-calendar-check"></i> <span>Agenda openen</span>
         </button>
       </div>
