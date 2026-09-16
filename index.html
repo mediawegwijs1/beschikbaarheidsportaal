@@ -5,6 +5,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
   <title>Mediawegwijs - Beschikbaarheid</title>
   
+  <!-- Voorkomt automatische favicon 404 in console -->
+  <link rel="icon" href="data:,">
+
   <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
   <script>
@@ -274,9 +277,13 @@
             <button onclick="setPlannerViewMode('week')" id="btnPlanViewWeek" class="px-3 py-1.5 rounded-lg text-slate-600 hover:text-slate-900 transition">Weekoverzicht</button>
           </div>
 
+          <!-- Knoppenbalk met Export/Deel-icoontje -->
           <div class="flex items-center gap-2">
             <button onclick="openAddSchoolPlanningModal()" class="text-xs bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-3.5 py-2 rounded-xl transition flex items-center gap-1.5 shadow-sm">
               <i class="fa-solid fa-plus"></i> School Inplannen
+            </button>
+            <button onclick="openExportModal()" title="Planning Exporteren" class="w-9 h-9 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl flex items-center justify-center transition border border-slate-200 shadow-sm">
+              <i class="fa-solid fa-arrow-up-from-bracket text-xs"></i>
             </button>
             <button onclick="loadAdminData()" class="w-9 h-9 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl flex items-center justify-center transition">
               <i class="fa-solid fa-arrows-rotate text-xs"></i>
@@ -347,16 +354,14 @@
       <div class="max-h-80 overflow-y-auto custom-scrollbar space-y-3 pr-1 text-xs">
         <div class="p-3 bg-emerald-50/50 border border-emerald-200 rounded-2xl">
           <div class="flex items-center justify-between mb-1.5">
-            <span class="font-bold text-emerald-950">Versie V2.1.5</span>
+            <span class="font-bold text-emerald-950">Versie V2.1.6</span>
             <span class="text-[10px] bg-emerald-600 text-white px-2 py-0.5 rounded-full font-bold">Current</span>
           </div>
           <ul class="list-disc list-inside space-y-1 text-emerald-900">
-            <li><strong>WhatsApp Desktop Koppeling:</strong> Directe integratie met WhatsApp Desktop app voor planners.</li>
-            <li><strong>Inline Periode Bewerken:</strong> Vaste periodes rechtstreeks inline bewerken via de datumkiezers en dagbadges.</li>
-            <li><strong>Duidelijke Goedkeuringen:</strong> Planner ziet nu exact de oude datum/dagen versus de nieuwe aanvraag in badges.</li>
-            <li><strong>Veilige Knoppen:</strong> Verwijderknop in de Slot Manager staat op ruime afstand van het sluitkruisje.</li>
-            <li><strong>Laadanimaties:</strong> Directe spinner-feedback bij het accepteren of weigeren van wijzigingsverzoeken.</li>
-            <li><strong>Server Cache Beheer:</strong> Server-cache direct legen vanuit het Systeem &amp; Cache admin-tabblad.</li>
+            <li><strong>Planning Exporteren:</strong> Exporteer eenvoudig de actuele planning naar een tabel, klembord (Google Sheets) of CSV-bestand.</li>
+            <li><strong>Snelle &amp; Betrouwbare Login:</strong> Overstap naar een directe POST-inlogflow waardoor redirects en haperingen zijn verholpen.</li>
+            <li><strong>Pincode Voorloopnul-fix:</strong> Pincodes die beginnen met een 0 (bijv. 0123) worden altijd correct gevalideerd.</li>
+            <li><strong>WhatsApp Snelkoppeling:</strong> Direct chatten met docenten vanuit zowel Vakdocenten als Niet-Ingevulde docenten.</li>
           </ul>
         </div>
       </div>
@@ -600,6 +605,77 @@
           Inplannen
         </button>
       </form>
+    </div>
+  </div>
+
+  <!-- MODAL: PLANNING EXPORTEREN (NIEUW) -->
+  <div id="modalExportPlanning" class="fixed inset-0 bg-slate-950/80 z-50 hidden flex items-center justify-center p-4">
+    <div class="w-full max-w-2xl bg-white rounded-3xl p-6 shadow-2xl relative text-left text-xs max-h-[90vh] flex flex-col">
+      <button onclick="closeExportModal()" class="absolute top-4 right-4 text-slate-400 hover:text-slate-600 w-8 h-8 rounded-full flex items-center justify-center">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+
+      <div class="flex items-center gap-2 mb-1">
+        <span class="w-2.5 h-2.5 rounded-full bg-emerald-500"></span>
+        <h3 class="text-lg font-bold text-slate-900">Planning Exporteren</h3>
+      </div>
+      <p class="text-slate-500 mb-4">Filter op datum, school en/of vakdocent en exporteer naar tabel of spreadsheet.</p>
+
+      <!-- Filters -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-4 bg-slate-50 p-3.5 rounded-2xl border border-slate-200">
+        <div>
+          <label class="block font-bold text-slate-700 mb-1">Begindatum (Verplicht)</label>
+          <input type="text" id="exportInputStart" placeholder="Kies startdatum (Ma-Vr)" class="w-full p-2 bg-white border border-slate-300 rounded-xl font-medium cursor-pointer" />
+        </div>
+        <div>
+          <label class="block font-bold text-slate-700 mb-1">Einddatum (Verplicht)</label>
+          <input type="text" id="exportInputEnd" placeholder="Kies einddatum (Ma-Vr)" class="w-full p-2 bg-white border border-slate-300 rounded-xl font-medium cursor-pointer" />
+        </div>
+        <div>
+          <label class="block font-bold text-slate-700 mb-1">Filter op Vakdocent (Optioneel)</label>
+          <select id="exportSelectDocent" class="w-full p-2 bg-white border border-slate-300 rounded-xl font-medium">
+            <option value="">Alle vakdocenten</option>
+          </select>
+        </div>
+        <div>
+          <label class="block font-bold text-slate-700 mb-1">Filter op School (Optioneel)</label>
+          <select id="exportSelectSchool" class="w-full p-2 bg-white border border-slate-300 rounded-xl font-medium">
+            <option value="">Alle scholen</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="flex items-center justify-between gap-2 mb-3">
+        <button onclick="generateExportData()" class="px-4 py-2 bg-slate-800 hover:bg-slate-900 text-white font-bold rounded-xl transition flex items-center gap-1.5 shadow-sm">
+          <i class="fa-solid fa-filter text-xs"></i> <span>Genereer Overzicht</span>
+        </button>
+        <div id="exportActionBtns" class="hidden flex items-center gap-2">
+          <button onclick="copyExportTableToClipboard()" class="px-3.5 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold rounded-xl border border-slate-200 transition flex items-center gap-1.5">
+            <i class="fa-regular fa-copy"></i> <span>Kopieer naar Sheets/Excel</span>
+          </button>
+          <button onclick="downloadExportCsv()" class="px-3.5 py-2 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-xl transition flex items-center gap-1.5 shadow-sm">
+            <i class="fa-solid fa-file-csv"></i> <span>Download CSV</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Preview tabel -->
+      <div class="flex-1 overflow-y-auto border border-slate-200 rounded-2xl custom-scrollbar">
+        <table class="w-full text-left border-collapse text-xs">
+          <thead class="bg-slate-50 border-b border-slate-200 text-slate-600 uppercase font-bold sticky top-0">
+            <tr>
+              <th class="p-2.5">Datum</th>
+              <th class="p-2.5">School</th>
+              <th class="p-2.5">Vakdocent</th>
+            </tr>
+          </thead>
+          <tbody id="exportTableBody" class="divide-y divide-slate-100 font-medium text-slate-700">
+            <tr>
+              <td colspan="3" class="p-6 text-center text-slate-400">Selecteer minimaal een begin- en einddatum en klik op 'Genereer Overzicht'.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
     </div>
   </div>
 
