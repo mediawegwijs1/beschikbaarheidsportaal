@@ -121,25 +121,60 @@ function handleClockClick() {
   }
 }
 
-function forceHardAppRefresh(btn) {
+async function forceHardAppRefresh(btn) {
+  // Visuele feedback: draaiend icoontje en knop uitschakelen
   if (btn) {
     const icon = btn.querySelector('i');
     if (icon) icon.classList.add('fa-spin');
     btn.disabled = true;
   }
-  localStorage.clear();
-  sessionStorage.clear();
-  if ('caches' in window) {
-    caches.keys().then(keys => {
-      Promise.all(keys.map(k => caches.delete(k))).then(() => {
-        window.location.href = window.location.pathname + '?t=' + Date.now();
-      });
-    }).catch(() => {
-      window.location.href = window.location.pathname + '?t=' + Date.now();
-    });
-  } else {
-    window.location.href = window.location.pathname + '?t=' + Date.now();
+
+  try {
+    // 1. Wis LocalStorage en SessionStorage
+    localStorage.clear();
+    sessionStorage.clear();
+
+    // 2. Wis alle browser cookies op het domein en pad
+    const cookies = document.cookie.split(";");
+    for (let i = 0; i < cookies.length; i++) {
+      const cookie = cookies[i];
+      const eqPos = cookie.indexOf("=");
+      const name = eqPos > -1 ? cookie.substr(0, eqPos).trim() : cookie.trim();
+      if (name) {
+        document.cookie = `${name}=;expires=Thu, 01 Jan 1970 00:00:00 GMT;path=/`;
+        document.cookie = `${name}=;expires=Thu, 01 Jan 1970 00:00:00 GMT;path=${window.location.pathname}`;
+        document.cookie = `${name}=;expires=Thu, 01 Jan 1970 00:00:00 GMT;domain=${window.location.hostname};path=/`;
+      }
+    }
+
+    // 3. Wis alle Service Worker Cache storages
+    if ('caches' in window) {
+      const cacheKeys = await caches.keys();
+      await Promise.all(cacheKeys.map(k => caches.delete(k)));
+    }
+
+    // 4. Schrijf alle actieve Service Workers uit (forceert schone download bij herstart)
+    if ('serviceWorker' in navigator) {
+      const registrations = await navigator.serviceWorker.getRegistrations();
+      await Promise.all(registrations.map(r => r.unregister()));
+    }
+
+    // 5. Wis eventuele IndexedDB databases
+    if ('indexedDB' in window && indexedDB.databases) {
+      try {
+        const dbs = await indexedDB.databases();
+        for (const db of dbs) {
+          if (db.name) indexedDB.deleteDatabase(db.name);
+        }
+      } catch (e) {}
+    }
+  } catch (err) {
+    console.error("Fout tijdens harde reset:", err);
   }
+
+  // 6. Forceer een volledige herlaadbeurt via een unieke query-parameter
+  const cleanUrl = window.location.origin + window.location.pathname + '?reset=' + Date.now();
+  window.location.replace(cleanUrl);
 }
 
 function openPatchNotesModal() { document.getElementById('modalPatchNotes').classList.remove('hidden'); }
