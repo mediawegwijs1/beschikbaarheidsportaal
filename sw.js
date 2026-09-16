@@ -1,5 +1,5 @@
 // SERVICE WORKER V2.11 (Instant Cache-First & Auto-Activation)
-const CACHE_NAME = 'mediawegwijs-v3.0';
+const CACHE_NAME = 'mediawegwijs-v3.0.1';
 const STATIC_ASSETS = [
   './',
   './index.html',
