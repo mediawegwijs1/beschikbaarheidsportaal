@@ -1,5 +1,5 @@
 // ==========================================
-// ON TOURS & SLOT MANAGER (V2.1.4)
+// ON TOURS & SLOT MANAGER (V2.1.6)
 // ==========================================
 
 async function loadDocentOnTours() {
@@ -287,7 +287,7 @@ async function handleSaveOnTourSubmit(e) {
 }
 
 // ==========================================
-// SLOT MANAGER MET VEILIGE VERWIJDERKNOP MARGE
+// SLOT MANAGER MET DUBBELBOEKING-DETECTIE
 // ==========================================
 
 function openSlotManagerModal(type, id, selectedDayFilter = null) {
@@ -317,7 +317,6 @@ function openSlotManagerModal(type, id, selectedDayFilter = null) {
     progressBadge.className = `text-xs font-bold px-2 py-0.5 rounded-full ${assignedCount >= totalSlots ? 'bg-emerald-100 text-emerald-800' : 'bg-rose-100 text-rose-800'}`;
   }
 
-  // Verwijderknop met 'mr-8' zodat hij nooit op het sluitkruisje zit
   const badgeContainer = progressBadge ? progressBadge.parentElement : null;
   let delBtn = document.getElementById('btnDeleteSlotPlanningModal');
   if (!delBtn && badgeContainer) {
@@ -358,7 +357,6 @@ function openSlotManagerModal(type, id, selectedDayFilter = null) {
   modal.classList.add('flex');
 }
 
-// Instant feedback (Optimistic UI) bij verwijderen van planning of On Tour
 async function deleteCurrentItemFromModal() {
   if (!currentSlotTarget) return;
   const { type, item } = currentSlotTarget;
@@ -456,6 +454,31 @@ function renderPinnedVasteDocentSection() {
     const isAlreadyIn = assignedIds.includes(doc.id);
     const isDisabled = isAlreadyIn || isNee || isFull;
 
+    // Dubbelboeking-detectie voor vaste docent op dezelfde dag
+    let conflictWarning = "";
+    if (!isAlreadyIn) {
+      const otherRegular = (adminData.planning || []).find(p => 
+        p.planningId !== item.planningId && 
+        normalizeDateStr(p.datum) === targetDate && 
+        (p.toegewezenDocentIDs || []).includes(doc.id)
+      );
+      if (otherRegular) {
+        conflictWarning = `<span class="inline-flex items-center gap-1 text-[10px] font-extrabold text-amber-800 bg-amber-100 border border-amber-300 px-2 py-0.5 rounded-md animate-pulse mt-0.5"><i class="fa-solid fa-bell text-[9px] text-amber-600"></i> Al ingeroosterd op ${otherRegular.schoolNaam}</span>`;
+      } else {
+        const onTourOverlap = (adminData.onTours || []).find(t => {
+          const s = normalizeDateStr(t.startDatum);
+          const e = normalizeDateStr(t.eindDatum);
+          if (targetDate >= s && targetDate <= e) {
+            return (t.slotAssignments || []).some(slot => slot.dayDocents && slot.dayDocents[targetDate] === doc.id);
+          }
+          return false;
+        });
+        if (onTourOverlap) {
+          conflictWarning = `<span class="inline-flex items-center gap-1 text-[10px] font-extrabold text-amber-800 bg-amber-100 border border-amber-300 px-2 py-0.5 rounded-md animate-pulse mt-0.5"><i class="fa-solid fa-bell text-[9px] text-amber-600"></i> Al ingeroosterd op On Tour (${onTourOverlap.schoolNaam})</span>`;
+        }
+      }
+    }
+
     let btnText = "Koppelen";
     let btnClass = "px-3 py-1.5 bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-xl text-xs transition shadow-sm";
 
@@ -472,15 +495,16 @@ function renderPinnedVasteDocentSection() {
 
     const cardClass = isNee 
       ? "p-3 bg-slate-100/90 border-2 border-slate-200 rounded-2xl flex items-center justify-between gap-3 opacity-60" 
-      : "p-3 bg-indigo-50/80 border-2 border-indigo-200 rounded-2xl flex items-center justify-between gap-3";
+      : (conflictWarning ? "p-3 bg-amber-50/70 border-2 border-amber-300 rounded-2xl flex items-center justify-between gap-3" : "p-3 bg-indigo-50/80 border-2 border-indigo-200 rounded-2xl flex items-center justify-between gap-3");
 
     const card = document.createElement('div');
     card.className = cardClass;
     card.innerHTML = `
       <div>
-        <div class="flex items-center gap-1.5 mb-0.5">
+        <div class="flex items-center gap-1.5 mb-0.5 flex-wrap">
           <span class="text-[10px] ${isNee ? 'bg-slate-400' : 'bg-indigo-600'} text-white font-extrabold px-2 py-0.5 rounded-full">⭐ Vaste Docent</span>
           <span class="font-extrabold text-xs ${isNee ? 'text-slate-500 line-through' : 'text-slate-900'}">${doc.naam}</span>
+          ${conflictWarning}
         </div>
         <div class="text-[11px] text-slate-600">Status: ${statusBadge}</div>
       </div>
@@ -657,16 +681,62 @@ function renderSlotManagerCandidates() {
 }
 
 function renderSlotCandidateButtons(container, list) {
-  if (list.length === 0) { container.innerHTML = `<div class="text-[11px] text-slate-400 p-2">Geen kandidaten gevonden.</div>`; return; }
+  if (list.length === 0) { 
+    container.innerHTML = `<div class="text-[11px] text-slate-400 p-2">Geen kandidaten gevonden.</div>`; 
+    return; 
+  }
+
+  let targetIso = "";
+  let currentPlanningId = null;
+  if (currentSlotTarget.type === 'PLANNING') {
+    targetIso = normalizeDateStr(currentSlotTarget.item.datum);
+    currentPlanningId = currentSlotTarget.item.planningId;
+  } else if (currentSlotTarget.type === 'ONTOUR' && currentSlotTarget.selectedDayFilter) {
+    targetIso = normalizeDateStr(currentSlotTarget.selectedDayFilter.dayIso);
+  }
+
   list.forEach(doc => {
+    let conflictWarning = "";
+    if (targetIso) {
+      // 1. Check reguliere planning op die dag
+      const otherRegular = (adminData.planning || []).find(p => 
+        p.planningId !== currentPlanningId && 
+        normalizeDateStr(p.datum) === targetIso && 
+        (p.toegewezenDocentIDs || []).includes(doc.id)
+      );
+
+      if (otherRegular) {
+        conflictWarning = `<span class="inline-flex items-center gap-1 text-[10px] font-extrabold text-amber-800 bg-amber-100 border border-amber-300 px-2 py-0.5 rounded-md animate-pulse"><i class="fa-solid fa-bell text-[9px] text-amber-600"></i> Al ingeroosterd op ${otherRegular.schoolNaam}</span>`;
+      } else {
+        // 2. Check On Tours op die dag
+        const onTourOverlap = (adminData.onTours || []).find(t => {
+          if (currentSlotTarget.type === 'ONTOUR' && t.tourId === currentSlotTarget.item.tourId) return false;
+          const s = normalizeDateStr(t.startDatum);
+          const e = normalizeDateStr(t.eindDatum);
+          if (targetIso >= s && targetIso <= e) {
+            return (t.slotAssignments || []).some(slot => slot.dayDocents && slot.dayDocents[targetIso] === doc.id);
+          }
+          return false;
+        });
+
+        if (onTourOverlap) {
+          conflictWarning = `<span class="inline-flex items-center gap-1 text-[10px] font-extrabold text-amber-800 bg-amber-100 border border-amber-300 px-2 py-0.5 rounded-md animate-pulse"><i class="fa-solid fa-bell text-[9px] text-amber-600"></i> Al ingeroosterd op On Tour (${onTourOverlap.schoolNaam})</span>`;
+        }
+      }
+    }
+
     const div = document.createElement('div');
-    div.className = "p-2 bg-slate-50 hover:bg-slate-100 rounded-xl border flex items-center justify-between text-xs";
+    div.className = `p-2 rounded-xl border flex items-center justify-between text-xs transition ${conflictWarning ? 'bg-amber-50/50 border-amber-200 hover:bg-amber-50' : 'bg-slate-50 hover:bg-slate-100 border-slate-200'}`;
     div.innerHTML = `
       <div>
-        <div class="font-bold flex items-center gap-1"><span>${doc.naam}</span>${doc.alleenOnTour ? '<span class="text-[9px] bg-amber-100 text-amber-900 px-1 rounded">⭐ Tour Specialist</span>' : ''}</div>
+        <div class="font-bold flex items-center gap-1.5 flex-wrap">
+          <span class="text-slate-900">${doc.naam}</span>
+          ${doc.alleenOnTour ? '<span class="text-[9px] bg-amber-100 text-amber-900 px-1 rounded">⭐ Tour Specialist</span>' : ''}
+          ${conflictWarning}
+        </div>
         <div class="text-[10px] text-slate-500">Skill: ${doc.skillLevel} ${doc.matchedDays ? `<strong class="text-amber-700">(${doc.matchedDays})</strong>` : ''}</div>
       </div>
-      <button onclick="assignDocentToNextSlot('${doc.id}')" class="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-lg text-xs transition">Koppel</button>
+      <button onclick="assignDocentToNextSlot('${doc.id}')" class="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-lg text-xs transition shadow-sm">Koppel</button>
     `;
     container.appendChild(div);
   });
