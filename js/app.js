@@ -85,6 +85,8 @@ function initAllDatepickers() {
   initFlatpickrInstance(document.getElementById('inputPlanDate'));
   initFlatpickrInstance(document.getElementById('inputOtStart'));
   initFlatpickrInstance(document.getElementById('inputOtEind'));
+  initFlatpickrInstance(document.getElementById('exportInputStart'));
+  initFlatpickrInstance(document.getElementById('exportInputEnd'));
 }
 
 function startClock() {
@@ -1763,4 +1765,146 @@ function logout() {
   document.getElementById('headerUserSection').classList.add('hidden');
   document.getElementById('docentSearchInput').value = "";
   renderDocentenButtons(docentenCache);
+}
+
+// ==========================================
+// EXPORT FUNCTIONALITEIT
+// ==========================================
+
+let currentExportRows = [];
+
+function openExportModal() {
+  const modal = document.getElementById('modalExportPlanning');
+  if (!modal) return;
+
+  const startInput = document.getElementById('exportInputStart');
+  const endInput = document.getElementById('exportInputEnd');
+  if (startInput && startInput._flatpickr) startInput._flatpickr.clear();
+  if (endInput && endInput._flatpickr) endInput._flatpickr.clear();
+
+  const selectDocent = document.getElementById('exportSelectDocent');
+  selectDocent.innerHTML = '<option value="">Alle vakdocenten</option>';
+  const docs = (adminData.docenten || []).filter(d => !d.isPlanner);
+  docs.sort((a, b) => a.naam.localeCompare(b.naam));
+  docs.forEach(d => {
+    const opt = document.createElement('option');
+    opt.value = d.id;
+    opt.innerText = d.naam;
+    selectDocent.appendChild(opt);
+  });
+
+  const selectSchool = document.getElementById('exportSelectSchool');
+  selectSchool.innerHTML = '<option value="">Alle scholen</option>';
+  const schools = [...new Set((adminData.planning || []).map(p => p.schoolNaam))].filter(Boolean);
+  schools.sort((a, b) => getCleanSortName(a).localeCompare(getCleanSortName(b)));
+  schools.forEach(s => {
+    const opt = document.createElement('option');
+    opt.value = s;
+    opt.innerText = s;
+    selectSchool.appendChild(opt);
+  });
+
+  document.getElementById('exportActionBtns').classList.add('hidden');
+  document.getElementById('exportTableBody').innerHTML = `
+    <tr>
+      <td colspan="3" class="p-6 text-center text-slate-400">Selecteer minimaal een begin- en einddatum en klik op 'Genereer Overzicht'.</td>
+    </tr>
+  `;
+  currentExportRows = [];
+
+  modal.classList.remove('hidden');
+}
+
+function closeExportModal() {
+  document.getElementById('modalExportPlanning').classList.add('hidden');
+}
+
+function generateExportData() {
+  const startStr = normalizeDateStr(document.getElementById('exportInputStart').value);
+  const endStr = normalizeDateStr(document.getElementById('exportInputEnd').value);
+
+  if (!startStr || !endStr) {
+    alert("Kies verplicht zowel een begindatum als een einddatum.");
+    return;
+  }
+  if (startStr > endStr) {
+    alert("De begindatum mag niet na de einddatum liggen.");
+    return;
+  }
+
+  const filterDocentId = document.getElementById('exportSelectDocent').value;
+  const filterSchool = document.getElementById('exportSelectSchool').value;
+
+  const docMap = {};
+  (adminData.docenten || []).forEach(d => { docMap[d.id] = d.naam; });
+
+  const rows = [];
+  const plans = (adminData.planning || []).filter(p => {
+    const d = normalizeDateStr(p.datum);
+    return d >= startStr && d <= endStr;
+  });
+
+  plans.sort((a, b) => a.datum.localeCompare(b.datum));
+
+  plans.forEach(p => {
+    if (filterSchool && p.schoolNaam !== filterSchool) return;
+
+    const assigned = p.toegewezenDocentIDs || [];
+    const totalNeeded = p.aantalNodig || 1;
+
+    for (let i = 0; i < totalNeeded; i++) {
+      const docId = assigned[i] || null;
+      const docName = docId ? (docMap[docId] || docId) : "Nog niet ingedeeld";
+
+      if (filterDocentId && docId !== filterDocentId) continue;
+
+      rows.push({
+        datum: p.datum,
+        datumFormatted: formatDateNl(p.datum, true),
+        school: p.schoolNaam,
+        docent: docName
+      });
+    }
+  });
+
+  currentExportRows = rows;
+  const tbody = document.getElementById('exportTableBody');
+  const actionBtns = document.getElementById('exportActionBtns');
+
+  if (rows.length === 0) {
+    tbody.innerHTML = `<tr><td colspan="3" class="p-6 text-center text-slate-400">Geen lessen gevonden die voldoen aan de geselecteerde filters.</td></tr>`;
+    actionBtns.classList.add('hidden');
+    return;
+  }
+
+  tbody.innerHTML = rows.map(r => `
+    <tr class="hover:bg-slate-50 transition">
+      <td class="p-2.5 font-bold text-slate-900">${r.datumFormatted}</td>
+      <td class="p-2.5 text-slate-800">🏫 ${r.school}</td>
+      <td class="p-2.5 ${r.docent === 'Nog niet ingedeeld' ? 'text-rose-600 font-bold' : 'text-emerald-700 font-bold'}">${r.docent}</td>
+    </tr>
+  `).join('');
+
+  actionBtns.classList.remove('hidden');
+}
+
+function copyExportTableToClipboard() {
+  if (currentExportRows.length === 0) return;
+  const tsv = ["Datum\tSchool\tVakdocent", ...currentExportRows.map(r => `${formatDateNl(r.datum, false)}\t${r.school}\t${r.docent}`)].join("\n");
+  navigator.clipboard.writeText(tsv).then(() => {
+    alert("📋 Tabel gekopieerd naar het klembord!\n\nJe kunt dit nu direct met Ctrl+V in Google Sheets of Excel plakken.");
+  });
+}
+
+function downloadExportCsv() {
+  if (currentExportRows.length === 0) return;
+  const header = "Datum;School;Vakdocent\r\n";
+  const body = currentExportRows.map(r => `"${formatDateNl(r.datum, false)}";"${r.school.replace(/"/g, '""')}";"${r.docent.replace(/"/g, '""')}"`).join("\r\n");
+  const blob = new Blob(["\uFEFF" + header + body], { type: "text/csv;charset=utf-8;" });
+  const link = document.createElement("a");
+  link.href = URL.createObjectURL(blob);
+  link.setAttribute("download", `Mediawegwijs_Planning_${normalizeDateStr(new Date())}.csv`);
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
 }
