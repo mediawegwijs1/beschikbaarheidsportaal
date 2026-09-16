@@ -1,5 +1,5 @@
 // ==========================================
-// ON TOURS & SLOT MANAGER (V2.1.6)
+// ON TOURS & SLOT MANAGER (V2.1.8)
 // ==========================================
 
 async function loadDocentOnTours() {
@@ -287,7 +287,7 @@ async function handleSaveOnTourSubmit(e) {
 }
 
 // ==========================================
-// SLOT MANAGER MET DUBBELBOEKING-DETECTIE
+// SLOT MANAGER MET OVERRIDE & DUBBELBOEKING-DETECTIE
 // ==========================================
 
 function openSlotManagerModal(type, id, selectedDayFilter = null) {
@@ -339,13 +339,12 @@ function openSlotManagerModal(type, id, selectedDayFilter = null) {
     ? `Datum: ${formatDateNl(item.datum, true)}` 
     : `Periode: ${formatPeriodNl(item.startDatum, item.eindDatum)} ${item.locatie ? `• 📍 ${item.locatie}` : ''}`;
 
+  // Nood Override Knop: Altijd zichtbaar voor zowel Regulier als On Tour
   const overrideBtn = document.getElementById('btnEmergencyOverride');
-  if (type === 'ONTOUR') {
+  if (overrideBtn) {
     overrideBtn.classList.remove('hidden');
     overrideBtn.className = "text-[11px] px-2.5 py-1 rounded-xl border font-bold transition flex items-center gap-1 bg-slate-100 hover:bg-amber-100 text-slate-700 border-slate-300";
     overrideBtn.innerHTML = `<i class="fa-solid fa-unlock-keyhole"></i> <span>Nood Override: Toon alle docenten</span>`;
-  } else {
-    overrideBtn.classList.add('hidden');
   }
 
   renderPinnedVasteDocentSection();
@@ -618,27 +617,42 @@ function renderSlotManagerCandidates() {
   const listAlt = [];
 
   if (currentSlotTarget.type === 'PLANNING') {
-    document.getElementById('candidateFilterHeaderTitle').innerText = "Kies een beschikbare docent:";
-    document.getElementById('labelSlotCandJa').innerText = "🟢 Beschikbaar (N1 ➔ N3)";
-    wrapperAlt.classList.remove('hidden');
-    
-    const targetDate = normalizeDateStr(item.datum);
-    const dayAvail = (adminData.availability || []).filter(a => normalizeDateStr(a.datum) === targetDate && a.goedkeuring === "GOEDGEKEURD");
     const assigned = item.toegewezenDocentIDs || [];
+    const targetDate = normalizeDateStr(item.datum);
 
-    dayAvail.forEach(av => {
-      const doc = adminData.docenten.find(d => d.id === av.docentId);
-      if (doc && !doc.isPlanner && !assigned.includes(doc.id)) {
-        if (av.status === "JA") listJa.push(doc);
-        else if (av.status === "MOGELIJK") listAlt.push(doc);
-      }
-    });
-    listJa.sort((a, b) => (rankMap[a.skillLevel] || 3) - (rankMap[b.skillLevel] || 3));
-    listAlt.sort((a, b) => (rankMap[a.skillLevel] || 3) - (rankMap[b.skillLevel] || 3));
-    renderSlotCandidateButtons(listJaEl, listJa);
-    renderSlotCandidateButtons(listAltEl, listAlt);
+    if (emergencyOverrideAllDocents) {
+      // NOOD OVERRIDE ACTIEF VOOR REGULIERE SCHOOL: TOON ALLE DOCENTEN
+      document.getElementById('candidateFilterHeaderTitle').innerText = "🔓 Nood Override Actief: Toon alle docenten:";
+      document.getElementById('labelSlotCandJa').innerText = "Alle Docenten (N1 ➔ N3)";
+      wrapperAlt.classList.add('hidden');
+
+      const allDocs = (adminData.docenten || []).filter(d => !d.isPlanner && !assigned.includes(d.id));
+      allDocs.sort((a, b) => (rankMap[a.skillLevel] || 3) - (rankMap[b.skillLevel] || 3));
+      renderSlotCandidateButtons(listJaEl, allDocs);
+      listJa.push(...allDocs);
+    } else {
+      // STANDAARD WEERGAVE: ALLEEN BESCHIKBARE DOCENTEN OP DEZE DAG
+      document.getElementById('candidateFilterHeaderTitle').innerText = "Kies een beschikbare docent:";
+      document.getElementById('labelSlotCandJa').innerText = "🟢 Beschikbaar (N1 ➔ N3)";
+      wrapperAlt.classList.remove('hidden');
+      
+      const dayAvail = (adminData.availability || []).filter(a => normalizeDateStr(a.datum) === targetDate && a.goedkeuring === "GOEDGEKEURD");
+
+      dayAvail.forEach(av => {
+        const doc = adminData.docenten.find(d => d.id === av.docentId);
+        if (doc && !doc.isPlanner && !assigned.includes(doc.id)) {
+          if (av.status === "JA") listJa.push(doc);
+          else if (av.status === "MOGELIJK") listAlt.push(doc);
+        }
+      });
+      listJa.sort((a, b) => (rankMap[a.skillLevel] || 3) - (rankMap[b.skillLevel] || 3));
+      listAlt.sort((a, b) => (rankMap[a.skillLevel] || 3) - (rankMap[b.skillLevel] || 3));
+      renderSlotCandidateButtons(listJaEl, listJa);
+      renderSlotCandidateButtons(listAltEl, listAlt);
+    }
 
   } else {
+    // ON TOUR LOGICA
     const filter = currentSlotTarget.selectedDayFilter;
     if (emergencyOverrideAllDocents) {
       document.getElementById('candidateFilterHeaderTitle').innerText = "🔓 Nood Override Actief: Toon alle docenten:";
