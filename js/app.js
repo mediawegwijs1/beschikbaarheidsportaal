@@ -121,6 +121,27 @@ function handleClockClick() {
   }
 }
 
+function forceHardAppRefresh(btn) {
+  if (btn) {
+    const icon = btn.querySelector('i');
+    if (icon) icon.classList.add('fa-spin');
+    btn.disabled = true;
+  }
+  localStorage.clear();
+  sessionStorage.clear();
+  if ('caches' in window) {
+    caches.keys().then(keys => {
+      Promise.all(keys.map(k => caches.delete(k))).then(() => {
+        window.location.href = window.location.pathname + '?t=' + Date.now();
+      });
+    }).catch(() => {
+      window.location.href = window.location.pathname + '?t=' + Date.now();
+    });
+  } else {
+    window.location.href = window.location.pathname + '?t=' + Date.now();
+  }
+}
+
 function openPatchNotesModal() { document.getElementById('modalPatchNotes').classList.remove('hidden'); }
 function closePatchNotesModal() { document.getElementById('modalPatchNotes').classList.add('hidden'); }
 
