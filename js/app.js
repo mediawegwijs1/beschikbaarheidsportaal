@@ -1504,12 +1504,12 @@ function renderAdminUnfilledDocenten() {
     const daysBadges = item.missingDays.slice(0, 5).map(d => `<span class="px-1.5 py-0.5 rounded bg-amber-50 text-amber-800 border border-amber-200 font-bold text-[10px]">${formatDateNl(d, true)}</span>`).join(' ');
     const extraCount = item.missingDays.length > 5 ? `<span class="text-slate-400 font-bold text-[10px]">+${item.missingDays.length - 5} meer</span>` : '';
 
-    // WhatsApp snelkoppeling logica voor Niet Ingevuld: ALLEEN het icoontje
+    // WhatsApp snelkoppeling: ALLEEN het compacte groene icoontje
     const phone = item.docent.telefoonnummer || "";
     let waShortcutHtml = "";
     if (phone) {
       waShortcutHtml = `
-        <button onclick="openWhatsAppDesktop('${phone}')" class="w-9 h-9 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold transition shadow-sm flex items-center justify-center shrink-0" title="Open chat in WhatsApp Desktop (+${phone})">
+        <button onclick="openWhatsAppDesktop('${phone}')" class="w-9 h-9 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold transition shadow-sm flex items-center justify-center shrink-0" title="Open WhatsApp Desktop (+${phone})">
           <i class="fa-brands fa-whatsapp text-base"></i>
         </button>
       `;
