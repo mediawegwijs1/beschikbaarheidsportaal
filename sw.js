@@ -1,5 +1,5 @@
-// SERVICE WORKER V2.10 (Instant Cache-First & Auto-Activation)
-const CACHE_NAME = 'mediawegwijs-v2.10';
+// SERVICE WORKER V2.11 (Instant Cache-First & Auto-Activation)
+const CACHE_NAME = 'mediawegwijs-v2.11';
 const STATIC_ASSETS = [
   './',
   './index.html',
@@ -35,7 +35,6 @@ self.addEventListener('activate', (e) => {
 
 self.addEventListener('fetch', (e) => {
   const url = e.request.url;
-  // Laat Google Apps Script en de download-redirects altijd 100% live door
   if (
     url.includes('script.google.com') || 
     url.includes('script.googleusercontent.com') ||
@@ -44,7 +43,6 @@ self.addEventListener('fetch', (e) => {
     e.respondWith(fetch(e.request));
     return;
   }
-
   e.respondWith(
     caches.match(e.request).then((cachedResponse) => cachedResponse || fetch(e.request))
   );
