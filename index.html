@@ -55,13 +55,20 @@
   <header class="bg-white/90 backdrop-blur border-b border-slate-200 sticky top-0 z-30 shadow-sm">
     <div class="max-w-7xl mx-auto px-4 h-13 py-2.5 flex items-center justify-between">
       
-      <div 
-        onclick="handleClockClick()" 
-        title="Klik 5x om cache & data geforceerd te legen" 
-        class="flex items-center gap-2 text-xs md:text-sm font-medium text-slate-700 cursor-pointer select-none hover:opacity-80 transition"
-      >
-        <span class="w-2.5 h-2.5 rounded-full bg-emerald-400 inline-block shadow-sm"></span>
-        <span id="liveClock">laden...</span>
+      <!-- LIVE KLOK MET ZICHTBARE HARD-REFRESH KNOP -->
+      <div class="flex items-center gap-2">
+        <div class="flex items-center gap-2 text-xs md:text-sm font-medium text-slate-700 select-none">
+          <span class="w-2.5 h-2.5 rounded-full bg-emerald-400 inline-block shadow-sm"></span>
+          <span id="liveClock">laden...</span>
+        </div>
+        <button 
+          type="button"
+          onclick="forceHardAppRefresh(this)" 
+          title="Ververs app & wis lokale cache"
+          class="w-7 h-7 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-600 hover:text-slate-900 border border-slate-200 transition flex items-center justify-center text-xs shadow-sm active:scale-95"
+        >
+          <i class="fa-solid fa-arrows-rotate"></i>
+        </button>
       </div>
 
       <!-- User section (alleen na inloggen) -->
