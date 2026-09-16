@@ -210,7 +210,8 @@ function selectDocent(docent) {
   } else {
     openPinModal("Voer je pincode in", `Welkom terug, ${docent.naam}`, async (pin) => {
       showPinLoading(true);
-      const res = await apiCall("", "GET", { action: "getDocentData", docentId: docent.id, pin: pin });
+      // Gebruik POST in plaats van GET: vermijdt de trage redirect en cache-blokkade
+      const res = await apiCall("", "POST", { action: "getDocentData", docentId: docent.id, pin: pin });
       showPinLoading(false);
 
       if (res && res.success) {
@@ -226,7 +227,12 @@ function selectDocent(docent) {
           initCalendarView();
         }
       } else {
-        showPinError("Onjuiste pincode. Probeer opnieuw.");
+        const errorText = res?.error || "Verbindingsfout met server.";
+        if (errorText.toLowerCase().includes("pincode")) {
+          showPinError("Onjuiste pincode. Probeer opnieuw.");
+        } else {
+          showPinError(errorText);
+        }
       }
     });
   }
