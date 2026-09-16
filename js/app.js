@@ -2,26 +2,6 @@
 // BOOTSTRAP, PROFIEL, PLANNER & ADMIN LOGICA (V2.1.6)
 // ==========================================
 
-let clockClicks = 0;
-let clockTimer = null;
-let docentenCache = [];
-let schoolsCache = [];
-let enteredPin = "";
-let pinCallback = null;
-let currentDocent = null;
-let currentPin = "";
-let ghostPeriodesData = [];
-let plannerCurrentDate = new Date();
-let plannerViewMode = '3weeks';
-let filterOnlyGaten = false;
-let adminData = {};
-let docFilterTour = false;
-let docFilterRijbewijs = false;
-let docFilterAuto = false;
-let viewingAdminDocent = null;
-let adminDocentCalDate = new Date();
-let selectedAdminDayAction = null;
-
 function getCleanSortName(name) {
   if (!name) return "";
   return String(name).toLowerCase().replace(/^(de|het|een|obs|cbs|rkbs|pcbs|sbo)\s+/i, '').trim();
