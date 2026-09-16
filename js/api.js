@@ -1,4 +1,7 @@
-// API & NETWORK HELPERS (Met Browser Keep-Alive & Nederlandse Datumnotatie)
+// ==========================================
+// API & NETWORK HELPERS (V2.1.1 - Met HTML Fallback & Datumformatters)
+// ==========================================
+
 async function apiCall(endpoint, method = "GET", payload = null) {
   if (!API_URL || API_URL.trim() === "") return { success: false, error: "Geen API URL ingesteld." };
   try {
@@ -15,7 +18,17 @@ async function apiCall(endpoint, method = "GET", payload = null) {
         keepalive: true
       });
     }
-    return await response.json();
+
+    const text = await response.text();
+    try {
+      return JSON.parse(text);
+    } catch (parseErr) {
+      // Vangt Google HTML-foutpagina's (zoals 404, 500 of cold start timeouts) af
+      if (text.includes("<!DOCTYPE") || text.includes("<html")) {
+        return { success: false, error: "De server reageerde met een time-out of koude start. Probeer het direct nogmaals." };
+      }
+      return { success: false, error: text || parseErr.toString() };
+    }
   } catch (err) {
     return { success: false, error: err.toString() };
   }
