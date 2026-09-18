@@ -608,6 +608,9 @@ function renderSlotManagerCandidates() {
   const listJaEl = document.getElementById('listSlotCandJa');
   const listAltEl = document.getElementById('listSlotCandAlt');
   const wrapperAlt = document.getElementById('wrapperSlotCandAlt');
+  const labelJaEl = document.getElementById('labelSlotCandJa');
+  const labelAltEl = document.getElementById('labelSlotCandAlt');
+
   listJaEl.innerHTML = ""; 
   listAltEl.innerHTML = "";
 
@@ -623,7 +626,7 @@ function renderSlotManagerCandidates() {
     if (emergencyOverrideAllDocents) {
       // NOOD OVERRIDE ACTIEF VOOR REGULIERE SCHOOL: TOON ALLE DOCENTEN
       document.getElementById('candidateFilterHeaderTitle').innerText = "🔓 Nood Override Actief: Toon alle docenten:";
-      document.getElementById('labelSlotCandJa').innerText = "Alle Docenten (N1 ➔ N3)";
+      if (labelJaEl) labelJaEl.innerText = "Alle Docenten (N1 ➔ N3)";
       wrapperAlt.classList.add('hidden');
 
       const allDocs = (adminData.docenten || []).filter(d => !d.isPlanner && !assigned.includes(d.id));
@@ -633,7 +636,8 @@ function renderSlotManagerCandidates() {
     } else {
       // STANDAARD WEERGAVE: ALLEEN BESCHIKBARE DOCENTEN OP DEZE DAG
       document.getElementById('candidateFilterHeaderTitle').innerText = "Kies een beschikbare docent:";
-      document.getElementById('labelSlotCandJa').innerText = "🟢 Beschikbaar (N1 ➔ N3)";
+      if (labelJaEl) labelJaEl.innerText = "🟢 Beschikbaar (N1 ➔ N3)";
+      if (labelAltEl) labelAltEl.innerText = "🟠 Mogelijk (N1 ➔ N3)";
       wrapperAlt.classList.remove('hidden');
       
       const dayAvail = (adminData.availability || []).filter(a => normalizeDateStr(a.datum) === targetDate && a.goedkeuring === "GOEDGEKEURD");
@@ -656,7 +660,7 @@ function renderSlotManagerCandidates() {
     const filter = currentSlotTarget.selectedDayFilter;
     if (emergencyOverrideAllDocents) {
       document.getElementById('candidateFilterHeaderTitle').innerText = "🔓 Nood Override Actief: Toon alle docenten:";
-      document.getElementById('labelSlotCandJa').innerText = "Alle Docenten";
+      if (labelJaEl) labelJaEl.innerText = "Alle Docenten";
       wrapperAlt.classList.add('hidden');
       const allDocs = (adminData.docenten || []).filter(d => !d.isPlanner);
       allDocs.sort((a, b) => (rankMap[a.skillLevel] || 3) - (rankMap[b.skillLevel] || 3));
@@ -665,7 +669,8 @@ function renderSlotManagerCandidates() {
     } else {
       wrapperAlt.classList.remove('hidden');
       document.getElementById('candidateFilterHeaderTitle').innerText = filter ? `Kandidaten voor Slot ${filter.slotIndex + 1} op ${filter.dayName}:` : "Klik op een GAT (bijv. Wo) om te filteren:";
-      document.getElementById('labelSlotCandJa').innerText = "🟢 Hele Week Ingeschreven";
+      if (labelJaEl) labelJaEl.innerText = "🟢 Hele Week Ingeschreven";
+      if (labelAltEl) labelAltEl.innerText = "🟠 Deels Ingeschreven (N1 ➔ N3)";
       
       const tourIns = (adminData.onTourInschrijvingen || []).filter(i => i.tourId === item.tourId);
       tourIns.forEach(ins => {
