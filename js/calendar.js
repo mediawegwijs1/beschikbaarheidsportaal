@@ -1,6 +1,27 @@
 // ==========================================
-// KALENDER & BESCHIKBAARHEID (V2.1 - Met Goedkeuringscheck)
+// KALENDER & BESCHIKBAARHEID (V2.1.8 - Met Goedkeuringscheck & Weken-Herhaling)
 // ==========================================
+
+let selectedRepeatWeeks = 1;
+
+function toggleRepeatWeeksUi(checked) {
+  const wrapper = document.getElementById('wrapperRepeatWeeks');
+  if (wrapper) wrapper.classList.toggle('hidden', !checked);
+}
+
+function setRepeatWeeks(num) {
+  selectedRepeatWeeks = num;
+  [1, 2, 3].forEach(w => {
+    const btn = document.getElementById(`btnRepeat${w}Wk`);
+    if (btn) {
+      if (w === num) {
+        btn.className = "py-1.5 rounded-xl border text-xs font-bold transition bg-emerald-600 text-white border-emerald-600 shadow-sm";
+      } else {
+        btn.className = "py-1.5 rounded-xl border text-xs font-bold transition bg-white text-slate-700 border-slate-300 hover:bg-slate-100";
+      }
+    }
+  });
+}
 
 async function initCalendarView() {
   document.getElementById('viewLanding').classList.add('hidden');
@@ -161,7 +182,12 @@ function changeMonth(delta) {
 function openDayPicker(isoDate, dateObj) {
   selectedDayForPicker = { isoDate: normalizeDateStr(isoDate), dateObj };
   document.getElementById('dayPickerDateTitle').innerText = dateObj.toLocaleDateString('nl-NL', { weekday: 'long', day: 'numeric', month: 'long' });
-  document.getElementById('checkApply3Months').checked = false;
+  
+  const checkRepeat = document.getElementById('checkRepeatWeeks');
+  if (checkRepeat) checkRepeat.checked = false;
+  toggleRepeatWeeksUi(false);
+  setRepeatWeeks(1);
+
   document.getElementById('modalDayPicker').classList.remove('hidden');
 }
 
@@ -169,28 +195,19 @@ function closeDayPicker() {
   document.getElementById('modalDayPicker').classList.add('hidden');
 }
 
-// OPTIMISTIC UI MET WATERDICHTE GOEDKEURINGSCHECK
+// OPTIMISTIC UI MET WATERDICHTE GOEDKEURINGSCHECK & WEKEN HERHALING
 async function submitDayStatus(status) {
   if (!selectedDayForPicker) return;
   const entries = [];
-  const apply3Months = document.getElementById('checkApply3Months').checked;
+  const isRepeat = document.getElementById('checkRepeatWeeks')?.checked;
+  const repeatCount = isRepeat ? selectedRepeatWeeks : 0;
   const backupCache = JSON.parse(JSON.stringify(availabilityCache));
 
-  if (apply3Months) {
-    const targetDayOfWeek = selectedDayForPicker.dateObj.getDay();
-    const start = new Date(selectedDayForPicker.dateObj);
-    const end = new Date(start);
-    end.setMonth(end.getMonth() + 3);
-
-    let curr = new Date(start);
-    while (curr <= end) {
-      if (curr.getDay() === targetDayOfWeek) {
-        entries.push({ datum: normalizeDateStr(curr), status: status });
-      }
-      curr.setDate(curr.getDate() + 1);
-    }
-  } else {
-    entries.push({ datum: selectedDayForPicker.isoDate, status: status });
+  const baseDate = new Date(selectedDayForPicker.dateObj);
+  for (let w = 0; w <= repeatCount; w++) {
+    const targetDate = new Date(baseDate);
+    targetDate.setDate(baseDate.getDate() + (w * 7));
+    entries.push({ datum: normalizeDateStr(targetDate), status: status });
   }
 
   entries.forEach(entry => {
