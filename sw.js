@@ -1,5 +1,5 @@
 // SERVICE WORKER V2.11 (Instant Cache-First & Auto-Activation)
-const CACHE_NAME = 'mediawegwijs-v5.0';
+const CACHE_NAME = 'mediawegwijs-v5.1';
 const STATIC_ASSETS = [
   './',
   './index.html',
@@ -9,6 +9,7 @@ const STATIC_ASSETS = [
   './js/calendar.js',
   './js/tours.js',
   './js/app.js',
+  './js/deprecation-popup.js',
   'https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css',
   'https://cdn.jsdelivr.net/npm/flatpickr',
   'https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/nl.js',
