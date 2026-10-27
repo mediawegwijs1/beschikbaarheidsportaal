@@ -4,8 +4,8 @@
 
 // Opzettelijke vertraging: deze site is verhuisd naar https://mwwvakdocent.nl
 const DEPRECATION_START = new Date("2026-10-27");
-const BASE_DELAY_MS = 8000;
-const EXTRA_PER_WEEK_MS = 4000;
+const BASE_DELAY_MS = 6000;
+const EXTRA_PER_WEEK_MS = 3000;
 const MAX_DELAY_MS = 40000;
 
 function getDeprecationDelay() {
