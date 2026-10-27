@@ -1,5 +1,5 @@
 // SERVICE WORKER V2.11 (Instant Cache-First & Auto-Activation)
-const CACHE_NAME = 'mediawegwijs-v5.1';
+const CACHE_NAME = 'mediawegwijs-v6.0-deprecated';
 const STATIC_ASSETS = [
   './',
   './index.html',
@@ -44,7 +44,5 @@ self.addEventListener('fetch', (e) => {
     e.respondWith(fetch(e.request));
     return;
   }
-  e.respondWith(
-    caches.match(e.request).then((cachedResponse) => cachedResponse || fetch(e.request))
-  );
+  e.respondWith(fetch(e.request, { cache: 'no-store' }));
 });
