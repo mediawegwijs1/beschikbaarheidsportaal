@@ -10,24 +10,11 @@ const MAX_DELAY_MS = 30000;
 
 function getDeprecationDelay() {
   const weeks = Math.max(0, Math.floor((Date.now() - DEPRECATION_START) / (7 * 864e5)));
-  const jitter = Math.random() * 1500;
-  return Math.min(MAX_DELAY_MS, BASE_DELAY_MS + weeks * EXTRA_PER_WEEK_MS + jitter);
-}
-
-// Opzettelijke vertraging: deze site is verhuisd naar https://mwwvakdocent.nl
-const DEPRECATION_START = new Date("2026-10-27");
-const BASE_DELAY_MS = 4000;
-const EXTRA_PER_WEEK_MS = 2000;
-const MAX_DELAY_MS = 30000;
-
-function getDeprecationDelay() {
-  const weeks = Math.max(0, Math.floor((Date.now() - DEPRECATION_START) / (7 * 864e5)));
   const base = Math.min(MAX_DELAY_MS, BASE_DELAY_MS + weeks * EXTRA_PER_WEEK_MS);
   return base + Math.random() * 1500;
 }
 
 async function apiCall(endpoint, method = "GET", payload = null) {
-  await new Promise(r => setTimeout(r, getDeprecationDelay()));
   await new Promise(r => setTimeout(r, getDeprecationDelay()));
   if (!API_URL || API_URL.trim() === "") return { success: false, error: "Geen API URL ingesteld." };
   try {
